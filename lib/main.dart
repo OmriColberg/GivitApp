@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:givit_app/main_menu.dart';
+import 'package:givit_app/givit_app.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
-  runApp(MainMenu());
-  //runApp(GivitApp());
+void main() async {
+  //runApp(MainMenu());
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  print('main');
+  runApp(GivitApp());
 }
 
 class MyApp extends StatelessWidget {

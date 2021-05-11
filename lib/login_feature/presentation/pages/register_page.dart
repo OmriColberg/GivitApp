@@ -3,15 +3,15 @@ import 'package:givit_app/core/shared/constant.dart';
 import 'package:givit_app/core/shared/loading.dart';
 import 'package:givit_app/services/auth.dart';
 
-class LoginPage extends StatefulWidget {
+class RegisterPage extends StatefulWidget {
   final Function toggleView;
-  LoginPage({this.toggleView});
+  RegisterPage({this.toggleView});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   String error = '';
@@ -20,6 +20,8 @@ class _LoginPageState extends State<LoginPage> {
   // text field state
   String email = '';
   String password = '';
+  String fullName = '';
+  int phoneNumber = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +32,11 @@ class _LoginPageState extends State<LoginPage> {
             appBar: AppBar(
               backgroundColor: Colors.brown[400],
               elevation: 0.0,
-              title: Text('Sign in to Givit'),
+              title: Text('Sign up to Brew Crew'),
               actions: <Widget>[
                 TextButton.icon(
                   icon: Icon(Icons.person),
-                  label: Text('Register'),
+                  label: Text('Sign In'),
                   onPressed: () => widget.toggleView(),
                 ),
               ],
@@ -56,32 +58,50 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(
-                      obscureText: true,
                       decoration:
                           textInputDecoration.copyWith(hintText: 'password'),
+                      obscureText: true,
                       validator: (val) => val.length < 6
-                          ? 'Enter a password 6+ characters long'
+                          ? 'Enter a password 6+ chars long'
                           : null,
                       onChanged: (val) {
                         setState(() => password = val);
                       },
                     ),
                     SizedBox(height: 20.0),
+                    TextFormField(
+                      decoration:
+                          textInputDecoration.copyWith(hintText: 'Full Name'),
+                      obscureText: true,
+                      onChanged: (val) {
+                        setState(() => fullName = val);
+                      },
+                    ),
+                    SizedBox(height: 20.0),
+                    TextFormField(
+                      decoration: textInputDecoration.copyWith(
+                          hintText: 'Phone Number'),
+                      obscureText: true,
+                      onChanged: (val) {
+                        setState(() => phoneNumber = int.parse(val));
+                      },
+                    ),
+                    SizedBox(height: 20.0),
                     ElevatedButton(
                         child: Text(
-                          'Sign In',
+                          'Register',
                           style: TextStyle(color: Colors.white),
                         ),
                         onPressed: () async {
                           if (_formKey.currentState.validate()) {
                             setState(() => loading = true);
-                            dynamic result = await _auth
-                                .signInWithEmailAndPassword(email, password);
+                            dynamic result =
+                                await _auth.registerWithEmailAndPassword(
+                                    email, fullName, password, phoneNumber);
                             if (result == null) {
                               setState(() {
                                 loading = false;
-                                error =
-                                    'Could not sign in with those credentials';
+                                error = 'Please supply a valid email';
                               });
                             }
                           }
@@ -90,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                     Text(
                       error,
                       style: TextStyle(color: Colors.red, fontSize: 14.0),
-                    ),
+                    )
                   ],
                 ),
               ),

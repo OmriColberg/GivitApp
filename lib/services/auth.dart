@@ -23,32 +23,32 @@ class AuthService {
       print(error.toString());
       return null;
     }
+  }
 
-    // register with email and password
-    Future registerWithEmailAndPassword(
-        String email, String fullName, String password, int phoneNumber) async {
-      try {
-        UserCredential result = await _auth.createUserWithEmailAndPassword(
-            email: email, password: password);
-        User user = result.user;
-        // create a new document for the user with the uid
-        await DatabaseService(uid: user.uid)
-            .updateGivitUserData(email, fullName, password, phoneNumber);
-        return _givitUserFromFireBaseUser(user);
-      } catch (error) {
-        print(error.toString());
-        return null;
-      }
+  // register with email and password
+  Future registerWithEmailAndPassword(
+      String email, String fullName, String password, int phoneNumber) async {
+    try {
+      UserCredential result = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      User user = result.user;
+      // create a new document for the user with the uid
+      await DatabaseService(uid: user.uid)
+          .updateGivitUserData(email, fullName, password, phoneNumber);
+      return _givitUserFromFireBaseUser(user);
+    } catch (error) {
+      print(error.toString());
+      return null;
     }
+  }
 
-    // sign out
-    Future signOut() async {
-      try {
-        return await _auth.signOut();
-      } catch (error) {
-        print(error.toString());
-        return null;
-      }
+  // sign out
+  Future signOut() async {
+    try {
+      return await _auth.signOut();
+    } catch (error) {
+      print(error.toString());
+      return null;
     }
   }
 }
