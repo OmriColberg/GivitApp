@@ -3,6 +3,7 @@ import 'package:givit_app/main_menu.dart';
 
 void main() {
   runApp(MainMenu());
+  //runApp(GivitApp());
 }
 
 class MyApp extends StatelessWidget {
