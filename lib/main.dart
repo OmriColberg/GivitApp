@@ -3,7 +3,6 @@ import 'package:givit_app/givit_app.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
-  //runApp(MainMenu());
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(GivitApp());

@@ -27,91 +27,101 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return loading
         ? Loading()
-        : Scaffold(
-            backgroundColor: Colors.brown[100],
-            appBar: AppBar(
-              backgroundColor: Colors.brown[400],
-              elevation: 0.0,
-              title: Text('Sign up to Brew Crew'),
-              actions: <Widget>[
-                TextButton.icon(
-                  icon: Icon(Icons.person),
-                  label: Text('Sign In'),
-                  onPressed: () => widget.toggleView(),
-                ),
-              ],
-            ),
-            body: Container(
-              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(height: 20.0),
-                    TextFormField(
-                      decoration:
-                          textInputDecoration.copyWith(hintText: 'email'),
-                      validator: (val) => val.isEmpty ? 'Enter an email' : null,
-                      onChanged: (val) {
-                        setState(() => email = val);
-                      },
+        : SafeArea(
+            child: Scaffold(
+              backgroundColor: Colors.blue[100],
+              appBar: AppBar(
+                backgroundColor: Colors.blue[400],
+                elevation: 0.0,
+                title: Text('Sign up to Givit'),
+                actions: <Widget>[
+                  TextButton.icon(
+                    icon: Icon(
+                      Icons.person,
+                      color: Colors.black,
                     ),
-                    SizedBox(height: 20.0),
-                    TextFormField(
-                      decoration:
-                          textInputDecoration.copyWith(hintText: 'password'),
-                      obscureText: true,
-                      validator: (val) => val.length < 6
-                          ? 'Enter a password 6+ chars long'
-                          : null,
-                      onChanged: (val) {
-                        setState(() => password = val);
-                      },
+                    label: Text(
+                      'Sign In',
+                      style: TextStyle(color: Colors.black),
                     ),
-                    SizedBox(height: 20.0),
-                    TextFormField(
-                      decoration:
-                          textInputDecoration.copyWith(hintText: 'Full Name'),
-                      obscureText: true,
-                      onChanged: (val) {
-                        setState(() => fullName = val);
-                      },
-                    ),
-                    SizedBox(height: 20.0),
-                    TextFormField(
-                      decoration: textInputDecoration.copyWith(
-                          hintText: 'Phone Number'),
-                      obscureText: true,
-                      onChanged: (val) {
-                        setState(() => phoneNumber = int.parse(val));
-                      },
-                    ),
-                    SizedBox(height: 20.0),
-                    ElevatedButton(
-                        child: Text(
-                          'Register',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: () async {
-                          if (_formKey.currentState.validate()) {
-                            setState(() => loading = true);
-                            dynamic result =
-                                await _auth.registerWithEmailAndPassword(
-                                    email, fullName, password, phoneNumber);
-                            if (result == null) {
-                              setState(() {
-                                loading = false;
-                                error = 'Please supply a valid email';
-                              });
+                    onPressed: () => widget.toggleView(),
+                  ),
+                ],
+              ),
+              body: Container(
+                padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(height: 20.0),
+                      TextFormField(
+                        decoration:
+                            textInputDecoration.copyWith(hintText: 'email'),
+                        validator: (val) =>
+                            val.isEmpty ? 'Enter an email' : null,
+                        onChanged: (val) {
+                          setState(() => email = val);
+                        },
+                      ),
+                      SizedBox(height: 20.0),
+                      TextFormField(
+                        decoration:
+                            textInputDecoration.copyWith(hintText: 'password'),
+                        obscureText: true,
+                        validator: (val) => val.length < 6
+                            ? 'Enter a password 6+ characters long'
+                            : null,
+                        onChanged: (val) {
+                          setState(() => password = val);
+                        },
+                      ),
+                      SizedBox(height: 20.0),
+                      TextFormField(
+                        decoration:
+                            textInputDecoration.copyWith(hintText: 'Full Name'),
+                        onChanged: (val) {
+                          setState(() => fullName = val);
+                        },
+                      ),
+                      SizedBox(height: 20.0),
+                      TextFormField(
+                        decoration: textInputDecoration.copyWith(
+                            hintText: 'Phone Number'),
+                        validator: (val) => val.length != 10
+                            ? "Enter a valid phone number, as the appearance of 05********, with no '-'"
+                            : null,
+                        onChanged: (val) {
+                          setState(() => phoneNumber = int.parse(val));
+                        },
+                      ),
+                      SizedBox(height: 20.0),
+                      ElevatedButton(
+                          child: Text(
+                            'Register',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onPressed: () async {
+                            if (_formKey.currentState.validate()) {
+                              setState(() => loading = true);
+                              dynamic result =
+                                  await _auth.registerWithEmailAndPassword(
+                                      email, fullName, password, phoneNumber);
+                              if (result == null) {
+                                setState(() {
+                                  loading = false;
+                                  error = 'Please supply a valid email';
+                                });
+                              }
                             }
-                          }
-                        }),
-                    SizedBox(height: 12.0),
-                    Text(
-                      error,
-                      style: TextStyle(color: Colors.red, fontSize: 14.0),
-                    )
-                  ],
+                          }),
+                      SizedBox(height: 12.0),
+                      Text(
+                        error,
+                        style: TextStyle(color: Colors.red, fontSize: 14.0),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
