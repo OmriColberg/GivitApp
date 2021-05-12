@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 class GivitApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print('givitapp');
     return StreamProvider<GivitUser>.value(
       value: AuthService().user,
       initialData: GivitUser(),

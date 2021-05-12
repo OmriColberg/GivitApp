@@ -6,7 +6,6 @@ void main() async {
   //runApp(MainMenu());
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  print('main');
   runApp(GivitApp());
 }
 

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:givit_app/main_page_feature/presentation/pages/main_page.dart';
 import 'package:givit_app/profile_page_featre/profile_page.dart';
+import 'package:givit_app/services/auth.dart';
 
 class MainMenu extends StatelessWidget {
+  final AuthService _auth = AuthService();
   @override
   Widget build(BuildContext context) {
     //var size = MediaQuery.of(context).size;
@@ -20,6 +22,15 @@ class MainMenu extends StatelessWidget {
                   child: Image.asset('lib/core/assets/givit-white.png'),
                 ),
               ),
+              actions: [
+                TextButton.icon(
+                  icon: Icon(Icons.person),
+                  label: Text('logout'),
+                  onPressed: () async {
+                    await _auth.signOut();
+                  },
+                ),
+              ],
               bottom: TabBar(
                 tabs: [
                   Tab(

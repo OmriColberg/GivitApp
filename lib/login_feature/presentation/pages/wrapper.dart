@@ -7,9 +7,7 @@ import 'package:givit_app/main_menu.dart';
 class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print('wrapper');
     final user = Provider.of<GivitUser>(context);
-    print(user);
 
     return user == null ? Authenticate() : MainMenu();
   }
