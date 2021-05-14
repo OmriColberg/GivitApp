@@ -33,7 +33,7 @@ class _RegisterPageState extends State<RegisterPage> {
               appBar: AppBar(
                 backgroundColor: Colors.blue[400],
                 elevation: 0.0,
-                title: Text('Sign up to Givit'),
+                title: Text('Register to Givit'),
                 actions: <Widget>[
                   TextButton.icon(
                     icon: Icon(
@@ -89,7 +89,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         decoration: textInputDecoration.copyWith(
                             hintText: 'Phone Number'),
                         validator: (val) => val.length != 10
-                            ? "Enter a valid phone number, as the appearance of 05********, with no '-'"
+                            ? "Enter a valid phone number"
                             : null,
                         onChanged: (val) {
                           setState(() => phoneNumber = int.parse(val));
