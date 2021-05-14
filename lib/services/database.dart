@@ -18,6 +18,10 @@ class DatabaseService {
     });
   }
 
+  Future<GivitUser> getGivitUser(String uid) async {
+    return await userCollection.doc(uid).get().then((user) => user.data());
+  }
+
   GivitUser _userDataFromSnapshot(QueryDocumentSnapshot<GivitUser> snapshot) {
     return GivitUser(
       uid: uid,

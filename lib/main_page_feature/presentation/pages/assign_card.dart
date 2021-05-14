@@ -4,7 +4,7 @@ class DeliveryAssign extends StatelessWidget {
   final String title;
   final String schedule;
   final String body;
-  const DeliveryAssign(
+  DeliveryAssign(
       {Key key,
       @required this.title,
       /* @required*/ this.body,
