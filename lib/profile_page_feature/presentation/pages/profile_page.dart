@@ -36,11 +36,9 @@ class MapScreenState extends State<ProfilePage>
     return StreamBuilder<GivitUser>(
         stream: db.userData,
         builder: (context, snapshot) {
-          print('after getter');
           if (!snapshot.hasData) {
             return Loading();
           }
-          print('after2 getter');
           print(snapshot.data);
           GivitUser givitUser = snapshot.data;
           return Scaffold(
