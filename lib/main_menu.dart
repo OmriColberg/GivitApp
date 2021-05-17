@@ -3,13 +3,10 @@ import 'package:givit_app/core/shared/givit_logo.dart';
 import 'package:givit_app/main_page_feature/presentation/pages/main_page.dart';
 import 'package:givit_app/profile_page_feature/presentation/pages/profile_page.dart';
 import 'package:givit_app/services/auth.dart';
-import 'package:givit_app/services/database.dart';
 import 'package:givit_app/transport_log_feature/transport_log_page.dart';
 
 class MainMenu extends StatelessWidget {
   final AuthService _auth = AuthService();
-  final DatabaseService db = DatabaseService();
-  //final GivitUser givitUser = await db.getGivitUser(db.uid);
 
   @override
   Widget build(BuildContext context) {

@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:givit_app/models/givit_user.dart';
 
 class DatabaseService {
   final String uid;
-  DatabaseService({this.uid});
+  DatabaseService({@required this.uid});
 
   final CollectionReference userCollection =
       FirebaseFirestore.instance.collection('Users');
@@ -22,7 +23,7 @@ class DatabaseService {
     return await userCollection.doc(uid).get().then((user) => user.data());
   }
 
-  GivitUser _userDataFromSnapshot(QueryDocumentSnapshot<GivitUser> snapshot) {
+  GivitUser _userDataFromSnapshot(DocumentSnapshot<GivitUser> snapshot) {
     return GivitUser(
       uid: uid,
       email: snapshot.data().email,
@@ -32,6 +33,7 @@ class DatabaseService {
   }
 
   Stream<GivitUser> get userData {
+    print('before getter');
     return userCollection.doc(uid).snapshots().map(_userDataFromSnapshot);
   }
 }
