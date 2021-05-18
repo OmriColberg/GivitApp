@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:givit_app/core/shared/loading.dart';
 import 'package:givit_app/models/givit_user.dart';
 import 'package:givit_app/services/database.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -19,6 +18,10 @@ class MapScreenState extends State<ProfilePage>
     with SingleTickerProviderStateMixin {
   bool _status = true;
   final FocusNode myFocusNode = FocusNode();
+  final TextEditingController fullNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController phoneNumberController = TextEditingController();
   final Size size;
 
   MapScreenState({this.size});
@@ -39,8 +42,6 @@ class MapScreenState extends State<ProfilePage>
           if (!snapshot.hasData) {
             return Loading();
           }
-          print('after getter');
-          print(snapshot.data);
           GivitUser givitUser = snapshot.data;
           return Scaffold(
               body: Container(
@@ -163,10 +164,9 @@ class MapScreenState extends State<ProfilePage>
                                   children: <Widget>[
                                     Flexible(
                                       child: TextField(
+                                        controller: fullNameController,
                                         decoration: InputDecoration(
-                                            hintText: givitUser
-                                                .fullName //"Enter Your Name",
-                                            ),
+                                            hintText: givitUser.fullName),
                                         enabled: !_status,
                                         autofocus: !_status,
                                       ),
@@ -185,7 +185,7 @@ class MapScreenState extends State<ProfilePage>
                                       mainAxisSize: MainAxisSize.min,
                                       children: <Widget>[
                                         Text(
-                                          'Email ID',
+                                          "Email",
                                           style: TextStyle(
                                               fontSize: 16.0,
                                               fontWeight: FontWeight.bold),
@@ -202,8 +202,9 @@ class MapScreenState extends State<ProfilePage>
                                   children: <Widget>[
                                     Flexible(
                                       child: TextField(
-                                        decoration: const InputDecoration(
-                                            hintText: "Enter Email ID"),
+                                        controller: emailController,
+                                        decoration: InputDecoration(
+                                            hintText: givitUser.email),
                                         enabled: !_status,
                                       ),
                                     ),
@@ -221,7 +222,7 @@ class MapScreenState extends State<ProfilePage>
                                       mainAxisSize: MainAxisSize.min,
                                       children: <Widget>[
                                         Text(
-                                          'Mobile',
+                                          "Password",
                                           style: TextStyle(
                                               fontSize: 16.0,
                                               fontWeight: FontWeight.bold),
@@ -238,8 +239,10 @@ class MapScreenState extends State<ProfilePage>
                                   children: <Widget>[
                                     Flexible(
                                       child: TextField(
-                                        decoration: const InputDecoration(
-                                            hintText: "Enter Mobile Number"),
+                                        controller: passwordController,
+                                        decoration: InputDecoration(
+                                            hintText: givitUser.password),
+                                        obscureText: true,
                                         enabled: !_status,
                                       ),
                                     ),
@@ -250,29 +253,19 @@ class MapScreenState extends State<ProfilePage>
                                     left: 25.0, right: 25.0, top: 25.0),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: <Widget>[
-                                    Expanded(
-                                      child: Container(
-                                        child: Text(
-                                          'Pin Code',
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        Text(
+                                          'Phone Number',
                                           style: TextStyle(
                                               fontSize: 16.0,
                                               fontWeight: FontWeight.bold),
                                         ),
-                                      ),
-                                      flex: 2,
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        child: Text(
-                                          'State',
-                                          style: TextStyle(
-                                              fontSize: 16.0,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                      flex: 2,
+                                      ],
                                     ),
                                   ],
                                 )),
@@ -281,30 +274,21 @@ class MapScreenState extends State<ProfilePage>
                                     left: 25.0, right: 25.0, top: 2.0),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: <Widget>[
                                     Flexible(
-                                      child: Padding(
-                                        padding: EdgeInsets.only(right: 10.0),
-                                        child: TextField(
-                                          decoration: const InputDecoration(
-                                              hintText: "Enter Pin Code"),
-                                          enabled: !_status,
-                                        ),
-                                      ),
-                                      flex: 2,
-                                    ),
-                                    Flexible(
                                       child: TextField(
-                                        decoration: const InputDecoration(
-                                            hintText: "Enter State"),
+                                        controller: phoneNumberController,
+                                        decoration: InputDecoration(
+                                            hintText: givitUser.phoneNumber
+                                                .toString()),
                                         enabled: !_status,
                                       ),
-                                      flex: 2,
                                     ),
                                   ],
                                 )),
-                            !_status ? _getActionButtons() : Container(),
+                            !_status
+                                ? _getActionButtons(db, givitUser)
+                                : Container(),
                           ],
                         ),
                       ),
@@ -324,7 +308,7 @@ class MapScreenState extends State<ProfilePage>
     super.dispose();
   }
 
-  Widget _getActionButtons() {
+  Widget _getActionButtons(DatabaseService db, GivitUser givitUser) {
     return Padding(
       padding: EdgeInsets.only(left: 25.0, right: 25.0, top: 45.0),
       child: Row(
@@ -347,7 +331,20 @@ class MapScreenState extends State<ProfilePage>
                     ),
                   ),
                 ),
-                onPressed: () {
+                onPressed: () async {
+                  await db.updateGivitUserData(
+                      emailController.text == ''
+                          ? givitUser.email
+                          : emailController.text,
+                      fullNameController.text == ''
+                          ? givitUser.fullName
+                          : fullNameController.text,
+                      passwordController.text == ''
+                          ? givitUser.password
+                          : passwordController.text,
+                      phoneNumberController.text == ''
+                          ? givitUser.phoneNumber
+                          : int.parse(phoneNumberController.text));
                   setState(() {
                     _status = true;
                     FocusScope.of(context).requestFocus(FocusNode());
@@ -400,6 +397,7 @@ class MapScreenState extends State<ProfilePage>
         ),
       ),
       onTap: () {
+        // TODO: implement selection of profile picture or take from google user
         setState(() {
           _status = false;
         });

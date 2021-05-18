@@ -23,17 +23,17 @@ class DatabaseService {
     return await userCollection.doc(uid).get().then((user) => user.data());
   }
 
-  GivitUser _userDataFromSnapshot(DocumentSnapshot<GivitUser> snapshot) {
+  GivitUser _givitUserDataFromSnapshot(DocumentSnapshot snapshot) {
+    var snapshotData = snapshot.data() as Map;
     return GivitUser(
       uid: uid,
-      email: snapshot.data().email,
-      fullName: snapshot.data().fullName,
-      phoneNumber: snapshot.data().phoneNumber,
+      email: snapshotData['Email'],
+      fullName: snapshotData['Full Name'],
+      phoneNumber: snapshotData['Phone Number'],
     );
   }
 
   Stream<GivitUser> get userData {
-    print('before getter');
-    return userCollection.doc(uid).snapshots().map(_userDataFromSnapshot);
+    return userCollection.doc(uid).snapshots().map(_givitUserDataFromSnapshot);
   }
 }
