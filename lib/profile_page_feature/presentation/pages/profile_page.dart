@@ -152,6 +152,7 @@ class MapScreenState extends State<ProfilePage>
                             ParamInfoPersonalArea(
                               controller: passwordController,
                               paramInfo: givitUser.password,
+                              obscure: true,
                               status: _status,
                             ),
                             SubTitlePersonalArea(title: 'Phone Number'),

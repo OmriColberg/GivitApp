@@ -28,6 +28,7 @@ class DatabaseService {
     return GivitUser(
       uid: uid,
       email: snapshotData['Email'],
+      password: snapshotData['Password'],
       fullName: snapshotData['Full Name'],
       phoneNumber: snapshotData['Phone Number'],
     );
