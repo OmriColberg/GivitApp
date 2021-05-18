@@ -1,4 +1,5 @@
 class Product {
+  final String id;
   final String name;
   final ProductState state;
   final String ownerName;
@@ -8,7 +9,8 @@ class Product {
   final String notes;
 
   Product(
-      {this.name = '',
+      {this.id = '',
+      this.name = '',
       this.state = ProductState.unknown,
       this.ownerName = '',
       this.ownerPhoneNumber = '',
