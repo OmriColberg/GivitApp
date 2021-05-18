@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:givit_app/core/shared/loading.dart';
 import 'package:givit_app/models/givit_user.dart';
+import 'package:givit_app/profile_page_feature/presentation/pages/param_info_personal_area.dart';
+import 'package:givit_app/profile_page_feature/presentation/pages/sub_title_personal_area.dart';
 import 'package:givit_app/services/database.dart';
 import 'package:provider/provider.dart';
 
@@ -119,7 +121,7 @@ class MapScreenState extends State<ProfilePage>
                                       mainAxisSize: MainAxisSize.min,
                                       children: <Widget>[
                                         Text(
-                                          'Parsonal Information',
+                                          'Personal Information',
                                           style: TextStyle(
                                               fontSize: 18.0,
                                               fontWeight: FontWeight.bold),
@@ -135,157 +137,29 @@ class MapScreenState extends State<ProfilePage>
                                     )
                                   ],
                                 )),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 25.0, right: 25.0, top: 25.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: <Widget>[
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        Text(
-                                          'Name',
-                                          style: TextStyle(
-                                              fontSize: 16.0,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                )),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 25.0, right: 25.0, top: 2.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: <Widget>[
-                                    Flexible(
-                                      child: TextField(
-                                        controller: fullNameController,
-                                        decoration: InputDecoration(
-                                            hintText: givitUser.fullName),
-                                        enabled: !_status,
-                                        autofocus: !_status,
-                                      ),
-                                    ),
-                                  ],
-                                )),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 25.0, right: 25.0, top: 25.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: <Widget>[
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        Text(
-                                          "Email",
-                                          style: TextStyle(
-                                              fontSize: 16.0,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                )),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 25.0, right: 25.0, top: 2.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: <Widget>[
-                                    Flexible(
-                                      child: TextField(
-                                        controller: emailController,
-                                        decoration: InputDecoration(
-                                            hintText: givitUser.email),
-                                        enabled: !_status,
-                                      ),
-                                    ),
-                                  ],
-                                )),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 25.0, right: 25.0, top: 25.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: <Widget>[
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        Text(
-                                          "Password",
-                                          style: TextStyle(
-                                              fontSize: 16.0,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                )),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 25.0, right: 25.0, top: 2.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: <Widget>[
-                                    Flexible(
-                                      child: TextField(
-                                        controller: passwordController,
-                                        decoration: InputDecoration(
-                                            hintText: givitUser.password),
-                                        obscureText: true,
-                                        enabled: !_status,
-                                      ),
-                                    ),
-                                  ],
-                                )),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 25.0, right: 25.0, top: 25.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: <Widget>[
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        Text(
-                                          'Phone Number',
-                                          style: TextStyle(
-                                              fontSize: 16.0,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                )),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    left: 25.0, right: 25.0, top: 2.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: <Widget>[
-                                    Flexible(
-                                      child: TextField(
-                                        controller: phoneNumberController,
-                                        decoration: InputDecoration(
-                                            hintText: givitUser.phoneNumber
-                                                .toString()),
-                                        enabled: !_status,
-                                      ),
-                                    ),
-                                  ],
-                                )),
+                            SubTitlePersonalArea(title: 'Name'),
+                            ParamInfoPersonalArea(
+                                controller: fullNameController,
+                                paramInfo: givitUser.fullName,
+                                status: _status),
+                            SubTitlePersonalArea(title: 'Email'),
+                            ParamInfoPersonalArea(
+                              controller: emailController,
+                              paramInfo: givitUser.email,
+                              status: _status,
+                            ),
+                            SubTitlePersonalArea(title: 'Password'),
+                            ParamInfoPersonalArea(
+                              controller: passwordController,
+                              paramInfo: givitUser.password,
+                              status: _status,
+                            ),
+                            SubTitlePersonalArea(title: 'Phone Number'),
+                            ParamInfoPersonalArea(
+                              controller: phoneNumberController,
+                              paramInfo: givitUser.phoneNumber.toString(),
+                              status: _status,
+                            ),
                             !_status
                                 ? _getActionButtons(db, givitUser)
                                 : Container(),
@@ -305,6 +179,10 @@ class MapScreenState extends State<ProfilePage>
   void dispose() {
     // Clean up the controller when the Widget is disposed
     myFocusNode.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    phoneNumberController.dispose();
+    fullNameController.dispose();
     super.dispose();
   }
 
@@ -315,73 +193,55 @@ class MapScreenState extends State<ProfilePage>
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(right: 10.0),
-              child: Container(
-                  child: ElevatedButton(
-                child: Text("Save"),
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
-                  foregroundColor:
-                      MaterialStateProperty.all<Color>(Colors.white),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                  ),
-                ),
-                onPressed: () async {
-                  await db.updateGivitUserData(
-                      emailController.text == ''
-                          ? givitUser.email
-                          : emailController.text,
-                      fullNameController.text == ''
-                          ? givitUser.fullName
-                          : fullNameController.text,
-                      passwordController.text == ''
-                          ? givitUser.password
-                          : passwordController.text,
-                      phoneNumberController.text == ''
-                          ? givitUser.phoneNumber
-                          : int.parse(phoneNumberController.text));
-                  setState(() {
-                    _status = true;
-                    FocusScope.of(context).requestFocus(FocusNode());
-                  });
-                },
-              )),
-            ),
-            flex: 2,
-          ),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(left: 10.0),
-              child: Container(
-                  child: ElevatedButton(
-                child: Text("Cancel"),
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.red),
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.white),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                    )),
-                onPressed: () {
-                  setState(() {
-                    _status = true;
-                    FocusScope.of(context).requestFocus(FocusNode());
-                  });
-                },
-              )),
-            ),
-            flex: 2,
-          ),
+          _saveCancelButton('Save', () async {
+            await db.updateGivitUserData(
+                emailController.text == ''
+                    ? givitUser.email
+                    : emailController.text,
+                fullNameController.text == ''
+                    ? givitUser.fullName
+                    : fullNameController.text,
+                passwordController.text == ''
+                    ? givitUser.password
+                    : passwordController.text,
+                phoneNumberController.text == ''
+                    ? givitUser.phoneNumber
+                    : int.parse(phoneNumberController.text));
+            setState(() {
+              _status = true;
+              FocusScope.of(context).requestFocus(FocusNode());
+            });
+          }),
+          _saveCancelButton('Cancel', () {
+            setState(() {
+              _status = true;
+              FocusScope.of(context).requestFocus(FocusNode());
+            });
+          }),
         ],
       ),
+    );
+  }
+
+  Expanded _saveCancelButton(String text, Function onPressed) {
+    return Expanded(
+      child: Padding(
+        padding: EdgeInsets.only(left: 10.0),
+        child: Container(
+            child: ElevatedButton(
+          child: Text(text),
+          style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+              )),
+          onPressed: onPressed,
+        )),
+      ),
+      flex: 2,
     );
   }
 
