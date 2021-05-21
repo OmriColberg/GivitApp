@@ -24,7 +24,7 @@ class DatabaseService {
     });
   }
 
-  Future<void> updateProductData(
+  Future<void> addProductData(
       {String id,
       String name,
       ProductState state,
@@ -33,8 +33,7 @@ class DatabaseService {
       String pickUpAddress,
       String timeForPickUp,
       String notes}) async {
-    final String _id = id ?? productsCollection.doc().id;
-    return await productsCollection.doc(_id).set({
+    return await productsCollection.add({
       'Notes': notes,
       'Product Name': name,
       'State Of Product': state.toString(),
@@ -42,7 +41,7 @@ class DatabaseService {
       "Owner's Phone Number": ownerPhoneNumber,
       'Time Span For Pick Up': timeForPickUp,
       'Pick Up Address': pickUpAddress,
-    });
+    }).then((value) => value.id);
   }
 
   Product _productsDataFromSnapshot(QuerySnapshot snapshot) {

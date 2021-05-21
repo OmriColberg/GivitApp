@@ -26,7 +26,8 @@ class ParamInfoPersonalArea extends StatelessWidget {
               child: TextField(
                 obscureText: obscure ?? false,
                 controller: controller,
-                decoration: InputDecoration(hintText: paramInfo),
+                decoration:
+                    InputDecoration(hintText: obscure != null ? '' : paramInfo),
                 enabled: !_status,
                 autofocus: !_status,
               ),

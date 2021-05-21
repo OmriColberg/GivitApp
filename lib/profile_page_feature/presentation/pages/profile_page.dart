@@ -84,13 +84,18 @@ class MapScreenState extends State<ProfilePage>
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
-                                      CircleAvatar(
-                                        backgroundColor: Colors.red,
-                                        radius: 25.0,
-                                        child: Icon(
-                                          Icons.camera_alt,
-                                          color: Colors.white,
+                                      GestureDetector(
+                                        child: CircleAvatar(
+                                          backgroundColor: Colors.red,
+                                          radius: 25.0,
+                                          child: Icon(
+                                            Icons.camera_alt,
+                                            color: Colors.white,
+                                          ),
                                         ),
+                                        onTap: () {
+                                          // TODO: implemenet selection of profile picture
+                                        },
                                       )
                                     ],
                                   )),
@@ -258,7 +263,6 @@ class MapScreenState extends State<ProfilePage>
         ),
       ),
       onTap: () {
-        // TODO: implement selection of profile picture or take from google user
         setState(() {
           _status = false;
         });
