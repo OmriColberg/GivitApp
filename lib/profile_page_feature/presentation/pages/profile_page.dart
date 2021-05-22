@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:givit_app/core/shared/loading.dart';
 import 'package:givit_app/models/givit_user.dart';
-import 'package:givit_app/profile_page_feature/presentation/pages/param_info_personal_area.dart';
-import 'package:givit_app/profile_page_feature/presentation/pages/sub_title_personal_area.dart';
+import 'package:givit_app/profile_page_feature/presentation/pages/param_info_profile_page.dart';
+import 'package:givit_app/profile_page_feature/presentation/pages/sub_title_profile_page.dart';
 import 'package:givit_app/services/database.dart';
 import 'package:provider/provider.dart';
 
