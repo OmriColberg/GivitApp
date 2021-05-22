@@ -1,5 +1,5 @@
-import 'package:givit_app/models/givit_user.dart';
-import 'package:givit_app/models/product.dart';
+import 'package:givit_app/core/models/product.dart';
+import 'givit_user.dart';
 
 class Transport {
   final List<GivitUser> carriers;

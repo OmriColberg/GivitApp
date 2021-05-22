@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:givit_app/models/givit_user.dart';
-import 'package:givit_app/models/product.dart';
+import 'package:givit_app/core/models/givit_user.dart';
+import 'package:givit_app/core/models/product.dart';
 
 class DatabaseService {
   final String uid;
@@ -60,6 +60,7 @@ class DatabaseService {
       password: snapshotData['Password'],
       fullName: snapshotData['Full Name'],
       phoneNumber: snapshotData['Phone Number'],
+      role: snapshotData['Role'],
     );
   }
 
