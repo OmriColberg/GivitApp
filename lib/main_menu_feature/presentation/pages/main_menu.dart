@@ -12,7 +12,7 @@ class MainMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final GivitUser givitUser = getIt();
+    final GivitUser givitUser = Provider.of<GivitUser>(context);
     final bool isAdmin = givitUser.role == 'Admin';
     Size size = MediaQuery.of(context).size;
     return /*Container(child: FutureBuilder<String>(
@@ -61,6 +61,7 @@ class MainMenu extends StatelessWidget {
 
         isAdmin
             ? MainMenuAdmin(size: size, auth: _auth)
-            : MainMenuUser(size: size, auth: _auth);
+            : MainMenuAdmin(size: size, auth: _auth);
+    //MainMenuUser(size: size, auth: _auth);
   }
 }

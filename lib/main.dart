@@ -6,6 +6,6 @@ import 'package:givit_app/core/di/di.dart' as di;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  di.setup();
+  //di.setup();
   runApp(GivitApp());
 }

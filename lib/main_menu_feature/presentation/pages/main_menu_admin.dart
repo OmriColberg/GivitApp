@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:givit_app/admin_feature/presentation/pages/admin_page.dart';
 import 'package:givit_app/core/shared/givit_logo.dart';
 import 'package:givit_app/main_page_feature/presentation/pages/main_page.dart';
 import 'package:givit_app/profile_page_feature/presentation/pages/profile_page.dart';
@@ -20,7 +21,7 @@ class MainMenuAdmin extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: DefaultTabController(
-        initialIndex: 4,
+        initialIndex: 5,
         length: 6,
         child: SafeArea(
           child: Scaffold(
@@ -76,6 +77,7 @@ class MainMenuAdmin extends StatelessWidget {
             ),
             body: TabBarView(
               children: [
+                AdminPage(),
                 TransportLogPage(),
                 TransportLogPage(),
                 TransportLogPage(),
