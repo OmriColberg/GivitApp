@@ -9,6 +9,7 @@ class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final GivitUser user = Provider.of<GivitUser>(context);
+    //final GivitUser user = getIt();
 
     return user == null ? Authenticate() : MainMenu();
   }

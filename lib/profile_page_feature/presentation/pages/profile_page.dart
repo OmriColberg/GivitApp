@@ -37,7 +37,6 @@ class MapScreenState extends State<ProfilePage>
   @override
   Widget build(BuildContext context) {
     GivitUser user = Provider.of<GivitUser>(context);
-    print(user.uid);
     final DatabaseService db = DatabaseService(uid: user.uid);
     return StreamBuilder<GivitUser>(
         stream: db.userData,
