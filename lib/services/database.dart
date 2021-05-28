@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:givit_app/models/givit_user.dart';
-import 'package:givit_app/models/product.dart';
+import 'package:givit_app/core/models/givit_user.dart';
+import 'package:givit_app/core/models/product.dart';
 
 class DatabaseService {
   final String uid;
-  DatabaseService({@required this.uid});
+  DatabaseService({this.uid});
 
   final CollectionReference usersCollection =
       FirebaseFirestore.instance.collection('Users');
@@ -22,6 +22,10 @@ class DatabaseService {
       'Password': password,
       'Phone Number': phoneNumber,
     });
+  }
+
+  Stream<QuerySnapshot<Object>> get transportsData {
+    return transportsCollection.snapshots();
   }
 
   Future<void> addProductData(
@@ -44,12 +48,8 @@ class DatabaseService {
     }).then((value) => value.id);
   }
 
-  Product _productsDataFromSnapshot(QuerySnapshot snapshot) {
-    return Product();
-  }
-
-  Stream<Product> get producstData {
-    return productsCollection.snapshots().map(_productsDataFromSnapshot);
+  Stream<QuerySnapshot<Object>> get producstData {
+    return productsCollection.snapshots();
   }
 
   GivitUser _givitUserDataFromSnapshot(DocumentSnapshot snapshot) {
@@ -60,6 +60,7 @@ class DatabaseService {
       password: snapshotData['Password'],
       fullName: snapshotData['Full Name'],
       phoneNumber: snapshotData['Phone Number'],
+      role: snapshotData['Role'],
     );
   }
 

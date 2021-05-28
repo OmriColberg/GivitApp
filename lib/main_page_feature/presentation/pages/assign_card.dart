@@ -18,16 +18,13 @@ class DeliveryAssign extends StatelessWidget {
         child: Column(
           children: <Widget>[
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Icon(Icons.airport_shuttle),
-                SizedBox(
-                  width: 200,
-                ),
                 Text(
                   title ?? 'דרושים',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 18,
                   ),
                 ),
                 SizedBox(
@@ -35,10 +32,10 @@ class DeliveryAssign extends StatelessWidget {
                 ),
               ],
             ),
-            Text(body ?? 'כאן יהיה פירוט יתר אוטומטי'),
-            TextButton(
+            Text(body ?? 'ללא פירוט נוסף'),
+            ElevatedButton(
+              onPressed: () {},
               child: Text(schedule ?? 'לשיבוץ'),
-              onPressed: () {/* ... */},
             ),
           ],
         ),

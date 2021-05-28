@@ -5,12 +5,19 @@ import 'package:givit_app/profile_page_feature/presentation/pages/profile_page.d
 import 'package:givit_app/services/auth.dart';
 import 'package:givit_app/transport_log_feature/transport_log_page.dart';
 
-class MainMenu extends StatelessWidget {
-  final AuthService _auth = AuthService();
+class MainMenuUser extends StatelessWidget {
+  const MainMenuUser({
+    Key key,
+    @required this.size,
+    @required AuthService auth,
+  })  : _auth = auth,
+        super(key: key);
+
+  final Size size;
+  final AuthService _auth;
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return MaterialApp(
       home: DefaultTabController(
         initialIndex: 4,
