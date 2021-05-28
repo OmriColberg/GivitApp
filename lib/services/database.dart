@@ -5,7 +5,7 @@ import 'package:givit_app/core/models/product.dart';
 
 class DatabaseService {
   final String uid;
-  DatabaseService({@required this.uid});
+  DatabaseService({this.uid});
 
   final CollectionReference usersCollection =
       FirebaseFirestore.instance.collection('Users');
@@ -48,8 +48,8 @@ class DatabaseService {
     return Product();
   }
 
-  Stream<Product> get producstData {
-    return productsCollection.snapshots().map(_productsDataFromSnapshot);
+  Stream<QuerySnapshot<Object>> get producstData {
+    return productsCollection.snapshots(); //.map(_productsDataFromSnapshot);
   }
 
   GivitUser _givitUserDataFromSnapshot(DocumentSnapshot snapshot) {
