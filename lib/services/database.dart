@@ -24,6 +24,10 @@ class DatabaseService {
     });
   }
 
+  Stream<QuerySnapshot<Object>> get transportsData {
+    return transportsCollection.snapshots();
+  }
+
   Future<void> addProductData(
       {String id,
       String name,
@@ -44,12 +48,8 @@ class DatabaseService {
     }).then((value) => value.id);
   }
 
-  Product _productsDataFromSnapshot(QuerySnapshot snapshot) {
-    return Product();
-  }
-
   Stream<QuerySnapshot<Object>> get producstData {
-    return productsCollection.snapshots(); //.map(_productsDataFromSnapshot);
+    return productsCollection.snapshots();
   }
 
   GivitUser _givitUserDataFromSnapshot(DocumentSnapshot snapshot) {
