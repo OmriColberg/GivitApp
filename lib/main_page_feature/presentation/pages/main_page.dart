@@ -5,6 +5,8 @@ import 'package:givit_app/core/models/transport.dart';
 import 'package:givit_app/core/shared/loading.dart';
 import 'package:givit_app/main_page_feature/presentation/pages/assign_card.dart';
 import 'package:givit_app/services/database.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class MainPage extends StatelessWidget {
   @override
@@ -83,9 +85,16 @@ DeliveryAssign createDeliveryAssignFromProductSnapshot(Product product) {
 }
 
 DeliveryAssign createDeliveryAssignFromTransportSnapshot(Transport transport) {
+  String date;
+  if (transport.datePickUp != null) {
+    date =
+        DateFormat('yyyy-MM-dd hh:mm').format(transport.datePickUp).toString();
+  } else {
+    date = '';
+  }
   return DeliveryAssign(
-    title: transport.destinationAddress,
+    title: date + ' :הובלה ב',
     body: transport.notes,
-    schedule: 'לשיבוץ חיפוש',
+    schedule: 'לשיבוץ הובלה',
   );
 }

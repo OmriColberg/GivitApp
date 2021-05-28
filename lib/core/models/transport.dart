@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:givit_app/core/models/product.dart';
 import 'givit_user.dart';
 
@@ -8,6 +9,7 @@ class Transport {
   final DateTime datePickUp;
   final String destinationAddress;
   final String notes;
+  final Timestamp timestamp;
 
   Transport({
     this.id = '',
@@ -16,10 +18,16 @@ class Transport {
     this.carriers = const [],
     this.products = const [],
     this.datePickUp,
+    this.timestamp,
   });
 
   static Transport transportFromDocument(
       Map<dynamic, dynamic> trasnportMap, String id) {
-    return Transport(id: id, notes: trasnportMap['Notes']);
+    //this.timestamp.
+    return Transport(
+      id: id,
+      datePickUp: trasnportMap['Date For Pick Up'].toDate(),
+      notes: trasnportMap['Notes'],
+    );
   }
 }
