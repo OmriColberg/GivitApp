@@ -200,7 +200,7 @@ class MapScreenState extends State<ProfilePage>
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           _saveCancelButton('Save', () async {
-            await db.updateGivitUserData(
+            await db.createGivitUserData(
                 emailController.text == ''
                     ? givitUser.email
                     : emailController.text,

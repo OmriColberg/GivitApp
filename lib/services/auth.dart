@@ -35,7 +35,7 @@ class AuthService {
       User user = result.user;
       // create a new document for the user with the uid
       await DatabaseService(uid: user.uid)
-          .updateGivitUserData(email, fullName, password, phoneNumber);
+          .createGivitUserData(email, fullName, password, phoneNumber);
       return _givitUserFromFireBaseUser(user);
     } catch (error) {
       print(error.toString());
