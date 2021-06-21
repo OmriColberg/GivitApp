@@ -77,7 +77,7 @@ class MainMenuAdmin extends StatelessWidget {
             ),
             body: TabBarView(
               children: [
-                AdminPage(),
+                AdminPage(size: size),
                 TransportLogPage(),
                 TransportLogPage(),
                 TransportLogPage(),

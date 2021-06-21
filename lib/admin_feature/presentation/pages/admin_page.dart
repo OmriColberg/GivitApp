@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:givit_app/admin_feature/presentation/pages/add_product_page.dart';
 
 class AdminPage extends StatefulWidget {
-  AdminPage({Key key}) : super(key: key);
-
+  AdminPage({Key key, this.size}) : super(key: key);
+  final Size size;
   @override
-  _AaminPageState createState() => _AaminPageState();
+  _AdminPageState createState() => _AdminPageState();
 }
 
-class _AaminPageState extends State<AdminPage> {
+class _AdminPageState extends State<AdminPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -17,7 +18,13 @@ class _AaminPageState extends State<AdminPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => AddProductPage(size: widget.size)),
+              )
+            },
             child: Text('הוספת מוצר חדש לחיפוש'),
           ),
           ElevatedButton(

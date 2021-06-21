@@ -53,7 +53,7 @@ class MapScreenState extends State<ProfilePage>
                 Column(
                   children: <Widget>[
                     Container(
-                      height: size.height * 0.23 ?? 200,
+                      height: size.height * 0.28 ?? 200,
                       color: Colors.white,
                       child: Column(
                         children: <Widget>[
