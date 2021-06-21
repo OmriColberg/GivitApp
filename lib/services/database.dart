@@ -27,12 +27,8 @@ class DatabaseService {
 
   Future<void> addProductToGivitUser(String id) async {
     DocumentReference<Object> doc = usersCollection.doc(uid);
-    print(doc.toString());
-    print(uid);
-    print(id);
-
     return await doc.update({
-      "Products": FieldValue.arrayUnion(['/Products/$id']),
+      "Products": FieldValue.arrayUnion(["/Products/$id"]),
     }).then((e) {
       print('added successfuly');
     }).catchError((onError) {
@@ -66,6 +62,10 @@ class DatabaseService {
 
   Stream<QuerySnapshot<Object>> get producstData {
     return productsCollection.snapshots();
+  }
+
+  Stream<QuerySnapshot<Object>> get productsUser {
+    return usersCollection.doc(uid).collection("Products").snapshots();
   }
 
   GivitUser _givitUserDataFromSnapshot(DocumentSnapshot snapshot) {

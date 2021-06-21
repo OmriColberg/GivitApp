@@ -3,6 +3,7 @@ import 'package:givit_app/admin_feature/presentation/pages/admin_page.dart';
 import 'package:givit_app/core/shared/givit_logo.dart';
 import 'package:givit_app/main_page_feature/presentation/pages/main_page.dart';
 import 'package:givit_app/profile_page_feature/presentation/pages/profile_page.dart';
+import 'package:givit_app/search_product_feature/presentation/pages/product_page.dart';
 import 'package:givit_app/services/auth.dart';
 import 'package:givit_app/transport_log_feature/transport_log_page.dart';
 
@@ -78,7 +79,7 @@ class MainMenuAdmin extends StatelessWidget {
             body: TabBarView(
               children: [
                 AdminPage(size: size),
-                TransportLogPage(),
+                ProductPage(),
                 TransportLogPage(),
                 TransportLogPage(),
                 ProfilePage(size: size),

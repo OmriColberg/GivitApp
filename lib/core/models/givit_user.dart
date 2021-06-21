@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:givit_app/core/models/product.dart';
 
 class GivitUser {
   final String uid;
@@ -7,6 +8,7 @@ class GivitUser {
   final String fullName;
   final int phoneNumber;
   final String role;
+  List<Product> products = [];
 
   GivitUser(
       {this.email = '',
@@ -14,7 +16,8 @@ class GivitUser {
       this.fullName = '',
       this.phoneNumber = 0,
       this.role = '',
-      this.uid = ''});
+      this.uid = '',
+      this.products});
 
   factory GivitUser.fromFirestorUser(DocumentSnapshot userSnapshout) {
     return GivitUser(
@@ -24,6 +27,7 @@ class GivitUser {
       fullName: userSnapshout['Full Name'],
       phoneNumber: userSnapshout['Phone Number'],
       role: userSnapshout['Role'],
+      products: userSnapshout['Products'],
     );
   }
 }

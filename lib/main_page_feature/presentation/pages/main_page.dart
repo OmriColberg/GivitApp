@@ -6,7 +6,6 @@ import 'package:givit_app/core/shared/loading.dart';
 import 'package:givit_app/main_page_feature/presentation/pages/assign_card.dart';
 import 'package:givit_app/services/database.dart';
 import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
 
 class MainPage extends StatelessWidget {
   @override

@@ -45,6 +45,7 @@ class MapScreenState extends State<ProfilePage>
             return Loading();
           }
           GivitUser givitUser = snapshot.data;
+          print(givitUser.products);
           return Scaffold(
               body: Container(
             color: Colors.white,
