@@ -1,28 +1,28 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:givit_app/admin_feature/presentation/pages/product_register.dart';
 import 'package:givit_app/core/models/product.dart';
 import 'package:givit_app/core/shared/constant.dart';
 import 'package:givit_app/core/shared/loading.dart';
 import 'package:givit_app/services/auth.dart';
+import 'package:givit_app/services/database.dart';
 
 class AddProductPage extends StatefulWidget {
   final Function toggleView;
-  AddProductPage({this.toggleView});
+  final Size size;
+  AddProductPage({this.toggleView, this.size});
 
   @override
   _RegisterProductPageState createState() => _RegisterProductPageState();
 }
 
 class _RegisterProductPageState extends State<AddProductPage> {
-  final AuthService _auth = AuthService();
+  final DatabaseService db = DatabaseService();
   final _formKey = GlobalKey<FormState>();
   String error = '';
   bool loading = false;
 
   // text field state
   String name = '';
-  ProductState state = ProductState.brandNew;
+  ProductState state = ProductState.unknown;
   String ownerName = '';
   int ownerPhoneNumber;
   String pickUpAddress = '';
@@ -59,15 +59,28 @@ class _RegisterProductPageState extends State<AddProductPage> {
                           },
                         ),
                         SizedBox(height: 20.0),
-                        TextFormField(
-                          decoration: textInputDecoration.copyWith(
-                              hintText: 'מצב המוצר'),
-                          validator: (val) => val.length < 6
-                              ? 'Enter a password 6+ characters long'
-                              : null,
-                          onChanged: (val) {
-                            setState(() => state = ProductState.brandNew);
+                        DropdownButton<String>(
+                          value: Product.hebrewFromEnum(state),
+                          icon: const Icon(Icons.arrow_downward),
+                          iconSize: 20,
+                          elevation: 1,
+                          style: const TextStyle(color: Colors.blue),
+                          underline: Container(
+                            height: 1.5,
+                            color: Colors.blue,
+                          ),
+                          onChanged: (String newValue) {
+                            setState(() {
+                              state = Product.productStateFromString(newValue);
+                            });
                           },
+                          items: <String>['חדש', 'כמו חדש', 'משומש', 'לא ידוע']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
                         ),
                         SizedBox(height: 20.0),
                         TextFormField(
@@ -81,9 +94,9 @@ class _RegisterProductPageState extends State<AddProductPage> {
                         TextFormField(
                           decoration: textInputDecoration.copyWith(
                               hintText: 'טלפון מוסר המוצר'),
-                          validator: (val) => val.length != 10
+                          /*validator: (val) => val.length != 10
                               ? "הכנס מס' טלפון של בעל המוצר"
-                              : null,
+                              : null,*/
                           onChanged: (val) {
                             setState(() => ownerPhoneNumber = int.parse(val));
                           },
@@ -92,9 +105,9 @@ class _RegisterProductPageState extends State<AddProductPage> {
                         TextFormField(
                           decoration: textInputDecoration.copyWith(
                               hintText: 'כתובת לאיסוף'),
-                          validator: (val) => val.length != 10
+                          /*validator: (val) => val.length != 10
                               ? "הכנס כתובת לאיסוף המוצר"
-                              : null,
+                              : null,*/
                           onChanged: (val) {
                             setState(() => pickUpAddress = val);
                           },
@@ -103,9 +116,9 @@ class _RegisterProductPageState extends State<AddProductPage> {
                         TextFormField(
                           decoration: textInputDecoration.copyWith(
                               hintText: 'מועד לאיסוף המוצר'),
-                          validator: (val) => val.length != 10
+                          /*validator: (val) => val.length != 10
                               ? "הכנס מועד לאיסוף המוצר"
-                              : null,
+                              : null,*/
                           onChanged: (val) {
                             setState(() => timeForPickUp = val);
                           },
@@ -114,9 +127,9 @@ class _RegisterProductPageState extends State<AddProductPage> {
                         TextFormField(
                           decoration: textInputDecoration.copyWith(
                               hintText: 'הערות נוספות'),
-                          validator: (val) => val.length != 10
+                          /*validator: (val) => val.length != 10
                               ? "הכנס הערות על המוצר או איסופו"
-                              : null,
+                              : null,*/
                           onChanged: (val) {
                             setState(() => notes = val);
                           },
@@ -128,29 +141,22 @@ class _RegisterProductPageState extends State<AddProductPage> {
                             style: TextStyle(color: Colors.white),
                           ),
                           onPressed: () async {
-                            RegisterProduct _newProduct = new RegisterProduct(
-                                name: name,
-                                state: state.toString(),
-                                ownerName: ownerName,
-                                ownerPhoneNumber: ownerPhoneNumber,
-                                pickUpAddress: pickUpAddress,
-                                timeForPickUp: timeForPickUp,
-                                notes: notes);
-                            CollectionReference dbReplies = FirebaseFirestore
-                                .instance
-                                .collection('Products');
-                            FirebaseFirestore.instance
-                                .runTransaction((Transaction tx) async {
-                              var _result =
-                                  await dbReplies.add(_newProduct.toJson());
-                            }).then((_result) {
-                              showDialogHelper("Product added succesfully");
-
-                              print("Product added succesfully");
+                            db
+                                .addProductData(
+                                    name: name,
+                                    state: state,
+                                    ownerName: ownerName,
+                                    ownerPhoneNumber:
+                                        ownerPhoneNumber.toString(),
+                                    pickUpAddress: pickUpAddress,
+                                    timeForPickUp: timeForPickUp,
+                                    notes: notes)
+                                .then((_result) {
+                              showDialogHelper(
+                                  "Product added succesfully", widget.size);
                             }).catchError((error) {
-                              showDialogHelper("Failed tp add product");
-
-                              print("error");
+                              showDialogHelper(
+                                  "Failed tp add product", widget.size);
                             });
                           },
                         ),
@@ -168,50 +174,23 @@ class _RegisterProductPageState extends State<AddProductPage> {
           );
   }
 
-  void showDialogHelper(String dialogText) {
+  void showDialogHelper(String dialogText, Size size) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
-              content: Stack(children: <Widget>[
-            Positioned(
-              child: InkResponse(
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ),
-            Form(
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: TextFormField(),
+          return Container(
+            height: size.height * 0.5,
+            child: AlertDialog(
+                title: Text("המוצר הוסף בהצלחה"),
+                content: Stack(children: <Widget>[
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text("לחזרה"),
                   ),
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: TextFormField(),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                      child: Text(dialogText),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AddProductPage()),
-                        );
-                      },
-                    ),
-                  )
-                ],
-              ),
-            ),
-            SizedBox(height: 20.0),
-          ]));
+                ])),
+          );
         });
   }
 }
