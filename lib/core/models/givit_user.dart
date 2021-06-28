@@ -21,8 +21,6 @@ class GivitUser {
   });
 
   factory GivitUser.fromFirestorUser(DocumentSnapshot userSnapshot) {
-    print("check:");
-    print(userSnapshot);
     return GivitUser(
       uid: userSnapshot.id,
       email: userSnapshot['Email'],

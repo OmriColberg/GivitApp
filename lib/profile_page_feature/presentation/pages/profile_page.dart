@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:givit_app/core/models/givit_user.dart';
+import 'package:givit_app/core/models/product.dart';
 import 'package:givit_app/core/shared/loading.dart';
 import 'package:givit_app/profile_page_feature/presentation/pages/param_info_profile_page.dart';
 import 'package:givit_app/profile_page_feature/presentation/pages/sub_title_profile_page.dart';
@@ -47,6 +48,11 @@ class MapScreenState extends State<ProfilePage>
           GivitUser givitUser = snapshot.data;
           print("try to print products:@@@@@@@");
           print(givitUser.products);
+          String productID = givitUser.products[0];
+          String productIDcont =
+              productID.split('/')[2]; //THIS IS THE FIRST PRODUCT ID
+          print(productIDcont);
+          Product.productFromDocument(null, productIDcont);
           return Scaffold(
               body: Container(
             color: Colors.white,
