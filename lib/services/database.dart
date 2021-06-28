@@ -76,6 +76,7 @@ class DatabaseService {
       password: snapshotData['Password'],
       fullName: snapshotData['Full Name'],
       phoneNumber: snapshotData['Phone Number'],
+      products: List.from(snapshotData['Products']),
       role: snapshotData['Role'],
     );
   }

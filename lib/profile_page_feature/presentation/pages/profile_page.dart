@@ -45,6 +45,7 @@ class MapScreenState extends State<ProfilePage>
             return Loading();
           }
           GivitUser givitUser = snapshot.data;
+          print("try to print products:@@@@@@@");
           print(givitUser.products);
           return Scaffold(
               body: Container(

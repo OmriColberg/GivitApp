@@ -8,26 +8,29 @@ class GivitUser {
   final String fullName;
   final int phoneNumber;
   final String role;
-  List<Product> products = [];
+  List<String> products;
 
-  GivitUser(
-      {this.email = '',
-      this.password = '',
-      this.fullName = '',
-      this.phoneNumber = 0,
-      this.role = '',
-      this.uid = '',
-      this.products});
+  GivitUser({
+    this.email = '',
+    this.password = '',
+    this.fullName = '',
+    this.phoneNumber = 0,
+    this.role = '',
+    this.uid = '',
+    this.products,
+  });
 
-  factory GivitUser.fromFirestorUser(DocumentSnapshot userSnapshout) {
+  factory GivitUser.fromFirestorUser(DocumentSnapshot userSnapshot) {
+    print("check:");
+    print(userSnapshot);
     return GivitUser(
-      uid: userSnapshout.id,
-      email: userSnapshout['Email'],
-      password: userSnapshout['Password'],
-      fullName: userSnapshout['Full Name'],
-      phoneNumber: userSnapshout['Phone Number'],
-      role: userSnapshout['Role'],
-      products: userSnapshout['Products'],
+      uid: userSnapshot.id,
+      email: userSnapshot['Email'],
+      password: userSnapshot['Password'],
+      fullName: userSnapshot['Full Name'],
+      phoneNumber: userSnapshot['Phone Number'],
+      role: userSnapshot['Role'],
+      products: List.from(userSnapshot['Products']),
     );
   }
 }

@@ -3,7 +3,6 @@ import 'package:givit_app/admin_feature/presentation/pages/admin_page.dart';
 import 'package:givit_app/core/shared/givit_logo.dart';
 import 'package:givit_app/main_page_feature/presentation/pages/main_page.dart';
 import 'package:givit_app/profile_page_feature/presentation/pages/profile_page.dart';
-import 'package:givit_app/search_product_feature/presentation/pages/product_page.dart';
 import 'package:givit_app/services/auth.dart';
 import 'package:givit_app/transport_log_feature/transport_log_page.dart';
 
@@ -22,8 +21,8 @@ class MainMenuAdmin extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: DefaultTabController(
-        initialIndex: 5,
-        length: 6,
+        initialIndex: 3,
+        length: 4,
         child: SafeArea(
           child: Scaffold(
             appBar: AppBar(
@@ -54,16 +53,8 @@ class MainMenuAdmin extends StatelessWidget {
                     text: 'מנהלים',
                   ),
                   Tab(
-                    icon: Icon(Icons.fiber_new),
-                    text: '  מוצר\nלאיסוף',
-                  ),
-                  Tab(
                     icon: Icon(Icons.family_restroom),
                     text: 'קהילת\n givit',
-                  ),
-                  Tab(
-                    icon: Icon(Icons.airport_shuttle),
-                    text: '  מעקב\nהובלות ',
                   ),
                   Tab(
                     icon: Icon(Icons.person),
@@ -79,8 +70,6 @@ class MainMenuAdmin extends StatelessWidget {
             body: TabBarView(
               children: [
                 AdminPage(size: size),
-                ProductPage(),
-                TransportLogPage(),
                 TransportLogPage(),
                 ProfilePage(size: size),
                 MainPage(),
