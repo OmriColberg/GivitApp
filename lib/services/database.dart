@@ -7,6 +7,7 @@ class DatabaseService {
   final String uid;
   DatabaseService({this.uid});
 
+  final FirebaseFirestore db = FirebaseFirestore.instance;
   final CollectionReference usersCollection =
       FirebaseFirestore.instance.collection('Users');
   final CollectionReference productsCollection =
@@ -14,13 +15,38 @@ class DatabaseService {
   final CollectionReference transportsCollection =
       FirebaseFirestore.instance.collection('Transports');
 
-  Future<void> updateGivitUserData(
+  Future<void> createGivitUserData(
       String email, String fullName, String password, int phoneNumber) async {
     return await usersCollection.doc(uid).set({
       'Email': email,
       'Full Name': fullName,
       'Password': password,
       'Phone Number': phoneNumber,
+    });
+  }
+
+  Future<void> updateGivitUserData(
+      String email, String fullName, String password, int phoneNumber) async {
+    return await usersCollection.doc(uid).update({
+      'Email': email,
+      'Full Name': fullName,
+      'Password': password,
+      'Phone Number': phoneNumber,
+    });
+  }
+
+  Future<void> addProductToGivitUser(String id) async {
+    DocumentReference<Object> doc = usersCollection.doc(uid);
+    print(doc.toString());
+    print(uid);
+    print(id);
+
+    return await doc.update({
+      "Products": FieldValue.arrayUnion(['$id']),
+    }).then((e) {
+      print('added successfuly');
+    }).catchError((onError) {
+      print("not good");
     });
   }
 
@@ -61,6 +87,7 @@ class DatabaseService {
       fullName: snapshotData['Full Name'],
       phoneNumber: snapshotData['Phone Number'],
       role: snapshotData['Role'],
+      products: List.from(snapshotData['Products']),
     );
   }
 

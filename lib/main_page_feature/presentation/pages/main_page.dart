@@ -81,6 +81,8 @@ DeliveryAssign createDeliveryAssignFromProductSnapshot(Product product) {
     title: product.name,
     body: product.notes,
     schedule: 'לשיבוץ חיפוש',
+    isProduct: true,
+    id: product.id,
   );
 }
 
@@ -96,5 +98,7 @@ DeliveryAssign createDeliveryAssignFromTransportSnapshot(Transport transport) {
     title: date + ' :הובלה ב',
     body: transport.notes,
     schedule: 'לשיבוץ הובלה',
+    isProduct: false,
+    id: transport.id,
   );
 }

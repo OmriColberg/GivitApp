@@ -21,8 +21,8 @@ class MainMenuAdmin extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: DefaultTabController(
-        initialIndex: 5,
-        length: 6,
+        initialIndex: 3,
+        length: 4,
         child: SafeArea(
           child: Scaffold(
             appBar: AppBar(
@@ -53,16 +53,8 @@ class MainMenuAdmin extends StatelessWidget {
                     text: 'מנהלים',
                   ),
                   Tab(
-                    icon: Icon(Icons.fiber_new),
-                    text: '  מוצר\nלאיסוף',
-                  ),
-                  Tab(
                     icon: Icon(Icons.family_restroom),
                     text: 'קהילת\n givit',
-                  ),
-                  Tab(
-                    icon: Icon(Icons.airport_shuttle),
-                    text: '  מעקב\nהובלות ',
                   ),
                   Tab(
                     icon: Icon(Icons.person),
@@ -78,8 +70,6 @@ class MainMenuAdmin extends StatelessWidget {
             body: TabBarView(
               children: [
                 AdminPage(size: size),
-                TransportLogPage(),
-                TransportLogPage(),
                 TransportLogPage(),
                 ProfilePage(size: size),
                 MainPage(),
