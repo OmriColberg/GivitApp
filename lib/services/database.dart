@@ -28,7 +28,7 @@ class DatabaseService {
   Future<void> addProductToGivitUser(String id) async {
     DocumentReference<Object> doc = usersCollection.doc(uid);
     return await doc.update({
-      "Products": FieldValue.arrayUnion(["/Products/$id"]),
+      "Products": FieldValue.arrayUnion(["$id"]),
     }).then((e) {
       print('added successfuly');
     }).catchError((onError) {

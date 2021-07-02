@@ -8,16 +8,16 @@ import 'package:givit_app/profile_page_feature/presentation/pages/sub_title_prof
 import 'package:givit_app/services/database.dart';
 import 'package:provider/provider.dart';
 
-class ProfilePage extends StatefulWidget {
+class EditProfilePage extends StatefulWidget {
   final Size size;
 
-  ProfilePage({this.size});
+  EditProfilePage({this.size});
 
   @override
   MapScreenState createState() => MapScreenState(size: size);
 }
 
-class MapScreenState extends State<ProfilePage>
+class MapScreenState extends State<EditProfilePage>
     with SingleTickerProviderStateMixin {
   bool _status = true;
   final FocusNode myFocusNode = FocusNode();
@@ -48,11 +48,10 @@ class MapScreenState extends State<ProfilePage>
           GivitUser givitUser = snapshot.data;
           print("try to print products:@@@@@@@");
           print(givitUser.products);
-          String productID = givitUser.products[0];
-          String productIDcont =
-              productID.split('/')[2]; //THIS IS THE FIRST PRODUCT ID
-          print(productIDcont);
-          Product.productFromDocument(null, productIDcont);
+          String productID = givitUser.products[1];
+
+          print(productID);
+          // Product.productFromDocument(null, productIDcont);
           return Scaffold(
               body: Container(
             color: Colors.white,
