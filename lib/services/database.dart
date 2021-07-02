@@ -25,6 +25,16 @@ class DatabaseService {
     });
   }
 
+  Future<void> updateGivitUserData(
+      String email, String fullName, String password, int phoneNumber) async {
+    return await usersCollection.doc(uid).update({
+      'Email': email,
+      'Full Name': fullName,
+      'Password': password,
+      'Phone Number': phoneNumber,
+    });
+  }
+
   Future<void> addProductToGivitUser(String id) async {
     DocumentReference<Object> doc = usersCollection.doc(uid);
     print(doc.toString());
@@ -32,7 +42,7 @@ class DatabaseService {
     print(id);
 
     return await doc.update({
-      "Products": FieldValue.arrayUnion(['/Products/$id']),
+      "Products": FieldValue.arrayUnion(['$id']),
     }).then((e) {
       print('added successfuly');
     }).catchError((onError) {
@@ -77,6 +87,7 @@ class DatabaseService {
       fullName: snapshotData['Full Name'],
       phoneNumber: snapshotData['Phone Number'],
       role: snapshotData['Role'],
+      products: List.from(snapshotData['Products']),
     );
   }
 
