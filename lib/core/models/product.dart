@@ -43,7 +43,7 @@ class Product {
   }
 
   static ProductState productStateFromString(String state) {
-    ProductState res;
+    ProductState res = ProductState.unknown;
     ProductState.values.forEach((element) => {
           if (Product.hebrewFromEnum(element) == state ||
               element.toString() == state)

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class SubTitlePersonalArea extends StatelessWidget {
   final String title;
-  SubTitlePersonalArea({@required this.title});
+  SubTitlePersonalArea({required this.title});
 
   @override
   Widget build(BuildContext context) {

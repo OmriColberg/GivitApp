@@ -2,16 +2,14 @@ import 'package:flutter/material.dart';
 
 class ParamInfoPersonalArea extends StatelessWidget {
   const ParamInfoPersonalArea(
-      {Key key,
-      @required this.controller,
-      @required this.paramInfo,
-      @required bool status,
-      this.obscure})
-      : _status = status,
-        super(key: key);
+      {required this.controller,
+      required this.paramInfo,
+      required bool status,
+      required this.obscure})
+      : _status = status;
 
   final TextEditingController controller;
-  final String paramInfo;
+  final String? paramInfo;
   final bool _status;
   final bool obscure;
 
@@ -24,10 +22,9 @@ class ParamInfoPersonalArea extends StatelessWidget {
           children: <Widget>[
             Flexible(
               child: TextField(
-                obscureText: obscure ?? false,
+                obscureText: obscure,
                 controller: controller,
-                decoration:
-                    InputDecoration(hintText: obscure != null ? '' : paramInfo),
+                decoration: InputDecoration(hintText: obscure ? '' : paramInfo),
                 enabled: !_status,
                 autofocus: !_status,
               ),

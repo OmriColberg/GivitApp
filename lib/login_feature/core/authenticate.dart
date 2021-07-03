@@ -3,8 +3,6 @@ import 'package:givit_app/login_feature/presentation/pages/register_page.dart';
 import 'package:givit_app/login_feature/presentation/pages/login_page.dart';
 
 class Authenticate extends StatefulWidget {
-  Authenticate({Key key}) : super(key: key);
-
   @override
   _AuthenticateState createState() => _AuthenticateState();
 }
@@ -12,7 +10,6 @@ class Authenticate extends StatefulWidget {
 class _AuthenticateState extends State<Authenticate> {
   bool showSignIn = true;
   void toggleView() {
-    //print(showSignIn.toString());
     setState(() => showSignIn = !showSignIn);
   }
 

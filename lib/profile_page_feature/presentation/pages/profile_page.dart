@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 class ProfilePage extends StatefulWidget {
   final Size size;
 
-  const ProfilePage({Key key, @required this.size}) : super(key: key);
+  const ProfilePage({required this.size});
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -25,8 +25,8 @@ class _ProfilePageState extends State<ProfilePage> {
           if (!snapshot.hasData) {
             return Loading();
           }
-          GivitUser givitUser = snapshot.data;
-          print("PRODUCTS: ${givitUser.products}");
+          GivitUser? givitUser = snapshot.data;
+          print("PRODUCTS: ${givitUser!.products}");
           return Container(
             child: Column(
               children: [

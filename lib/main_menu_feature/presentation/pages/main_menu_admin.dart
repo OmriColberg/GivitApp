@@ -2,17 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:givit_app/admin_feature/presentation/pages/admin_page.dart';
 import 'package:givit_app/core/shared/givit_logo.dart';
 import 'package:givit_app/main_page_feature/presentation/pages/main_page.dart';
+import 'package:givit_app/profile_page_feature/presentation/pages/edit_profile_page.dart';
 import 'package:givit_app/profile_page_feature/presentation/pages/profile_page.dart';
 import 'package:givit_app/services/auth.dart';
 import 'package:givit_app/transport_log_feature/transport_log_page.dart';
 
 class MainMenuAdmin extends StatelessWidget {
   const MainMenuAdmin({
-    Key key,
-    @required this.size,
-    @required AuthService auth,
-  })  : _auth = auth,
-        super(key: key);
+    required this.size,
+    required AuthService auth,
+  }) : _auth = auth;
 
   final Size size;
   final AuthService _auth;
@@ -71,7 +70,7 @@ class MainMenuAdmin extends StatelessWidget {
               children: [
                 AdminPage(size: size),
                 TransportLogPage(),
-                ProfilePage(size: size),
+                EditProfilePage(size: size),
                 MainPage(),
               ],
             ),

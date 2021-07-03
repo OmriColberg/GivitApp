@@ -5,7 +5,7 @@ import 'package:givit_app/services/auth.dart';
 
 class LoginPage extends StatefulWidget {
   final Function toggleView;
-  LoginPage({this.toggleView});
+  LoginPage({required this.toggleView});
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -57,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
                         decoration:
                             textInputDecoration.copyWith(hintText: 'email'),
                         validator: (val) =>
-                            val.isEmpty ? 'Enter an email' : null,
+                            val!.isEmpty ? 'Enter an email' : null,
                         onChanged: (val) {
                           setState(() => email = val);
                         },
@@ -67,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
                         obscureText: true,
                         decoration:
                             textInputDecoration.copyWith(hintText: 'password'),
-                        validator: (val) => val.length < 6
+                        validator: (val) => val!.length < 6
                             ? 'Enter a password 6+ characters long'
                             : null,
                         onChanged: (val) {
@@ -81,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                             style: TextStyle(color: Colors.white),
                           ),
                           onPressed: () async {
-                            if (_formKey.currentState.validate()) {
+                            if (_formKey.currentState!.validate()) {
                               setState(() => loading = true);
                               dynamic result = await _auth
                                   .signInWithEmailAndPassword(email, password);

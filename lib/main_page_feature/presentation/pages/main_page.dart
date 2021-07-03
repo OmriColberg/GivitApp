@@ -6,7 +6,6 @@ import 'package:givit_app/core/shared/loading.dart';
 import 'package:givit_app/main_page_feature/presentation/pages/assign_card.dart';
 import 'package:givit_app/services/database.dart';
 import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
 
 class MainPage extends StatelessWidget {
   @override
@@ -51,7 +50,7 @@ class _MainPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        snapshotProduct.data.docs
+                        snapshotProduct.data!.docs
                             .map((DocumentSnapshot document) {
                           var snapshotData = document.data() as Map;
                           Product product = Product.productFromDocument(
@@ -59,7 +58,7 @@ class _MainPage extends StatelessWidget {
                           return createDeliveryAssignFromProductSnapshot(
                               product);
                         }).toList(),
-                        snapshotTransport.data.docs
+                        snapshotTransport.data!.docs
                             .map((DocumentSnapshot document) {
                           var snapshotData = document.data() as Map;
                           Transport transport = Transport.transportFromDocument(
