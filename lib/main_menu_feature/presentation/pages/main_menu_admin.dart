@@ -8,11 +8,9 @@ import 'package:givit_app/transport_log_feature/transport_log_page.dart';
 
 class MainMenuAdmin extends StatelessWidget {
   const MainMenuAdmin({
-    Key key,
-    @required this.size,
-    @required AuthService auth,
-  })  : _auth = auth,
-        super(key: key);
+    required this.size,
+    required AuthService auth,
+  }) : _auth = auth;
 
   final Size size;
   final AuthService _auth;

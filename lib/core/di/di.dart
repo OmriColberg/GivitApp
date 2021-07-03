@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dartz/dartz.dart';
+//import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:givit_app/core/firebase_entities/collections.dart';
@@ -7,7 +7,7 @@ import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/login_feature/core/failures.dart';
 
 final getIt = GetIt.instance;
-
+/*
 void setup() {
   getIt.registerLazySingletonAsync<Either<GivitUser, UserNotFoundFailure>>(
       () async {
@@ -15,7 +15,7 @@ void setup() {
       DocumentSnapshot documentSnapshot = await getIt
           .get<UsersCollection>()
           .collectionReference
-          .doc(FirebaseAuth.instance.currentUser.uid)
+          .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
 
       // documentSnapshot
@@ -32,3 +32,4 @@ void setup() {
 
   getIt.registerLazySingleton(() => UsersCollection());
 }
+*/

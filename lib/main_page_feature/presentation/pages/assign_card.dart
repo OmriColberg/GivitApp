@@ -10,13 +10,11 @@ class DeliveryAssign extends StatelessWidget {
   final bool isProduct;
   final String id;
   DeliveryAssign(
-      {Key key,
-      @required this.title,
-      /* @required*/ this.body,
-      @required this.schedule,
-      @required this.isProduct,
-      @required this.id})
-      : super(key: key);
+      {required this.title,
+      required this.body,
+      required this.schedule,
+      required this.isProduct,
+      required this.id});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +29,7 @@ class DeliveryAssign extends StatelessWidget {
               children: <Widget>[
                 Icon(Icons.airport_shuttle),
                 Text(
-                  title ?? 'דרושים',
+                  title,
                   style: TextStyle(
                     fontSize: 18,
                   ),
@@ -41,14 +39,14 @@ class DeliveryAssign extends StatelessWidget {
                 ),
               ],
             ),
-            Text(body ?? 'ללא פירוט נוסף'),
+            Text(body),
             ElevatedButton(
               onPressed: isProduct
                   ? () {
                       db.addProductToGivitUser(id);
                     }
                   : () {},
-              child: Text(schedule ?? 'לשיבוץ'),
+              child: Text(schedule),
             ),
           ],
         ),

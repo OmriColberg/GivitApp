@@ -17,8 +17,8 @@ class Transport {
     this.notes = '',
     this.carriers = const [],
     this.products = const [],
-    this.datePickUp,
-    this.timestamp,
+    required this.datePickUp,
+    required this.timestamp,
   });
 
   static Transport transportFromDocument(
@@ -28,6 +28,7 @@ class Transport {
       id: id,
       datePickUp: trasnportMap['Date For Pick Up'].toDate(),
       notes: trasnportMap['Notes'],
+      timestamp: Timestamp.now(),
     );
   }
 }

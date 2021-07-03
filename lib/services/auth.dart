@@ -1,13 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/services/database.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  GivitUser _givitUserFromFireBaseUser(User user) {
-    return user != null ? GivitUser(uid: user.uid, email: user.email) : null;
+  GivitUser _givitUserFromFireBaseUser(User? user) {
+    return user != null
+        ? GivitUser(uid: user.uid, email: user.email)
+        : GivitUser();
   }
 
   Stream<GivitUser> get user {
@@ -18,7 +19,7 @@ class AuthService {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
-      User user = result.user;
+      User? user = result.user;
       return user;
     } catch (error) {
       print(error.toString());
@@ -32,9 +33,9 @@ class AuthService {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      User user = result.user;
+      User? user = result.user;
       // create a new document for the user with the uid
-      await DatabaseService(uid: user.uid)
+      await DatabaseService(uid: user!.uid)
           .createGivitUserData(email, fullName, password, phoneNumber);
       return _givitUserFromFireBaseUser(user);
     } catch (error) {

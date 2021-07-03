@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 class EditProfilePage extends StatefulWidget {
   final Size size;
 
-  EditProfilePage({this.size});
+  EditProfilePage({required this.size});
 
   @override
   MapScreenState createState() => MapScreenState(size: size);
@@ -26,7 +26,7 @@ class MapScreenState extends State<EditProfilePage>
   final TextEditingController phoneNumberController = TextEditingController();
   final Size size;
 
-  MapScreenState({this.size});
+  MapScreenState({required this.size});
 
   @override
   void initState() {
@@ -44,7 +44,7 @@ class MapScreenState extends State<EditProfilePage>
           if (!snapshot.hasData) {
             return Loading();
           }
-          GivitUser givitUser = snapshot.data;
+          GivitUser? givitUser = snapshot.data;
           return Scaffold(
               backgroundColor: Colors.blue[100],
               appBar: AppBar(
@@ -59,7 +59,7 @@ class MapScreenState extends State<EditProfilePage>
                     Column(
                       children: <Widget>[
                         Container(
-                          height: size.height * 0.28 ?? 200,
+                          height: size.height * 0.28,
                           color: Colors.white,
                           child: Column(
                             children: <Widget>[
@@ -158,12 +158,14 @@ class MapScreenState extends State<EditProfilePage>
                                 SubTitlePersonalArea(title: 'Name'),
                                 ParamInfoPersonalArea(
                                     controller: fullNameController,
-                                    paramInfo: givitUser.fullName,
+                                    paramInfo: givitUser!.fullName,
+                                    obscure: false,
                                     status: _status),
                                 SubTitlePersonalArea(title: 'Email'),
                                 ParamInfoPersonalArea(
                                   controller: emailController,
                                   paramInfo: givitUser.email,
+                                  obscure: false,
                                   status: _status,
                                 ),
                                 SubTitlePersonalArea(title: 'Password'),
@@ -177,6 +179,7 @@ class MapScreenState extends State<EditProfilePage>
                                 ParamInfoPersonalArea(
                                   controller: phoneNumberController,
                                   paramInfo: givitUser.phoneNumber.toString(),
+                                  obscure: false,
                                   status: _status,
                                 ),
                                 !_status
@@ -243,7 +246,7 @@ class MapScreenState extends State<EditProfilePage>
     );
   }
 
-  Expanded _saveCancelButton(String text, Function onPressed) {
+  Expanded _saveCancelButton(String text, VoidCallback onPressed) {
     return Expanded(
       child: Padding(
         padding: EdgeInsets.only(left: 10.0),

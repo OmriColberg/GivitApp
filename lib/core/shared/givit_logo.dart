@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class GivitLogo extends StatelessWidget {
   final Size size;
-  GivitLogo({this.size});
+  GivitLogo({required this.size});
   @override
   Widget build(BuildContext context) {
     return Container(
