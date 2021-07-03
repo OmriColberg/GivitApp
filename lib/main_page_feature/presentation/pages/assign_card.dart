@@ -8,13 +8,18 @@ class DeliveryAssign extends StatelessWidget {
   final String schedule;
   final String body;
   final bool isProduct;
+  final bool isMain;
   final String id;
-  DeliveryAssign(
-      {required this.title,
-      required this.body,
-      required this.schedule,
-      required this.isProduct,
-      required this.id});
+  final List<String> products;
+  DeliveryAssign({
+    required this.title,
+    required this.body,
+    required this.schedule,
+    required this.isProduct,
+    required this.id,
+    required this.isMain,
+    required this.products,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +27,7 @@ class DeliveryAssign extends StatelessWidget {
     final DatabaseService db = DatabaseService(uid: givitUser.uid);
     return Center(
       child: Card(
+        color: isProduct ? Colors.lightGreen[100] : Colors.purple[100],
         child: Column(
           children: <Widget>[
             Row(
@@ -40,14 +46,23 @@ class DeliveryAssign extends StatelessWidget {
               ],
             ),
             Text(body),
-            ElevatedButton(
-              onPressed: isProduct
-                  ? () {
-                      db.addProductToGivitUser(id);
-                    }
-                  : () {},
-              child: Text(schedule),
-            ),
+            isMain
+                ? ElevatedButton(
+                    onPressed: isProduct
+                        ? () {
+                            db.addProductToGivitUser(id);
+                          }
+                        : () {},
+                    child: Text(schedule),
+                  )
+                : ElevatedButton(
+                    onPressed: () async {
+                      db.deleteProductFromProductList(id);
+                      products.remove(id);
+                      db.deleteProductFromUserList(id, products);
+                    },
+                    child: Text('מצאתי'),
+                  )
           ],
         ),
       ),

@@ -73,6 +73,23 @@ class DatabaseService {
     }).then((value) => value.id);
   }
 
+  Future<void> deleteProductFromProductList(String id) async {
+    return await productsCollection
+        .doc(id)
+        .delete()
+        .then((_) => print('$id deleted successfuly from products list'))
+        .catchError((onError) => print("Error removing document: $onError"));
+  }
+
+  Future<void> deleteProductFromUserList(
+      String id, List<String> products) async {
+    return await usersCollection
+        .doc(uid)
+        .update({"Products": products})
+        .then((_) => print('$id successfuly removed from user'))
+        .catchError((onError) => print("Error removing document: $onError"));
+  }
+
   Stream<QuerySnapshot<Object?>> get producstData {
     return productsCollection.snapshots();
   }
