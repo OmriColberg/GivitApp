@@ -1,33 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:givit_app/core/models/givit_user.dart';
+import 'package:givit_app/services/database.dart';
+import 'package:provider/provider.dart';
 
 class DeliveryAssign extends StatelessWidget {
   final String title;
   final String schedule;
   final String body;
-  const DeliveryAssign(
-      {Key key,
-      @required this.title,
-      /* @required*/ this.body,
-      @required this.schedule})
-      : super(key: key);
+  final bool isProduct;
+  final String id;
+  DeliveryAssign(
+      {required this.title,
+      required this.body,
+      required this.schedule,
+      required this.isProduct,
+      required this.id});
 
   @override
   Widget build(BuildContext context) {
+    final GivitUser givitUser = Provider.of<GivitUser>(context);
+    final DatabaseService db = DatabaseService(uid: givitUser.uid);
     return Center(
       child: Card(
         child: Column(
           children: <Widget>[
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Icon(Icons.airport_shuttle),
-                SizedBox(
-                  width: 200,
-                ),
                 Text(
-                  title ?? 'דרושים',
+                  title,
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 18,
                   ),
                 ),
                 SizedBox(
@@ -35,10 +39,14 @@ class DeliveryAssign extends StatelessWidget {
                 ),
               ],
             ),
-            Text(body ?? 'כאן יהיה פירוט יתר אוטומטי'),
-            TextButton(
-              child: Text(schedule ?? 'לשיבוץ'),
-              onPressed: () {/* ... */},
+            Text(body),
+            ElevatedButton(
+              onPressed: isProduct
+                  ? () {
+                      db.addProductToGivitUser(id);
+                    }
+                  : () {},
+              child: Text(schedule),
             ),
           ],
         ),

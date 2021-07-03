@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "633644276097",
+    "project_id": "givitapp-4c707",
+    "storage_bucket": "givitapp-4c707.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:633644276097:android:6763b3d5ac19d1d237f080",
+        "android_client_info": {
+          "package_name": "com.example.givit_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "633644276097-tpfkaose563bfpnhas4apnjvbekpo71o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.givit_app",
+            "certificate_hash": "b2dfda858a09d42bbf8c6797491f2d2764de0476"
+          }
+        },
+        {
+          "client_id": "633644276097-0f14roq6fsn0b61tg0joe6hfnfg6jsef.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSoVonytWK4vQNHtPZZftb4pbYkbSstOk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "633644276097-0f14roq6fsn0b61tg0joe6hfnfg6jsef.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
