@@ -57,44 +57,39 @@ class DatabaseService {
 
   Future<void> addProductData({
     String? name,
-    ProductState? state = ProductState.unknown,
-    String? ownerName = '',
-    String? ownerPhoneNumber = '',
-    String? pickUpAddress = '',
-    String? timeForPickUp = '',
     String? notes,
-    int? weight = 0,
-    int? length = 0,
-    int? width = 0,
   }) async {
     return await productsCollection.add({
       'Notes': notes,
       'Product Name': name,
-      'State Of Product': state.toString(),
-      "Owner's Name": ownerName,
-      "Owner's Phone Number": ownerPhoneNumber,
-      'Time Span For Pick Up': timeForPickUp,
-      'Pick Up Address': pickUpAddress,
-      'Weight': weight,
-      'Length': length,
-      'Width': width,
+      'State Of Product': ProductState.unknown.toString().split('.')[1],
+      "Owner's Name": '',
+      "Owner's Phone Number": 0,
+      'Time Span For Pick Up': '',
+      'Pick Up Address': '',
+      'Weight': 0,
+      'Length': 0,
+      'Width': 0,
+      'Status Of Product': ProductStatus.searching.toString().split('.')[1],
     }).then((value) => value.id);
   }
 
-  Future<void> updateProductData(
-      {String? id,
-      String? ownerName,
-      ProductState? state,
-      String? ownerPhoneNumber,
-      String? pickUpAddress,
-      String? timeForPickUp,
-      String? notes,
-      int? weight,
-      int? length,
-      int? width}) async {
+  Future<void> updateProductData({
+    String? id,
+    String? ownerName,
+    ProductState? state,
+    String? ownerPhoneNumber,
+    String? pickUpAddress,
+    String? timeForPickUp,
+    String? notes,
+    int? weight,
+    int? length,
+    int? width,
+    ProductStatus? status = ProductStatus.waitingToBeDelivered,
+  }) async {
     return await productsCollection.doc(id).update({
       "Owner's Name": ownerName,
-      'State Of Product': state.toString(),
+      'State Of Product': state.toString().split('.')[1],
       "Owner's Phone Number": ownerPhoneNumber,
       'Pick Up Address': pickUpAddress,
       'Time Span For Pick Up': timeForPickUp,
@@ -102,6 +97,7 @@ class DatabaseService {
       'Length': length,
       'Width': width,
       'Notes': notes,
+      'Status Of Product': status.toString().split('.')[1],
     });
   }
 

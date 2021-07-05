@@ -8,7 +8,9 @@ import 'package:provider/provider.dart';
 class ProductFoundForm extends StatefulWidget {
   final Size size;
   final String id;
-  ProductFoundForm({required this.size, required this.id});
+  final List<String> products;
+  ProductFoundForm(
+      {required this.size, required this.id, required this.products});
 
   @override
   _ProductFoundForm createState() => _ProductFoundForm();
@@ -27,6 +29,7 @@ class _ProductFoundForm extends State<ProductFoundForm> {
   String pickUpAddress = '';
   String timeForPickUp = '';
   String notes = '';
+  ProductStatus status = ProductStatus.searching;
 
   @override
   Widget build(BuildContext context) {
@@ -170,13 +173,16 @@ class _ProductFoundForm extends State<ProductFoundForm> {
                               weight: weight,
                               length: length,
                               width: width,
-                              notes: notes)
+                              notes: notes,
+                              status: ProductStatus.waitingToBeDelivered)
                           .then((_result) {
                         showDialogHelper(
                             "Product added succesfully", widget.size);
                       }).catchError((error) {
                         showDialogHelper("Failed tp add product", widget.size);
                       });
+                      widget.products.remove(widget.id);
+                      db.deleteProductFromUserList(widget.id, widget.products);
                     },
                   ),
                   SizedBox(height: 12.0),
@@ -200,7 +206,8 @@ class _ProductFoundForm extends State<ProductFoundForm> {
           return Container(
             height: size.height * 0.5,
             child: AlertDialog(
-                title: Text("המוצר הוסף בהצלחה"),
+                title: Text(
+                    "תודה על מציאת המוצר!\nפרטי המוצר עודכנו, ממתין לשיבוץ הובלה"),
                 content: Stack(children: <Widget>[
                   ElevatedButton(
                     onPressed: () {

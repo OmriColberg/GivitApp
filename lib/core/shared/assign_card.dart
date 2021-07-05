@@ -63,13 +63,10 @@ class DeliveryAssign extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              ProductFoundForm(size: size, id: id),
+                          builder: (context) => ProductFoundForm(
+                              size: size, id: id, products: products),
                         ),
                       );
-                      // db.deleteProductFromProductList(id);
-                      products.remove(id);
-                      db.deleteProductFromUserList(id, products);
                     },
                     child: Text('מצאתי'),
                   )

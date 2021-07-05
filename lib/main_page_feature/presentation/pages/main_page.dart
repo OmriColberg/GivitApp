@@ -59,8 +59,11 @@ class _MainPageState extends State<MainPage> {
                           var snapshotData = document.data() as Map;
                           Product product = Product.productFromDocument(
                               snapshotData, document.id);
-                          return createDeliveryAssignFromProductSnapshot(
-                              product, widget.size);
+                          if (product.status == ProductStatus.searching)
+                            return createDeliveryAssignFromProductSnapshot(
+                                product, widget.size);
+                          else
+                            return Container();
                         }).toList(),
                         snapshotTransport.data!.docs
                             .map((DocumentSnapshot document) {
