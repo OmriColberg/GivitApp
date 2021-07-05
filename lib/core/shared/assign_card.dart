@@ -30,7 +30,11 @@ class DeliveryAssign extends StatelessWidget {
     final DatabaseService db = DatabaseService(uid: givitUser.uid);
     return Center(
       child: Card(
-        color: isProduct ? Colors.lightGreen[100] : Colors.purple[100],
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: Colors.black),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        color: isProduct ? Colors.lightGreen[300] : Colors.red[300],
         child: Column(
           children: <Widget>[
             Row(
@@ -55,21 +59,25 @@ class DeliveryAssign extends StatelessWidget {
                         ? () {
                             db.addProductToGivitUser(id);
                           }
-                        : () {},
+                        : () {
+                            db.addTransportToGivitUser(id);
+                          },
                     child: Text(schedule),
                   )
-                : ElevatedButton(
-                    onPressed: () async {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProductFoundForm(
-                              size: size, id: id, products: products),
-                        ),
-                      );
-                    },
-                    child: Text('מצאתי'),
-                  )
+                : isProduct
+                    ? ElevatedButton(
+                        onPressed: () async {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProductFoundForm(
+                                  size: size, id: id, products: products),
+                            ),
+                          );
+                        },
+                        child: Text('מצאתי'),
+                      )
+                    : Container(),
           ],
         ),
       ),

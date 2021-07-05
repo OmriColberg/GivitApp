@@ -22,6 +22,7 @@ class DatabaseService {
       'Password': password,
       'Phone Number': phoneNumber,
       'Products': [],
+      'Transports': [],
       'Role': 'User',
     });
   }
@@ -36,18 +37,17 @@ class DatabaseService {
     });
   }
 
+  Future<void> addTransportToGivitUser(String id) async {
+    DocumentReference<Object?> doc = usersCollection.doc(uid);
+    return await doc.update({
+      "Transports": FieldValue.arrayUnion(['$id'])
+    });
+  }
+
   Future<void> addProductToGivitUser(String id) async {
     DocumentReference<Object?> doc = usersCollection.doc(uid);
-    print(doc.toString());
-    print(uid);
-    print(id);
-
     return await doc.update({
-      "Products": FieldValue.arrayUnion(['$id']),
-    }).then((e) {
-      print('added successfuly');
-    }).catchError((onError) {
-      print("not good");
+      "Products": FieldValue.arrayUnion(['$id'])
     });
   }
 
@@ -132,6 +132,7 @@ class DatabaseService {
       phoneNumber: snapshotData['Phone Number'],
       role: snapshotData['Role'],
       products: List.from(snapshotData['Products']),
+      transports: List.from(snapshotData['Transports']),
     );
   }
 

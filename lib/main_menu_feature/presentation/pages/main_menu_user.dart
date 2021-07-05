@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:givit_app/core/shared/givit_logo.dart';
+import 'package:givit_app/givit_community_feature/givit_community_page.dart';
 import 'package:givit_app/main_page_feature/presentation/pages/main_page.dart';
 import 'package:givit_app/profile_page_feature/presentation/pages/profile_page.dart';
 import 'package:givit_app/services/auth.dart';
-import 'package:givit_app/transport_log_feature/transport_log_page.dart';
 
 class MainMenuUser extends StatelessWidget {
   const MainMenuUser({
@@ -70,9 +70,9 @@ class MainMenuUser extends StatelessWidget {
             ),
             body: TabBarView(
               children: [
-                TransportLogPage(),
-                TransportLogPage(),
-                TransportLogPage(),
+                GivitCommunityPage(),
+                GivitCommunityPage(),
+                GivitCommunityPage(),
                 ProfilePage(size: size),
                 MainPage(size: size),
               ],

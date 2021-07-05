@@ -2,10 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
+import 'package:givit_app/core/models/transport.dart';
 import 'package:givit_app/core/shared/loading.dart';
 import 'package:givit_app/core/shared/assign_card.dart';
+import 'package:givit_app/main_page_feature/presentation/pages/main_page.dart';
 import 'package:givit_app/profile_page_feature/presentation/pages/edit_profile_page.dart';
 import 'package:givit_app/services/database.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -29,15 +32,15 @@ class _ProfilePageState extends State<ProfilePage> {
           return Loading();
         }
         GivitUser? givitUser = snapshot.data;
-        print("PRODUCTS: ${givitUser!.products}");
         return Container(
+          color: Colors.blue[100],
           child: Column(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Hello ${givitUser.fullName}',
+                    'Hello ${givitUser!.fullName}',
                     style: TextStyle(
                       fontSize: 18,
                     ),
@@ -57,38 +60,66 @@ class _ProfilePageState extends State<ProfilePage> {
                   )
                 ],
               ),
-              Container(
-                height: 400,
-                alignment: Alignment.topCenter,
-                child: SingleChildScrollView(
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream: db.producstData,
-                    builder: (context, snapshotProduct) {
-                      if (snapshotProduct.hasError) {
-                        return Text('Something went wrong');
-                      }
+              SingleChildScrollView(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: db.producstData,
+                  builder: (context, snapshotProduct) {
+                    if (snapshotProduct.hasError) {
+                      return Text('Something went wrong');
+                    }
 
-                      if (snapshotProduct.connectionState ==
-                          ConnectionState.waiting) {
-                        return Loading();
-                      }
+                    if (snapshotProduct.connectionState ==
+                        ConnectionState.waiting) {
+                      return Loading();
+                    }
 
-                      return Column(
-                        children: snapshotProduct.data!.docs
-                            .map((DocumentSnapshot document) {
-                          if (givitUser.products.contains(document.id)) {
-                            var snapshotData = document.data() as Map;
-                            Product product = Product.productFromDocument(
-                                snapshotData, document.id);
-                            return createDeliveryAssignFromProductSnapshot(
-                                product, givitUser.products, widget.size);
-                          } else {
-                            return Container();
-                          }
-                        }).toList(),
-                      );
-                    },
-                  ),
+                    return StreamBuilder<QuerySnapshot>(
+                      stream: db.transportsData,
+                      builder: (context, snapshotTransport) {
+                        if (snapshotTransport.hasError) {
+                          return Text('Something went wrong');
+                        }
+
+                        if (snapshotTransport.connectionState ==
+                            ConnectionState.waiting) {
+                          return Loading();
+                        }
+
+                        return SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              snapshotProduct.data!.docs
+                                  .map((DocumentSnapshot document) {
+                                if (givitUser.products.contains(document.id)) {
+                                  var snapshotData = document.data() as Map;
+                                  Product product = Product.productFromDocument(
+                                      snapshotData, document.id);
+                                  return createDeliveryAssignFromProductSnapshot(
+                                      product, givitUser.products, widget.size);
+                                } else
+                                  return Container();
+                              }).toList(),
+                              snapshotTransport.data!.docs
+                                  .map((DocumentSnapshot document) {
+                                var snapshotData = document.data() as Map;
+                                Transport transport =
+                                    Transport.transportFromDocument(
+                                        snapshotData, document.id);
+                                if (givitUser.transports
+                                    .contains(transport.id)) {
+                                  return createDeliveryAssignFromTransportSnapshot(
+                                      transport, widget.size);
+                                } else
+                                  return Container();
+                              }).toList(),
+                            ].expand((element) => element).toList(),
+                          ),
+                        );
+                      },
+                    );
+                  },
                 ),
               ),
             ],
@@ -109,6 +140,27 @@ DeliveryAssign createDeliveryAssignFromProductSnapshot(
     isMain: false,
     id: product.id,
     products: products,
+    size: size,
+  );
+}
+
+DeliveryAssign createDeliveryAssignFromTransportSnapshot(
+    Transport transport, Size size) {
+  String date;
+  if (transport.datePickUp != null) {
+    date =
+        DateFormat('yyyy-MM-dd hh:mm').format(transport.datePickUp).toString();
+  } else {
+    date = '';
+  }
+  return DeliveryAssign(
+    title: date + ' :הובלה ב',
+    body: transport.notes,
+    schedule: 'לשיבוץ הובלה',
+    isProduct: false,
+    isMain: true,
+    id: transport.id,
+    products: [],
     size: size,
   );
 }
