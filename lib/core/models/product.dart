@@ -7,6 +7,9 @@ class Product {
   final String pickUpAddress;
   final String timeForPickUp;
   final String notes;
+  final int weight;
+  final int length;
+  final int width;
 
   Product(
       {this.id = '',
@@ -16,7 +19,10 @@ class Product {
       this.ownerPhoneNumber = '',
       this.pickUpAddress = '',
       this.timeForPickUp = '',
-      this.notes = ''});
+      this.notes = '',
+      this.weight = 0,
+      this.length = 0,
+      this.width = 0});
 
   Map<String, dynamic> toJson() => {
         'Product Name': name,
@@ -26,6 +32,9 @@ class Product {
         'Pick Up Address': pickUpAddress,
         'Time Span For Pick Up': timeForPickUp,
         'Notes': notes,
+        'Weight': weight,
+        'Length': length,
+        'Width': width,
       };
 
   static Product productFromDocument(
@@ -39,6 +48,9 @@ class Product {
       pickUpAddress: productMap['Pick Up Address'],
       timeForPickUp: productMap['Time Span For Pick Up'],
       notes: productMap['Notes'],
+      weight: productMap['Weight'] ?? 0,
+      length: productMap['Length'] ?? 0,
+      width: productMap['Width'] ?? 0,
     );
   }
 

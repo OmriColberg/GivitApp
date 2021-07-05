@@ -40,7 +40,10 @@ class MainMenuAdmin extends StatelessWidget {
                     style: TextStyle(color: Colors.black),
                   ),
                   onPressed: () async {
-                    await _auth.signOut();
+                    await _auth
+                        .signOut()
+                        .then((_) => print('successful signout'))
+                        .catchError((onError) => print(onError));
                   },
                 ),
               ],
@@ -70,7 +73,7 @@ class MainMenuAdmin extends StatelessWidget {
                 AdminPage(size: size),
                 TransportLogPage(),
                 ProfilePage(size: size),
-                MainPage(),
+                MainPage(size: size),
               ],
             ),
           ),

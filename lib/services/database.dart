@@ -21,6 +21,8 @@ class DatabaseService {
       'Full Name': fullName,
       'Password': password,
       'Phone Number': phoneNumber,
+      'Products': [],
+      'Role': 'User',
     });
   }
 
@@ -53,15 +55,18 @@ class DatabaseService {
     return transportsCollection.snapshots();
   }
 
-  Future<void> addProductData(
-      {String? id,
-      String? name,
-      ProductState? state,
-      String? ownerName,
-      String? ownerPhoneNumber,
-      String? pickUpAddress,
-      String? timeForPickUp,
-      String? notes}) async {
+  Future<void> addProductData({
+    String? name,
+    ProductState? state = ProductState.unknown,
+    String? ownerName = '',
+    String? ownerPhoneNumber = '',
+    String? pickUpAddress = '',
+    String? timeForPickUp = '',
+    String? notes,
+    int? weight = 0,
+    int? length = 0,
+    int? width = 0,
+  }) async {
     return await productsCollection.add({
       'Notes': notes,
       'Product Name': name,
@@ -70,7 +75,34 @@ class DatabaseService {
       "Owner's Phone Number": ownerPhoneNumber,
       'Time Span For Pick Up': timeForPickUp,
       'Pick Up Address': pickUpAddress,
+      'Weight': weight,
+      'Length': length,
+      'Width': width,
     }).then((value) => value.id);
+  }
+
+  Future<void> updateProductData(
+      {String? id,
+      String? ownerName,
+      ProductState? state,
+      String? ownerPhoneNumber,
+      String? pickUpAddress,
+      String? timeForPickUp,
+      String? notes,
+      int? weight,
+      int? length,
+      int? width}) async {
+    return await productsCollection.doc(id).update({
+      "Owner's Name": ownerName,
+      'State Of Product': state.toString(),
+      "Owner's Phone Number": ownerPhoneNumber,
+      'Pick Up Address': pickUpAddress,
+      'Time Span For Pick Up': timeForPickUp,
+      'Weight': weight,
+      'Length': length,
+      'Width': width,
+      'Notes': notes,
+    });
   }
 
   Future<void> deleteProductFromProductList(String id) async {

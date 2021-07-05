@@ -11,6 +11,6 @@ class Wrapper extends StatelessWidget {
     final GivitUser user = Provider.of<GivitUser>(context);
     //final GivitUser user = getIt();
 
-    return user == null ? Authenticate() : MainMenu();
+    return user.uid == '' ? Authenticate() : MainMenu();
   }
 }

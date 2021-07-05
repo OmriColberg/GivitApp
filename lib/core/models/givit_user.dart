@@ -14,7 +14,7 @@ class GivitUser {
       this.password = '',
       this.fullName = '',
       this.phoneNumber = 0,
-      this.role = '',
+      this.role = 'User',
       this.uid = '',
       this.products = const []});
 

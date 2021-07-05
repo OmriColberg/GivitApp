@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:givit_app/core/models/givit_user.dart';
+import 'package:givit_app/profile_page_feature/presentation/pages/product_found_form.dart';
 import 'package:givit_app/services/database.dart';
 import 'package:provider/provider.dart';
 
@@ -11,6 +12,7 @@ class DeliveryAssign extends StatelessWidget {
   final bool isMain;
   final String id;
   final List<String> products;
+  final Size size;
   DeliveryAssign({
     required this.title,
     required this.body,
@@ -19,6 +21,7 @@ class DeliveryAssign extends StatelessWidget {
     required this.id,
     required this.isMain,
     required this.products,
+    required this.size,
   });
 
   @override
@@ -57,7 +60,14 @@ class DeliveryAssign extends StatelessWidget {
                   )
                 : ElevatedButton(
                     onPressed: () async {
-                      db.deleteProductFromProductList(id);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ProductFoundForm(size: size, id: id),
+                        ),
+                      );
+                      // db.deleteProductFromProductList(id);
                       products.remove(id);
                       db.deleteProductFromUserList(id, products);
                     },

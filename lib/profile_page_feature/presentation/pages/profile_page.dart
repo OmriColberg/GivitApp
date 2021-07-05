@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
 import 'package:givit_app/core/shared/loading.dart';
-import 'package:givit_app/main_page_feature/presentation/pages/assign_card.dart';
+import 'package:givit_app/core/shared/assign_card.dart';
 import 'package:givit_app/profile_page_feature/presentation/pages/edit_profile_page.dart';
 import 'package:givit_app/services/database.dart';
 import 'package:provider/provider.dart';
@@ -58,7 +58,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               ),
               Container(
-                height: 280,
+                height: 400,
                 alignment: Alignment.topCenter,
                 child: SingleChildScrollView(
                   child: StreamBuilder<QuerySnapshot>(
@@ -81,7 +81,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             Product product = Product.productFromDocument(
                                 snapshotData, document.id);
                             return createDeliveryAssignFromProductSnapshot(
-                                product, givitUser.products);
+                                product, givitUser.products, widget.size);
                           } else {
                             return Container();
                           }
@@ -100,7 +100,7 @@ class _ProfilePageState extends State<ProfilePage> {
 }
 
 DeliveryAssign createDeliveryAssignFromProductSnapshot(
-    Product product, List<String> products) {
+    Product product, List<String> products, Size size) {
   return DeliveryAssign(
     title: product.name,
     body: product.notes,
@@ -109,5 +109,6 @@ DeliveryAssign createDeliveryAssignFromProductSnapshot(
     isMain: false,
     id: product.id,
     products: products,
+    size: size,
   );
 }

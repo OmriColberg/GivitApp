@@ -74,7 +74,7 @@ class MainMenuUser extends StatelessWidget {
                 TransportLogPage(),
                 TransportLogPage(),
                 ProfilePage(size: size),
-                MainPage(),
+                MainPage(size: size),
               ],
             ),
           ),

@@ -47,6 +47,7 @@ class AuthService {
   // sign out
   Future signOut() async {
     try {
+      print('try to logout');
       return await _auth.signOut();
     } catch (error) {
       print(error.toString());
