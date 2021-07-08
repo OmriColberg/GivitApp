@@ -73,12 +73,10 @@ class _AddTransportPageState extends State<AddTransportPage> {
 
             return Container(
               color: Colors.blue[100],
-              height: 400.0,
               alignment: Alignment.topCenter,
+              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
               child: SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     MultiSelectDialogField<Product?>(
                       items: _products,
@@ -88,8 +86,9 @@ class _AddTransportPageState extends State<AddTransportPage> {
                           "                            בחר/י מוצרים להובלה"),
                       onConfirm: (results) {
                         products = results
-                            .map((Product product) => product.id)
-                            .toList();
+                            .map((Product? product) => product!.id)
+                            .toList()
+                            .cast<String>();
                       },
                     ),
                     SizedBox(height: 20.0),
@@ -131,6 +130,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
                         setState(() => notes = val);
                       },
                     ),
+                    SizedBox(height: 12.0),
                     ElevatedButton(
                       child: Text(
                         'הוסף הובלה למערכת',
