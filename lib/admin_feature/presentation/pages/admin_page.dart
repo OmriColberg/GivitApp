@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:givit_app/admin_feature/presentation/pages/add_product_page.dart';
+import 'package:givit_app/admin_feature/presentation/pages/add_transport_page.dart';
 
 class AdminPage extends StatefulWidget {
   AdminPage({required this.size});
@@ -29,7 +30,14 @@ class _AdminPageState extends State<AdminPage> {
             child: Text('הוספת מוצר חדש לחיפוש'),
           ),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddTransportPage(size: widget.size),
+                ),
+              ),
+            },
             child: Text('הוספת הובלה חדשה'),
           ),
         ],

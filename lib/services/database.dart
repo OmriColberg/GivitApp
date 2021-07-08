@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
+import 'package:intl/intl.dart';
 
 class DatabaseService {
   final String? uid;
@@ -49,6 +50,26 @@ class DatabaseService {
     return await doc.update({
       "Products": FieldValue.arrayUnion(['$id'])
     });
+  }
+
+  Future<void> addTransportData({
+    int? totalNumOfCarriers,
+    String? destinationAddress,
+    String? pickUpAddress,
+    String? notes,
+    List<String>? products,
+    DateTime? datePickUp,
+  }) async {
+    return await transportsCollection.add({
+      'Current Number Of Carriers': 0,
+      'Total Number Of Carriers': totalNumOfCarriers ?? 0,
+      'Destination Address': destinationAddress ?? '',
+      'Pick Up Address': pickUpAddress ?? '',
+      'Date For Pick Up':
+          DateFormat('yyyy-MM-dd hh:mm').format(datePickUp!).toString(),
+      'Products': products ?? [],
+      'Notes': notes ?? '',
+    }).then((value) => value.id);
   }
 
   Stream<QuerySnapshot<Object?>> get transportsData {

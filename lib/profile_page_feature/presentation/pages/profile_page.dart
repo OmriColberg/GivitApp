@@ -5,7 +5,6 @@ import 'package:givit_app/core/models/product.dart';
 import 'package:givit_app/core/models/transport.dart';
 import 'package:givit_app/core/shared/loading.dart';
 import 'package:givit_app/core/shared/assign_card.dart';
-import 'package:givit_app/main_page_feature/presentation/pages/main_page.dart';
 import 'package:givit_app/profile_page_feature/presentation/pages/edit_profile_page.dart';
 import 'package:givit_app/services/database.dart';
 import 'package:intl/intl.dart';
@@ -158,7 +157,7 @@ DeliveryAssign createDeliveryAssignFromTransportSnapshot(
     body: transport.notes,
     schedule: 'לשיבוץ הובלה',
     isProduct: false,
-    isMain: true,
+    isMain: false,
     id: transport.id,
     products: [],
     size: size,

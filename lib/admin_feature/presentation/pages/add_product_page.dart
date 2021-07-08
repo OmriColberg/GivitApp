@@ -10,11 +10,10 @@ class AddProductPage extends StatefulWidget {
   AddProductPage({required this.size});
 
   @override
-  _RegisterProductPageState createState() => _RegisterProductPageState();
+  _AddProductPageState createState() => _AddProductPageState();
 }
 
-class _RegisterProductPageState extends State<AddProductPage> {
-  final _formKey = GlobalKey<FormState>();
+class _AddProductPageState extends State<AddProductPage> {
   String error = '';
 
   String name = '';
@@ -34,55 +33,50 @@ class _RegisterProductPageState extends State<AddProductPage> {
         ),
         body: Container(
           padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
-          child: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  SizedBox(height: 20.0),
-                  TextFormField(
-                    decoration:
-                        textInputDecoration.copyWith(hintText: 'שם המוצר'),
-                    validator: (val) => val!.isEmpty ? 'הכנס שם מוצר' : null,
-                    onChanged: (val) {
-                      setState(() => name = val);
-                    },
-                  ),
-                  SizedBox(height: 20.0),
-                  TextFormField(
-                    decoration:
-                        textInputDecoration.copyWith(hintText: 'הערות נוספות'),
-                    /*validator: (val) => val.length != 10
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                SizedBox(height: 20.0),
+                TextFormField(
+                  decoration:
+                      textInputDecoration.copyWith(hintText: 'שם המוצר'),
+                  validator: (val) => val!.isEmpty ? 'הכנס שם מוצר' : null,
+                  onChanged: (val) {
+                    setState(() => name = val);
+                  },
+                ),
+                SizedBox(height: 20.0),
+                TextFormField(
+                  decoration:
+                      textInputDecoration.copyWith(hintText: 'הערות נוספות'),
+                  /*validator: (val) => val.length != 10
                               ? "הכנס הערות על המוצר או איסופו"
                               : null,*/
-                    onChanged: (val) {
-                      setState(() => notes = val);
-                    },
+                  onChanged: (val) {
+                    setState(() => notes = val);
+                  },
+                ),
+                SizedBox(height: 20.0),
+                ElevatedButton(
+                  child: Text(
+                    'הוסף מוצר למערכת',
+                    style: TextStyle(color: Colors.white),
                   ),
-                  SizedBox(height: 20.0),
-                  ElevatedButton(
-                    child: Text(
-                      'הוסף מוצר למערכת',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onPressed: () async {
-                      db
-                          .addProductData(name: name, notes: notes)
-                          .then((_result) {
-                        showDialogHelper(
-                            "Product added succesfully", widget.size);
-                      }).catchError((error) {
-                        showDialogHelper("Failed tp add product", widget.size);
-                      });
-                    },
-                  ),
-                  SizedBox(height: 12.0),
-                  Text(
-                    error,
-                    style: TextStyle(color: Colors.red, fontSize: 14.0),
-                  )
-                ],
-              ),
+                  onPressed: () async {
+                    db.addProductData(name: name, notes: notes).then((_result) {
+                      showDialogHelper(
+                          "Product added succesfully", widget.size);
+                    }).catchError((error) {
+                      showDialogHelper("Failed tp add product", widget.size);
+                    });
+                  },
+                ),
+                SizedBox(height: 12.0),
+                Text(
+                  error,
+                  style: TextStyle(color: Colors.red, fontSize: 14.0),
+                )
+              ],
             ),
           ),
         ),

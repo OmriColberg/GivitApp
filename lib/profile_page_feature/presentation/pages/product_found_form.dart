@@ -13,10 +13,10 @@ class ProductFoundForm extends StatefulWidget {
       {required this.size, required this.id, required this.products});
 
   @override
-  _ProductFoundForm createState() => _ProductFoundForm();
+  _ProductFoundFormState createState() => _ProductFoundFormState();
 }
 
-class _ProductFoundForm extends State<ProductFoundForm> {
+class _ProductFoundFormState extends State<ProductFoundForm> {
   final _formKey = GlobalKey<FormState>();
   String error = '';
 
