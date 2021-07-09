@@ -31,13 +31,17 @@ class Transport {
       totalNumOfCarriers: trasnportMap['Total Number Of Carriers'] ?? 0,
       destinationAddress: trasnportMap['Destination Address'] ?? '',
       pickUpAddress: trasnportMap['Pick Up Address'] ?? '',
-      datePickUp: trasnportMap['Date For Pick Up'].toDate(),
-      carriers: List.from(trasnportMap['Carriers']).isEmpty
-          ? []
-          : List.from(trasnportMap['Carriers']),
-      products: List.from(trasnportMap['Products']).isEmpty
-          ? []
-          : List.from(trasnportMap['Products']),
+      datePickUp: DateTime.parse(trasnportMap['Date For Pick Up']),
+      carriers: List.from(trasnportMap['Carriers'])
+      // .isEmpty
+      //     ? []
+      //     : List.from(trasnportMap['Carriers'])
+      ,
+      products: List.from(trasnportMap['Products'])
+      // .isEmpty
+      //     ? []
+      //     : List.from(trasnportMap['Products'])
+      ,
       notes: trasnportMap['Notes'] ?? '',
     );
   }

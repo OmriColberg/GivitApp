@@ -68,6 +68,7 @@ class DatabaseService {
       'Date For Pick Up':
           DateFormat('yyyy-MM-dd hh:mm').format(datePickUp!).toString(),
       'Products': products ?? [],
+      'Carriers': [],
       'Notes': notes ?? '',
     }).then((value) => value.id);
   }
