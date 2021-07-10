@@ -15,7 +15,7 @@ class DatabaseService {
   final CollectionReference transportsCollection =
       FirebaseFirestore.instance.collection('Transports');
 
-  Future<void> createGivitUserData(
+  Future<void> addGivitUser(
       String email, String fullName, String password, int phoneNumber) async {
     return await usersCollection.doc(uid).set({
       'Email': email,
@@ -28,31 +28,34 @@ class DatabaseService {
     });
   }
 
-  Future<void> updateGivitUserData(
-      String? email, String fullName, String password, int phoneNumber) async {
-    return await usersCollection.doc(uid).update({
-      'Email': email,
-      'Full Name': fullName,
-      'Password': password,
-      'Phone Number': phoneNumber,
-    });
+  Future<void> updateAssignProductsToTransport(List<String> products) async {
+    Set mySet = products.toSet();
+    await productsCollection.get().then((QuerySnapshot querySnapshot) => {
+          querySnapshot.docs.forEach((product) {
+            if (mySet.contains(product.id)) {
+              updateProductFields(product.id, {
+                'Status Of Product':
+                    ProductStatus.assignToDelivery.toString().split('.')[1],
+              });
+            }
+          })
+        });
   }
 
-  Future<void> addTransportToGivitUser(String id) async {
-    DocumentReference<Object?> doc = usersCollection.doc(uid);
-    return await doc.update({
-      "Transports": FieldValue.arrayUnion(['$id'])
-    });
+  Future<void> updateGivitUserFields(Map<String, Object?> data) async {
+    return await usersCollection.doc(uid).update(data);
   }
 
-  Future<void> addProductToGivitUser(String id) async {
-    DocumentReference<Object?> doc = usersCollection.doc(uid);
-    return await doc.update({
-      "Products": FieldValue.arrayUnion(['$id'])
-    });
+  Future<void> updateProductFields(String id, Map<String, Object?> data) async {
+    return await productsCollection.doc(id).update(data);
   }
 
-  Future<void> addTransportData({
+  Future<void> updateTransportFields(
+      String id, Map<String, Object?> data) async {
+    return await transportsCollection.doc(id).update(data);
+  }
+
+  Future<String> addTransport({
     int? totalNumOfCarriers,
     String? destinationAddress,
     String? pickUpAddress,
@@ -77,10 +80,7 @@ class DatabaseService {
     return transportsCollection.snapshots();
   }
 
-  Future<void> addProductData({
-    String? name,
-    String? notes,
-  }) async {
+  Future<String> addProduct({String? name, String? notes}) async {
     return await productsCollection.add({
       'Notes': notes,
       'Product Name': name,
@@ -96,48 +96,8 @@ class DatabaseService {
     }).then((value) => value.id);
   }
 
-  Future<void> updateProductData({
-    String? id,
-    String? ownerName,
-    ProductState? state,
-    String? ownerPhoneNumber,
-    String? pickUpAddress,
-    String? timeForPickUp,
-    String? notes,
-    int? weight,
-    int? length,
-    int? width,
-    ProductStatus? status = ProductStatus.waitingToBeDelivered,
-  }) async {
-    return await productsCollection.doc(id).update({
-      "Owner's Name": ownerName,
-      'State Of Product': state.toString().split('.')[1],
-      "Owner's Phone Number": ownerPhoneNumber,
-      'Pick Up Address': pickUpAddress,
-      'Time Span For Pick Up': timeForPickUp,
-      'Weight': weight,
-      'Length': length,
-      'Width': width,
-      'Notes': notes,
-      'Status Of Product': status.toString().split('.')[1],
-    });
-  }
-
   Future<void> deleteProductFromProductList(String id) async {
-    return await productsCollection
-        .doc(id)
-        .delete()
-        .then((_) => print('$id deleted successfuly from products list'))
-        .catchError((onError) => print("Error removing document: $onError"));
-  }
-
-  Future<void> deleteProductFromUserList(
-      String id, List<String> products) async {
-    return await usersCollection
-        .doc(uid)
-        .update({"Products": products})
-        .then((_) => print('$id successfuly removed from user'))
-        .catchError((onError) => print("Error removing document: $onError"));
+    return await productsCollection.doc(id).delete();
   }
 
   Stream<QuerySnapshot<Object?>> get producstData {

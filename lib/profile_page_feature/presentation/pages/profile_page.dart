@@ -26,11 +26,12 @@ class _ProfilePageState extends State<ProfilePage> {
     final DatabaseService db = DatabaseService(uid: user.uid);
     return StreamBuilder<GivitUser>(
       stream: db.userData,
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
+      builder: (context, snapshotGivitUser) {
+        if (!snapshotGivitUser.hasData) {
           return Loading();
         }
-        GivitUser? givitUser = snapshot.data;
+
+        GivitUser? givitUser = snapshotGivitUser.data;
         return Container(
           color: Colors.blue[100],
           child: Column(
@@ -55,7 +56,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                     },
-                    child: Text('Edit Personal Info'),
+                    child: Text('עריכת פרטים אישיים'),
                   )
                 ],
               ),
@@ -109,7 +110,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                 if (givitUser.transports
                                     .contains(transport.id)) {
                                   return createDeliveryAssignFromTransportSnapshot(
-                                      transport, widget.size);
+                                      transport,
+                                      givitUser.transports,
+                                      widget.size);
                                 } else
                                   return Container();
                               }).toList(),
@@ -137,14 +140,14 @@ DeliveryAssign createDeliveryAssignFromProductSnapshot(
     schedule: 'לשיבוץ חיפוש',
     isProduct: true,
     isMain: false,
-    id: product.id,
-    products: products,
+    contant: product,
+    contantList: products,
     size: size,
   );
 }
 
 DeliveryAssign createDeliveryAssignFromTransportSnapshot(
-    Transport transport, Size size) {
+    Transport transport, List<String> transports, Size size) {
   String date;
   if (transport.datePickUp != null) {
     date =
@@ -158,8 +161,8 @@ DeliveryAssign createDeliveryAssignFromTransportSnapshot(
     schedule: 'לשיבוץ הובלה',
     isProduct: false,
     isMain: false,
-    id: transport.id,
-    products: [],
+    contant: transport,
+    contantList: transports,
     size: size,
   );
 }

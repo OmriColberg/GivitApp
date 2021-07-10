@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/profile_page_feature/presentation/pages/product_found_form.dart';
@@ -10,17 +11,17 @@ class DeliveryAssign extends StatelessWidget {
   final String body;
   final bool isProduct;
   final bool isMain;
-  final String id;
-  final List<String> products;
+  final dynamic contant;
+  final List<String> contantList;
   final Size size;
   DeliveryAssign({
     required this.title,
     required this.body,
     required this.schedule,
     required this.isProduct,
-    required this.id,
+    required this.contant,
     required this.isMain,
-    required this.products,
+    required this.contantList,
     required this.size,
   });
 
@@ -34,33 +35,60 @@ class DeliveryAssign extends StatelessWidget {
           side: BorderSide(color: Colors.black),
           borderRadius: BorderRadius.circular(4),
         ),
-        color: isProduct ? Colors.lightGreen[300] : Colors.red[300],
+        color: isProduct ? Colors.lightGreen[300] : Colors.deepPurple[200],
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Icon(Icons.airport_shuttle),
+                isProduct ? Container() : Icon(Icons.airport_shuttle),
                 Text(
                   title,
                   style: TextStyle(
                     fontSize: 18,
                   ),
                 ),
-                SizedBox(
-                  width: 10,
-                ),
+                isMain
+                    ? Container()
+                    : InkWell(
+                        child: Icon(
+                          Icons.cancel_outlined,
+                          color: Colors.red,
+                        ),
+                        onTap: () {
+                          contantList.remove(contant.id);
+                          isProduct
+                              ? db.updateGivitUserFields(
+                                  {'Products': contantList})
+                              : db.updateGivitUserFields(
+                                  {'Transports': contantList});
+                        },
+                      )
               ],
             ),
-            Text(body),
+            Text(
+              body,
+              style: TextStyle(fontSize: 16),
+            ),
             isMain
                 ? ElevatedButton(
                     onPressed: isProduct
                         ? () {
-                            db.addProductToGivitUser(id);
+                            db.updateGivitUserFields({
+                              "Products":
+                                  FieldValue.arrayUnion(['${contant.id}'])
+                            });
                           }
                         : () {
-                            db.addTransportToGivitUser(id);
+                            db.updateGivitUserFields({
+                              "Transports":
+                                  FieldValue.arrayUnion(['${contant.id}'])
+                            });
+                            db.updateTransportFields(contant.id, {
+                              'Current Number Of Carriers':
+                                  contant.currentNumOfCarriers + 1
+                            });
                           },
                     child: Text(schedule),
                   )
@@ -71,13 +99,18 @@ class DeliveryAssign extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => ProductFoundForm(
-                                  size: size, id: id, products: products),
+                                  size: size,
+                                  id: contant.id,
+                                  products: contantList),
                             ),
                           );
                         },
                         child: Text('מצאתי'),
                       )
-                    : Container(),
+                    : Text(
+                        'נרשמו ${contant.currentNumOfCarriers} מתוך  ${contant.totalNumOfCarriers} מובילים',
+                        style: TextStyle(fontSize: 16),
+                      ),
           ],
         ),
       ),

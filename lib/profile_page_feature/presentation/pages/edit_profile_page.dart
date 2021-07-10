@@ -216,20 +216,20 @@ class MapScreenState extends State<EditProfilePage>
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           _saveCancelButton('Save', () async {
-            await db.updateGivitUserData(
-              emailController.text == ''
+            await db.updateGivitUserFields({
+              'Email': emailController.text == ''
                   ? givitUser.email
                   : emailController.text,
-              fullNameController.text == ''
+              'Full Name': fullNameController.text == ''
                   ? givitUser.fullName
                   : fullNameController.text,
-              passwordController.text == ''
+              'Password': passwordController.text == ''
                   ? givitUser.password
                   : passwordController.text,
-              phoneNumberController.text == ''
+              'Phone Number': phoneNumberController.text == ''
                   ? givitUser.phoneNumber
                   : int.parse(phoneNumberController.text),
-            );
+            });
             setState(() {
               _status = true;
               FocusScope.of(context).requestFocus(FocusNode());

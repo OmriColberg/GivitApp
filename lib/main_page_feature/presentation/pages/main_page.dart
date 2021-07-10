@@ -22,18 +22,26 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     GivitUser user = Provider.of<GivitUser>(context);
     final DatabaseService db = DatabaseService(uid: user.uid);
-    return StreamBuilder<QuerySnapshot>(
-        stream: db.producstData,
-        builder: (context, snapshotProduct) {
-          if (snapshotProduct.hasError) {
-            return Text('Something went wrong');
-          }
+    return StreamBuilder<GivitUser>(
+      stream: db.userData,
+      builder: (context, snapshotGivitUser) {
+        if (!snapshotGivitUser.hasData) {
+          return Loading();
+        }
 
-          if (snapshotProduct.connectionState == ConnectionState.waiting) {
-            return Loading();
-          }
+        GivitUser? givitUser = snapshotGivitUser.data;
+        return StreamBuilder<QuerySnapshot>(
+          stream: db.producstData,
+          builder: (context, snapshotProduct) {
+            if (snapshotProduct.hasError) {
+              return Text('Something went wrong');
+            }
 
-          return StreamBuilder<QuerySnapshot>(
+            if (snapshotProduct.connectionState == ConnectionState.waiting) {
+              return Loading();
+            }
+
+            return StreamBuilder<QuerySnapshot>(
               stream: db.transportsData,
               builder: (context, snapshotTransport) {
                 if (snapshotTransport.hasError) {
@@ -59,7 +67,8 @@ class _MainPageState extends State<MainPage> {
                           var snapshotData = document.data() as Map;
                           Product product = Product.productFromDocument(
                               snapshotData, document.id);
-                          if (product.status == ProductStatus.searching)
+                          if (product.status == ProductStatus.searching &&
+                              !(givitUser!.products.contains(product.id)))
                             return createDeliveryAssignFromProductSnapshot(
                                 product, widget.size);
                           else
@@ -70,15 +79,25 @@ class _MainPageState extends State<MainPage> {
                           var snapshotData = document.data() as Map;
                           Transport transport = Transport.transportFromDocument(
                               snapshotData, document.id);
-                          return createDeliveryAssignFromTransportSnapshot(
-                              transport, widget.size);
+                          if (transport.currentNumOfCarriers <
+                                  transport.totalNumOfCarriers &&
+                              !(givitUser!.transports.contains(transport.id))) {
+                            return createDeliveryAssignFromTransportSnapshot(
+                                transport, widget.size);
+                          } else {
+                            return Container();
+                          }
                         }).toList(),
                       ].expand((element) => element).toList(),
                     ),
                   ),
                 );
-              });
-        });
+              },
+            );
+          },
+        );
+      },
+    );
   }
 }
 
@@ -90,8 +109,8 @@ DeliveryAssign createDeliveryAssignFromProductSnapshot(
     schedule: 'לשיבוץ חיפוש',
     isProduct: true,
     isMain: true,
-    id: product.id,
-    products: [],
+    contant: product,
+    contantList: [],
     size: size,
   );
 }
@@ -111,8 +130,8 @@ DeliveryAssign createDeliveryAssignFromTransportSnapshot(
     schedule: 'לשיבוץ הובלה',
     isProduct: false,
     isMain: true,
-    id: transport.id,
-    products: [],
+    contant: transport,
+    contantList: [],
     size: size,
   );
 }

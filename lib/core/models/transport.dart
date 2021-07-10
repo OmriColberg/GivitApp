@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Transport {
   final String id;
   final int currentNumOfCarriers;

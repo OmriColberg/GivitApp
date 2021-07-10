@@ -111,5 +111,6 @@ enum ProductState {
 enum ProductStatus {
   searching,
   waitingToBeDelivered,
+  assignToDelivery,
   delivered,
 }

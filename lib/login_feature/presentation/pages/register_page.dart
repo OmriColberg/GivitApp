@@ -97,24 +97,25 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       SizedBox(height: 20.0),
                       ElevatedButton(
-                          child: Text(
-                            'Register',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              setState(() => loading = true);
-                              dynamic result =
-                                  await _auth.registerWithEmailAndPassword(
-                                      email, fullName, password, phoneNumber);
-                              if (result == null) {
-                                setState(() {
-                                  loading = false;
-                                  error = 'Please supply a valid email';
-                                });
-                              }
+                        child: Text(
+                          'Register',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            setState(() => loading = true);
+                            dynamic result =
+                                await _auth.registerWithEmailAndPassword(
+                                    email, fullName, password, phoneNumber);
+                            if (result == null) {
+                              setState(() {
+                                loading = false;
+                                error = 'Please supply a valid email';
+                              });
                             }
-                          }),
+                          }
+                        },
+                      ),
                       SizedBox(height: 12.0),
                       Text(
                         error,
