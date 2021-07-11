@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/profile_page_feature/presentation/pages/product_found_form.dart';
 import 'package:givit_app/services/database.dart';
@@ -42,7 +43,10 @@ class DeliveryAssign extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                isProduct ? Container() : Icon(Icons.airport_shuttle),
+                isProduct
+                    ? SvgPicture.asset('lib/core/assets/sofa_icon.svg',
+                        height: 24, width: 24)
+                    : Icon(Icons.airport_shuttle),
                 Text(
                   title,
                   style: TextStyle(
@@ -56,14 +60,21 @@ class DeliveryAssign extends StatelessWidget {
                           Icons.cancel_outlined,
                           color: Colors.red,
                         ),
-                        onTap: () {
-                          contantList.remove(contant.id);
-                          isProduct
-                              ? db.updateGivitUserFields(
-                                  {'Products': contantList})
-                              : db.updateGivitUserFields(
-                                  {'Transports': contantList});
-                        },
+                        onTap: isProduct
+                            ? () {
+                                contantList.remove(contant.id);
+                                db.updateGivitUserFields(
+                                    {'Products': contantList});
+                              }
+                            : () {
+                                contantList.remove(contant.id);
+                                db.updateGivitUserFields(
+                                    {'Transports': contantList});
+                                db.updateTransportFields(contant.id, {
+                                  'Current Number Of Carriers':
+                                      contant.currentNumOfCarriers - 1
+                                });
+                              },
                       )
               ],
             ),
