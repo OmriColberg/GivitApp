@@ -168,8 +168,8 @@ class _ProductFoundFormState extends State<ProductFoundForm> {
                                 'Length': length,
                                 'Width': width,
                                 'Notes': notes,
-                                'Status Of Product':
-                                    status.toString().split('.')[1],
+                                'Status Of Product': 'waitingToBeDelivered',
+                                //status.toString().split('.')[1],
                               }).then((_result) {
                                 showDialogHelper(
                                     "תודה על מציאת המוצר!\nפרטי המוצר עודכנו, ממתין לשיבוץ הובלה",

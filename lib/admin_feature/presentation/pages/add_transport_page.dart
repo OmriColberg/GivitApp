@@ -19,6 +19,7 @@ class AddTransportPage extends StatefulWidget {
 
 class _AddTransportPageState extends State<AddTransportPage> {
   final _formKey = GlobalKey<FormState>();
+  String error = '';
 
   int totalNumOfCarriers = 0;
   String destinationAddress = '';
@@ -93,7 +94,6 @@ class _AddTransportPageState extends State<AddTransportPage> {
                   SizedBox(height: 20.0),
                   TextFormField(
                     decoration: textInputDecoration.copyWith(hintText: 'הערות'),
-                    validator: (val) => val!.isEmpty ? 'הערות' : null,
                     onChanged: (val) {
                       setState(() => notes = val);
                     },
@@ -106,35 +106,44 @@ class _AddTransportPageState extends State<AddTransportPage> {
                     ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        db
-                            .addTransport(
-                          products: products,
-                          datePickUp: datePickUp,
-                          totalNumOfCarriers: totalNumOfCarriers,
-                          destinationAddress: destinationAddress,
-                          pickUpAddress: pickUpAddress,
-                          notes: notes,
-                        )
-                            .then((_result) {
-                          print(
-                              'This is the ID of the transport that just added: $_result');
-                          showDialogHelper(
-                              "ההובלה התווספה בהצלחה", widget.size);
-                        }).catchError((error) {
-                          showDialogHelper(
-                              "קרתה תקלה, נסה שוב ($error)", widget.size);
-                        });
-                        db
-                            .updateAssignProductsToTransport(products)
-                            .then((_) => products.forEach((id) {
-                                  print(
-                                      'the product with the id: $id were updated to delivery');
-                                }))
-                            .onError((error, stackTrace) =>
-                                print("קרתה תקלה, נסה שוב ($error)"));
+                        if (products.isNotEmpty) {
+                          db
+                              .addTransport(
+                            products: products,
+                            datePickUp: datePickUp,
+                            totalNumOfCarriers: totalNumOfCarriers,
+                            destinationAddress: destinationAddress,
+                            pickUpAddress: pickUpAddress,
+                            notes: notes,
+                          )
+                              .then((_result) {
+                            print(
+                                'This is the ID of the transport that just added: $_result');
+                            showDialogHelper(
+                                "ההובלה התווספה בהצלחה", widget.size);
+                          }).catchError((error) {
+                            showDialogHelper(
+                                "קרתה תקלה, נסה שוב ($error)", widget.size);
+                          });
+                          db
+                              .updateAssignProductsToTransport(products)
+                              .then((_) => products.forEach((id) {
+                                    print(
+                                        'the product with the id: $id were updated to delivery');
+                                  }))
+                              .onError((error, stackTrace) =>
+                                  print("קרתה תקלה, נסה שוב ($error)"));
+                        } else {
+                          error = 'ההובלה חייבת לכלול לפחות מוצר 1';
+                        }
                       }
                     },
                   ),
+                  SizedBox(height: 12.0),
+                  Text(
+                    error,
+                    style: TextStyle(color: Colors.red, fontSize: 14.0),
+                  )
                 ],
               ),
             ),

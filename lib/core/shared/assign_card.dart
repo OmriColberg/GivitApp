@@ -11,7 +11,7 @@ class DeliveryAssign extends StatelessWidget {
   final String body;
   final bool isProduct;
   final bool isMain;
-  final dynamic contant;
+  var contant;
   final List<String> contantList;
   final Size size;
   DeliveryAssign({
@@ -35,7 +35,7 @@ class DeliveryAssign extends StatelessWidget {
           side: BorderSide(color: Colors.black),
           borderRadius: BorderRadius.circular(4),
         ),
-        color: isProduct ? Colors.lightGreen[300] : Colors.deepPurple[200],
+        color: isProduct ? Colors.grey[300] : Colors.deepPurple[200],
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[

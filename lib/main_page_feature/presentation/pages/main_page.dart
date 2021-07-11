@@ -26,6 +26,7 @@ class _MainPageState extends State<MainPage> {
       stream: db.userData,
       builder: (context, snapshotGivitUser) {
         if (!snapshotGivitUser.hasData) {
+          print('givit user');
           return Loading();
         }
 
