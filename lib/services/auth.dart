@@ -36,7 +36,7 @@ class AuthService {
       User? user = result.user;
       // create a new document for the user with the uid
       await DatabaseService(uid: user!.uid)
-          .createGivitUserData(email, fullName, password, phoneNumber);
+          .addGivitUser(email, fullName, password, phoneNumber);
       return _givitUserFromFireBaseUser(user);
     } catch (error) {
       print(error.toString());
@@ -47,6 +47,7 @@ class AuthService {
   // sign out
   Future signOut() async {
     try {
+      print('try to logout');
       return await _auth.signOut();
     } catch (error) {
       print(error.toString());
