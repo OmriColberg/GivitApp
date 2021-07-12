@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
+import 'package:intl/intl.dart';
 
 class DatabaseService {
   final String? uid;
@@ -14,80 +15,89 @@ class DatabaseService {
   final CollectionReference transportsCollection =
       FirebaseFirestore.instance.collection('Transports');
 
-  Future<void> createGivitUserData(
+  Future<void> addGivitUser(
       String email, String fullName, String password, int phoneNumber) async {
     return await usersCollection.doc(uid).set({
       'Email': email,
       'Full Name': fullName,
       'Password': password,
       'Phone Number': phoneNumber,
+      'Products': [],
+      'Transports': [],
+      'Role': 'User',
     });
   }
 
-  Future<void> updateGivitUserData(
-      String? email, String fullName, String password, int phoneNumber) async {
-    return await usersCollection.doc(uid).update({
-      'Email': email,
-      'Full Name': fullName,
-      'Password': password,
-      'Phone Number': phoneNumber,
-    });
+  Future<void> updateAssignProductsToTransport(List<String> products) async {
+    Set mySet = products.toSet();
+    await productsCollection.get().then((QuerySnapshot querySnapshot) => {
+          querySnapshot.docs.forEach((product) {
+            if (mySet.contains(product.id)) {
+              updateProductFields(product.id, {
+                'Status Of Product':
+                    ProductStatus.assignToDelivery.toString().split('.')[1],
+              });
+            }
+          })
+        });
   }
 
-  Future<void> addProductToGivitUser(String id) async {
-    DocumentReference<Object?> doc = usersCollection.doc(uid);
-    print(doc.toString());
-    print(uid);
-    print(id);
+  Future<void> updateGivitUserFields(Map<String, Object?> data) async {
+    return await usersCollection.doc(uid).update(data);
+  }
 
-    return await doc.update({
-      "Products": FieldValue.arrayUnion(['$id']),
-    }).then((e) {
-      print('added successfuly');
-    }).catchError((onError) {
-      print("not good");
-    });
+  Future<void> updateProductFields(String id, Map<String, Object?> data) async {
+    return await productsCollection.doc(id).update(data);
+  }
+
+  Future<void> updateTransportFields(
+      String id, Map<String, Object?> data) async {
+    return await transportsCollection.doc(id).update(data);
+  }
+
+  Future<String> addTransport({
+    int? totalNumOfCarriers,
+    String? destinationAddress,
+    String? pickUpAddress,
+    String? notes,
+    List<String>? products,
+    DateTime? datePickUp,
+  }) async {
+    return await transportsCollection.add({
+      'Current Number Of Carriers': 0,
+      'Total Number Of Carriers': totalNumOfCarriers ?? 0,
+      'Destination Address': destinationAddress ?? '',
+      'Pick Up Address': pickUpAddress ?? '',
+      'Date For Pick Up':
+          DateFormat('yyyy-MM-dd hh:mm').format(datePickUp!).toString(),
+      'Products': products ?? [],
+      'Carriers': [],
+      'Notes': notes ?? '',
+    }).then((value) => value.id);
   }
 
   Stream<QuerySnapshot<Object?>> get transportsData {
     return transportsCollection.snapshots();
   }
 
-  Future<void> addProductData(
-      {String? id,
-      String? name,
-      ProductState? state,
-      String? ownerName,
-      String? ownerPhoneNumber,
-      String? pickUpAddress,
-      String? timeForPickUp,
-      String? notes}) async {
+  Future<String> addProduct({String? name, String? notes}) async {
     return await productsCollection.add({
       'Notes': notes,
       'Product Name': name,
-      'State Of Product': state.toString(),
-      "Owner's Name": ownerName,
-      "Owner's Phone Number": ownerPhoneNumber,
-      'Time Span For Pick Up': timeForPickUp,
-      'Pick Up Address': pickUpAddress,
+      'State Of Product': ProductState.unknown.toString().split('.')[1],
+      "Owner's Name": '',
+      "Owner's Phone Number": 0,
+      'Time Span For Pick Up': '',
+      'Pick Up Address': '',
+      'Weight': 0,
+      'Length': 0,
+      'Width': 0,
+      'Status Of Product': ProductStatus.searching.toString().split('.')[1],
     }).then((value) => value.id);
   }
 
   Future<void> deleteProductFromProductList(String id) async {
-    return await productsCollection
-        .doc(id)
-        .delete()
-        .then((_) => print('$id deleted successfuly from products list'))
-        .catchError((onError) => print("Error removing document: $onError"));
-  }
-
-  Future<void> deleteProductFromUserList(
-      String id, List<String> products) async {
-    return await usersCollection
-        .doc(uid)
-        .update({"Products": products})
-        .then((_) => print('$id successfuly removed from user'))
-        .catchError((onError) => print("Error removing document: $onError"));
+    return await productsCollection.doc(id).delete();
   }
 
   Stream<QuerySnapshot<Object?>> get producstData {
@@ -104,6 +114,7 @@ class DatabaseService {
       phoneNumber: snapshotData['Phone Number'],
       role: snapshotData['Role'],
       products: List.from(snapshotData['Products']),
+      transports: List.from(snapshotData['Transports']),
     );
   }
 

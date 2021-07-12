@@ -7,16 +7,25 @@ class Product {
   final String pickUpAddress;
   final String timeForPickUp;
   final String notes;
+  final int weight;
+  final int length;
+  final int width;
+  final ProductStatus status;
 
-  Product(
-      {this.id = '',
-      this.name = '',
-      this.state = ProductState.unknown,
-      this.ownerName = '',
-      this.ownerPhoneNumber = '',
-      this.pickUpAddress = '',
-      this.timeForPickUp = '',
-      this.notes = ''});
+  Product({
+    this.id = '',
+    this.name = '',
+    this.state = ProductState.unknown,
+    this.ownerName = '',
+    this.ownerPhoneNumber = '',
+    this.pickUpAddress = '',
+    this.timeForPickUp = '',
+    this.notes = '',
+    this.weight = 0,
+    this.length = 0,
+    this.width = 0,
+    this.status = ProductStatus.searching,
+  });
 
   Map<String, dynamic> toJson() => {
         'Product Name': name,
@@ -26,6 +35,10 @@ class Product {
         'Pick Up Address': pickUpAddress,
         'Time Span For Pick Up': timeForPickUp,
         'Notes': notes,
+        'Weight': weight,
+        'Length': length,
+        'Width': width,
+        'Status Of Product': status,
       };
 
   static Product productFromDocument(
@@ -39,6 +52,10 @@ class Product {
       pickUpAddress: productMap['Pick Up Address'],
       timeForPickUp: productMap['Time Span For Pick Up'],
       notes: productMap['Notes'],
+      weight: productMap['Weight'] ?? 0,
+      length: productMap['Length'] ?? 0,
+      width: productMap['Width'] ?? 0,
+      status: Product.productStatusFromString(productMap["Status Of Product"]),
     );
   }
 
@@ -48,6 +65,15 @@ class Product {
           if (Product.hebrewFromEnum(element) == state ||
               element.toString() == state)
             {res = element}
+        });
+
+    return res;
+  }
+
+  static ProductStatus productStatusFromString(String status) {
+    ProductStatus res = ProductStatus.searching;
+    ProductStatus.values.forEach((element) => {
+          if (element.toString().split('.')[1] == status) {res = element}
         });
 
     return res;
@@ -80,4 +106,11 @@ enum ProductState {
   likeNew,
   used,
   unknown,
+}
+
+enum ProductStatus {
+  searching,
+  waitingToBeDelivered,
+  assignToDelivery,
+  delivered,
 }

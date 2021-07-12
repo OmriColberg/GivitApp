@@ -2,10 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
+import 'package:givit_app/core/models/transport.dart';
 import 'package:givit_app/core/shared/loading.dart';
-import 'package:givit_app/main_page_feature/presentation/pages/assign_card.dart';
+import 'package:givit_app/core/shared/assign_card.dart';
 import 'package:givit_app/profile_page_feature/presentation/pages/edit_profile_page.dart';
 import 'package:givit_app/services/database.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -24,20 +26,21 @@ class _ProfilePageState extends State<ProfilePage> {
     final DatabaseService db = DatabaseService(uid: user.uid);
     return StreamBuilder<GivitUser>(
       stream: db.userData,
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
+      builder: (context, snapshotGivitUser) {
+        if (!snapshotGivitUser.hasData) {
           return Loading();
         }
-        GivitUser? givitUser = snapshot.data;
-        print("PRODUCTS: ${givitUser!.products}");
+
+        GivitUser? givitUser = snapshotGivitUser.data;
         return Container(
+          color: Colors.blue[100],
           child: Column(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Hello ${givitUser.fullName}',
+                    'Hello ${givitUser!.fullName}',
                     style: TextStyle(
                       fontSize: 18,
                     ),
@@ -53,42 +56,72 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                     },
-                    child: Text('Edit Personal Info'),
+                    child: Text('עריכת פרטים אישיים'),
                   )
                 ],
               ),
-              Container(
-                height: 280,
-                alignment: Alignment.topCenter,
-                child: SingleChildScrollView(
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream: db.producstData,
-                    builder: (context, snapshotProduct) {
-                      if (snapshotProduct.hasError) {
-                        return Text('Something went wrong');
-                      }
+              SingleChildScrollView(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: db.producstData,
+                  builder: (context, snapshotProduct) {
+                    if (snapshotProduct.hasError) {
+                      return Text('Something went wrong');
+                    }
 
-                      if (snapshotProduct.connectionState ==
-                          ConnectionState.waiting) {
-                        return Loading();
-                      }
+                    if (snapshotProduct.connectionState ==
+                        ConnectionState.waiting) {
+                      return Loading();
+                    }
 
-                      return Column(
-                        children: snapshotProduct.data!.docs
-                            .map((DocumentSnapshot document) {
-                          if (givitUser.products.contains(document.id)) {
-                            var snapshotData = document.data() as Map;
-                            Product product = Product.productFromDocument(
-                                snapshotData, document.id);
-                            return createDeliveryAssignFromProductSnapshot(
-                                product, givitUser.products);
-                          } else {
-                            return Container();
-                          }
-                        }).toList(),
-                      );
-                    },
-                  ),
+                    return StreamBuilder<QuerySnapshot>(
+                      stream: db.transportsData,
+                      builder: (context, snapshotTransport) {
+                        if (snapshotTransport.hasError) {
+                          return Text('Something went wrong');
+                        }
+
+                        if (snapshotTransport.connectionState ==
+                            ConnectionState.waiting) {
+                          return Loading();
+                        }
+
+                        return SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              snapshotProduct.data!.docs
+                                  .map((DocumentSnapshot document) {
+                                if (givitUser.products.contains(document.id)) {
+                                  var snapshotData = document.data() as Map;
+                                  Product product = Product.productFromDocument(
+                                      snapshotData, document.id);
+                                  return createDeliveryAssignFromProductSnapshot(
+                                      product, givitUser.products, widget.size);
+                                } else
+                                  return Container();
+                              }).toList(),
+                              snapshotTransport.data!.docs
+                                  .map((DocumentSnapshot document) {
+                                var snapshotData = document.data() as Map;
+                                Transport transport =
+                                    Transport.transportFromDocument(
+                                        snapshotData, document.id);
+                                if (givitUser.transports
+                                    .contains(transport.id)) {
+                                  return createDeliveryAssignFromTransportSnapshot(
+                                      transport,
+                                      givitUser.transports,
+                                      widget.size);
+                                } else
+                                  return Container();
+                              }).toList(),
+                            ].expand((element) => element).toList(),
+                          ),
+                        );
+                      },
+                    );
+                  },
                 ),
               ),
             ],
@@ -100,14 +133,36 @@ class _ProfilePageState extends State<ProfilePage> {
 }
 
 DeliveryAssign createDeliveryAssignFromProductSnapshot(
-    Product product, List<String> products) {
+    Product product, List<String> products, Size size) {
   return DeliveryAssign(
     title: product.name,
     body: product.notes,
     schedule: 'לשיבוץ חיפוש',
     isProduct: true,
     isMain: false,
-    id: product.id,
-    products: products,
+    contant: product,
+    contantList: products,
+    size: size,
+  );
+}
+
+DeliveryAssign createDeliveryAssignFromTransportSnapshot(
+    Transport transport, List<String> transports, Size size) {
+  String date;
+  if (transport.datePickUp != null) {
+    date =
+        DateFormat('yyyy-MM-dd hh:mm').format(transport.datePickUp).toString();
+  } else {
+    date = '';
+  }
+  return DeliveryAssign(
+    title: date + ' :הובלה ב',
+    body: transport.notes,
+    schedule: 'לשיבוץ הובלה',
+    isProduct: false,
+    isMain: false,
+    contant: transport,
+    contantList: transports,
+    size: size,
   );
 }

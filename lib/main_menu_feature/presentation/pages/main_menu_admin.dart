@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:givit_app/admin_feature/presentation/pages/admin_page.dart';
 import 'package:givit_app/core/shared/givit_logo.dart';
+import 'package:givit_app/givit_community_feature/givit_community_page.dart';
 import 'package:givit_app/main_page_feature/presentation/pages/main_page.dart';
 import 'package:givit_app/profile_page_feature/presentation/pages/profile_page.dart';
 import 'package:givit_app/services/auth.dart';
-import 'package:givit_app/transport_log_feature/transport_log_page.dart';
 
 class MainMenuAdmin extends StatelessWidget {
   const MainMenuAdmin({
@@ -40,7 +40,10 @@ class MainMenuAdmin extends StatelessWidget {
                     style: TextStyle(color: Colors.black),
                   ),
                   onPressed: () async {
-                    await _auth.signOut();
+                    await _auth
+                        .signOut()
+                        .then((_) => print('successful signout'))
+                        .catchError((onError) => print(onError));
                   },
                 ),
               ],
@@ -68,9 +71,9 @@ class MainMenuAdmin extends StatelessWidget {
             body: TabBarView(
               children: [
                 AdminPage(size: size),
-                TransportLogPage(),
+                GivitCommunityPage(),
                 ProfilePage(size: size),
-                MainPage(),
+                MainPage(size: size),
               ],
             ),
           ),

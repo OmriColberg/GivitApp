@@ -1,35 +1,47 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
 import 'package:givit_app/core/models/transport.dart';
 import 'package:givit_app/core/shared/loading.dart';
-import 'package:givit_app/main_page_feature/presentation/pages/assign_card.dart';
+import 'package:givit_app/core/shared/assign_card.dart';
 import 'package:givit_app/services/database.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
-class MainPage extends StatelessWidget {
+class MainPage extends StatefulWidget {
+  final Size size;
+  MainPage({required this.size});
+
   @override
-  Widget build(BuildContext context) {
-    return _MainPage();
-  }
+  _MainPageState createState() => _MainPageState();
 }
 
-class _MainPage extends StatelessWidget {
+class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
-    final DatabaseService db = DatabaseService();
-    return StreamBuilder<QuerySnapshot>(
-        stream: db.producstData,
-        builder: (context, snapshotProduct) {
-          if (snapshotProduct.hasError) {
-            return Text('Something went wrong');
-          }
+    GivitUser user = Provider.of<GivitUser>(context);
+    final DatabaseService db = DatabaseService(uid: user.uid);
+    return StreamBuilder<GivitUser>(
+      stream: db.userData,
+      builder: (context, snapshotGivitUser) {
+        if (!snapshotGivitUser.hasData) {
+          return Loading();
+        }
 
-          if (snapshotProduct.connectionState == ConnectionState.waiting) {
-            return Loading();
-          }
+        GivitUser? givitUser = snapshotGivitUser.data;
+        return StreamBuilder<QuerySnapshot>(
+          stream: db.producstData,
+          builder: (context, snapshotProduct) {
+            if (snapshotProduct.hasError) {
+              return Text('Something went wrong');
+            }
 
-          return StreamBuilder<QuerySnapshot>(
+            if (snapshotProduct.connectionState == ConnectionState.waiting) {
+              return Loading();
+            }
+
+            return StreamBuilder<QuerySnapshot>(
               stream: db.transportsData,
               builder: (context, snapshotTransport) {
                 if (snapshotTransport.hasError) {
@@ -55,39 +67,56 @@ class _MainPage extends StatelessWidget {
                           var snapshotData = document.data() as Map;
                           Product product = Product.productFromDocument(
                               snapshotData, document.id);
-                          return createDeliveryAssignFromProductSnapshot(
-                              product);
+                          if (product.status == ProductStatus.searching &&
+                              !(givitUser!.products.contains(product.id)))
+                            return createDeliveryAssignFromProductSnapshot(
+                                product, widget.size);
+                          else
+                            return Container();
                         }).toList(),
                         snapshotTransport.data!.docs
                             .map((DocumentSnapshot document) {
                           var snapshotData = document.data() as Map;
                           Transport transport = Transport.transportFromDocument(
                               snapshotData, document.id);
-                          return createDeliveryAssignFromTransportSnapshot(
-                              transport);
+                          if (transport.currentNumOfCarriers <
+                                  transport.totalNumOfCarriers &&
+                              !(givitUser!.transports.contains(transport.id))) {
+                            return createDeliveryAssignFromTransportSnapshot(
+                                transport, widget.size);
+                          } else {
+                            return Container();
+                          }
                         }).toList(),
                       ].expand((element) => element).toList(),
                     ),
                   ),
                 );
-              });
-        });
+              },
+            );
+          },
+        );
+      },
+    );
   }
 }
 
-DeliveryAssign createDeliveryAssignFromProductSnapshot(Product product) {
+DeliveryAssign createDeliveryAssignFromProductSnapshot(
+    Product product, Size size) {
   return DeliveryAssign(
     title: product.name,
     body: product.notes,
     schedule: 'לשיבוץ חיפוש',
     isProduct: true,
     isMain: true,
-    id: product.id,
-    products: [],
+    contant: product,
+    contantList: [],
+    size: size,
   );
 }
 
-DeliveryAssign createDeliveryAssignFromTransportSnapshot(Transport transport) {
+DeliveryAssign createDeliveryAssignFromTransportSnapshot(
+    Transport transport, Size size) {
   String date;
   if (transport.datePickUp != null) {
     date =
@@ -101,7 +130,8 @@ DeliveryAssign createDeliveryAssignFromTransportSnapshot(Transport transport) {
     schedule: 'לשיבוץ הובלה',
     isProduct: false,
     isMain: true,
-    id: transport.id,
-    products: [],
+    contant: transport,
+    contantList: [],
+    size: size,
   );
 }
