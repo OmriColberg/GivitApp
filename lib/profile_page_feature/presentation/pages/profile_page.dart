@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
 import 'package:givit_app/core/models/transport.dart';
+import 'package:givit_app/core/shared/assign_card_transport.dart';
 import 'package:givit_app/core/shared/loading.dart';
-import 'package:givit_app/core/shared/assign_card.dart';
+import 'package:givit_app/core/shared/assign_card_product.dart';
 import 'package:givit_app/profile_page_feature/presentation/pages/edit_profile_page.dart';
 import 'package:givit_app/services/database.dart';
 import 'package:intl/intl.dart';
@@ -27,7 +28,11 @@ class _ProfilePageState extends State<ProfilePage> {
     return StreamBuilder<GivitUser>(
       stream: db.userData,
       builder: (context, snapshotGivitUser) {
-        if (!snapshotGivitUser.hasData) {
+        if (snapshotGivitUser.hasError) {
+          return Text('Something went wrong');
+        }
+
+        if (snapshotGivitUser.connectionState == ConnectionState.waiting) {
           return Loading();
         }
 
@@ -140,21 +145,20 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 }
 
-DeliveryAssign createDeliveryAssignFromProductSnapshot(
+AssignCardProduct createDeliveryAssignFromProductSnapshot(
     Product product, List<String> products, Size size) {
-  return DeliveryAssign(
+  return AssignCardProduct(
     title: product.name,
     body: product.notes,
     schedule: 'לשיבוץ חיפוש',
-    isProduct: true,
-    isMain: false,
-    contant: product,
-    contantList: products,
+    type: CardType.personal,
+    product: product,
+    personalProducts: products,
     size: size,
   );
 }
 
-DeliveryAssign createDeliveryAssignFromTransportSnapshot(
+AssignCardTransport createDeliveryAssignFromTransportSnapshot(
     Transport transport, List<String> transports, Size size) {
   String date;
   if (transport.datePickUp != null) {
@@ -163,14 +167,13 @@ DeliveryAssign createDeliveryAssignFromTransportSnapshot(
   } else {
     date = '';
   }
-  return DeliveryAssign(
+  return AssignCardTransport(
     title: date + ' :הובלה ב',
     body: transport.notes,
     schedule: 'לשיבוץ הובלה',
-    isProduct: false,
-    isMain: false,
-    contant: transport,
-    contantList: transports,
+    type: CardType.personal,
+    transport: transport,
+    personalTransport: transports,
     size: size,
   );
 }

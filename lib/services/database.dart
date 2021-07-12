@@ -43,6 +43,16 @@ class DatabaseService {
         });
   }
 
+  Future<Product> getProductByID(String id) async {
+    return await productsCollection
+        .doc(id)
+        .get()
+        .then((DocumentSnapshot<Object?> document) {
+      var snapshotData = document.data() as Map;
+      return Product.productFromDocument(snapshotData, document.id);
+    });
+  }
+
   Future<void> updateGivitUserFields(Map<String, Object?> data) async {
     return await usersCollection.doc(uid).update(data);
   }

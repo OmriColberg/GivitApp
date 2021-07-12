@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
 import 'package:givit_app/core/models/transport.dart';
+import 'package:givit_app/core/shared/assign_card_transport.dart';
 import 'package:givit_app/core/shared/loading.dart';
-import 'package:givit_app/core/shared/assign_card.dart';
+import 'package:givit_app/core/shared/assign_card_product.dart';
 import 'package:givit_app/services/database.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -101,21 +102,20 @@ class _MainPageState extends State<MainPage> {
   }
 }
 
-DeliveryAssign createDeliveryAssignFromProductSnapshot(
+AssignCardProduct createDeliveryAssignFromProductSnapshot(
     Product product, Size size) {
-  return DeliveryAssign(
+  return AssignCardProduct(
     title: product.name,
     body: product.notes,
     schedule: 'לשיבוץ חיפוש',
-    isProduct: true,
-    isMain: true,
-    contant: product,
-    contantList: [],
+    type: CardType.main,
+    product: product,
+    personalProducts: [],
     size: size,
   );
 }
 
-DeliveryAssign createDeliveryAssignFromTransportSnapshot(
+AssignCardTransport createDeliveryAssignFromTransportSnapshot(
     Transport transport, Size size) {
   String date;
   if (transport.datePickUp != null) {
@@ -124,14 +124,13 @@ DeliveryAssign createDeliveryAssignFromTransportSnapshot(
   } else {
     date = '';
   }
-  return DeliveryAssign(
+  return AssignCardTransport(
     title: date + ' :הובלה ב',
     body: transport.notes,
     schedule: 'לשיבוץ הובלה',
-    isProduct: false,
-    isMain: true,
-    contant: transport,
-    contantList: [],
+    type: CardType.main,
+    transport: transport,
+    personalTransport: [],
     size: size,
   );
 }
