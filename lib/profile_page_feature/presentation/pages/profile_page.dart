@@ -96,7 +96,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   var snapshotData = document.data() as Map;
                                   Product product = Product.productFromDocument(
                                       snapshotData, document.id);
-                                  if (product.status.toString().split('.')[1] !=
+                                  if (product.status.toString() !=
                                       ProductStatus.assignToDelivery
                                           .toString()) {
                                     return createDeliveryAssignFromProductSnapshot(
