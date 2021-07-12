@@ -79,8 +79,8 @@ class _MainPageState extends State<MainPage> {
                           var snapshotData = document.data() as Map;
                           Transport transport = Transport.transportFromDocument(
                               snapshotData, document.id);
-                          if (transport.currentNumOfCarriers <
-                                  transport.totalNumOfCarriers &&
+                          if (transport.status ==
+                                  TransportStatus.waitingForVolunteers &&
                               !(givitUser!.transports.contains(transport.id))) {
                             return createDeliveryAssignFromTransportSnapshot(
                                 transport, widget.size);

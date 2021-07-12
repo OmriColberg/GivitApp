@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:givit_app/core/models/givit_user.dart';
+import 'package:givit_app/core/models/transport.dart';
 import 'package:givit_app/profile_page_feature/presentation/pages/product_found_form.dart';
 import 'package:givit_app/services/database.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +13,7 @@ class DeliveryAssign extends StatelessWidget {
   final String body;
   final bool isProduct;
   final bool isMain;
-  var contant;
+  final dynamic contant;
   final List<String> contantList;
   final Size size;
   DeliveryAssign({
@@ -98,7 +99,16 @@ class DeliveryAssign extends StatelessWidget {
                             });
                             db.updateTransportFields(contant.id, {
                               'Current Number Of Carriers':
-                                  contant.currentNumOfCarriers + 1
+                                  contant.currentNumOfCarriers + 1,
+                              'Status Of Transport':
+                                  contant.currentNumOfCarriers + 1 ==
+                                          contant.totalNumOfCarriers
+                                      ? TransportStatus.waitingForDueDate
+                                          .toString()
+                                          .split('.')[1]
+                                      : TransportStatus.waitingForVolunteers
+                                          .toString()
+                                          .split('.')[1],
                             });
                           },
                     child: Text(schedule),

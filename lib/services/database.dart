@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
+import 'package:givit_app/core/models/transport.dart';
 import 'package:intl/intl.dart';
 
 class DatabaseService {
@@ -72,6 +73,8 @@ class DatabaseService {
           DateFormat('yyyy-MM-dd hh:mm').format(datePickUp!).toString(),
       'Products': products ?? [],
       'Carriers': [],
+      'Status Of Transport':
+          TransportStatus.waitingForVolunteers.toString().split('.')[1],
       'Notes': notes ?? '',
     }).then((value) => value.id);
   }
