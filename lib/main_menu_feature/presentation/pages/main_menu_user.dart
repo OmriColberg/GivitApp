@@ -18,8 +18,8 @@ class MainMenuUser extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: DefaultTabController(
-        initialIndex: 4,
-        length: 5,
+        initialIndex: 2,
+        length: 3,
         child: SafeArea(
           child: Scaffold(
             appBar: AppBar(
@@ -39,23 +39,18 @@ class MainMenuUser extends StatelessWidget {
                     style: TextStyle(color: Colors.black),
                   ),
                   onPressed: () async {
-                    await _auth.signOut();
+                    await _auth
+                        .signOut()
+                        .then((_) => print('successful signout'))
+                        .catchError((onError) => print(onError));
                   },
                 ),
               ],
               bottom: TabBar(
                 tabs: [
                   Tab(
-                    icon: Icon(Icons.fiber_new),
-                    text: '  מוצר\nלאיסוף',
-                  ),
-                  Tab(
                     icon: Icon(Icons.family_restroom),
                     text: 'קהילת\n givit',
-                  ),
-                  Tab(
-                    icon: Icon(Icons.airport_shuttle),
-                    text: '  מעקב\nהובלות ',
                   ),
                   Tab(
                     icon: Icon(Icons.person),
@@ -70,8 +65,6 @@ class MainMenuUser extends StatelessWidget {
             ),
             body: TabBarView(
               children: [
-                GivitCommunityPage(),
-                GivitCommunityPage(),
                 GivitCommunityPage(),
                 ProfilePage(size: size),
                 MainPage(size: size),
