@@ -125,26 +125,38 @@ class _AdminPageState extends State<AdminPage> {
                         return Column(
                           children: [
                             [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: _products.map((Product? product) {
-                                  return Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 2),
-                                    child: ElevatedButton(
-                                      onPressed: () {},
-                                      child: Text(
-                                          '${product!.name}\n${product.pickUpAddress}'),
-                                      style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(30.0),
+                              Wrap(
+                                direction: Axis.vertical,
+                                alignment: WrapAlignment.center,
+                                spacing: 8.0,
+                                runAlignment: WrapAlignment.center,
+                                runSpacing: 8.0,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                verticalDirection: VerticalDirection.up,
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: _products.map((Product? product) {
+                                      return Padding(
+                                        padding:
+                                            EdgeInsets.symmetric(horizontal: 2),
+                                        child: ElevatedButton(
+                                          onPressed: () {},
+                                          child: Text(
+                                              '${product!.name}\n${product.pickUpAddress}'),
+                                          style: ElevatedButton.styleFrom(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(30.0),
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ],
                               ),
                               Text(
                                 ':הובלות עתידיות',
