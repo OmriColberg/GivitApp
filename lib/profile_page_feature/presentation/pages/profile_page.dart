@@ -121,7 +121,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                     Transport.transportFromDocument(
                                         snapshotData, document.id);
                                 if (givitUser.transports
-                                    .contains(transport.id)) {
+                                        .contains(transport.id) &&
+                                    transport.status !=
+                                        TransportStatus.carriedOut) {
                                   return createDeliveryAssignFromTransportSnapshot(
                                       transport,
                                       givitUser.transports,

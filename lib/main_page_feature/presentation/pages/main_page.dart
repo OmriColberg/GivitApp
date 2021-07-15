@@ -126,7 +126,11 @@ AssignCardTransport createDeliveryAssignFromTransportSnapshot(
   }
   return AssignCardTransport(
     title: date + ' :הובלה ב',
-    body: transport.notes,
+    body: transport.pickUpAddress +
+        " :כתובת התחלה" +
+        "\n" +
+        transport.notes +
+        " :הערות",
     schedule: 'לשיבוץ הובלה',
     type: CardType.main,
     transport: transport,

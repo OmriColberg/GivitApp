@@ -158,10 +158,15 @@ class _AdminPageState extends State<AdminPage> {
                               Transport transport =
                                   Transport.transportFromDocument(
                                       snapshotData, document.id);
-                              return createDeliveryAssignFromTransportSnapshot(
-                                  transport,
-                                  givitUser!.transports,
-                                  widget.size);
+                              if (transport.status !=
+                                  TransportStatus.carriedOut) {
+                                return createDeliveryAssignFromTransportSnapshot(
+                                    transport,
+                                    givitUser!.transports,
+                                    widget.size);
+                              } else {
+                                return Container();
+                              }
                             }).toList(),
                           ].expand((element) => element).toList(),
                         );

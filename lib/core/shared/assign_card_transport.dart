@@ -29,6 +29,7 @@ class AssignCardTransport extends StatelessWidget {
     required this.size,
     required this.type,
   });
+  var i = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +73,15 @@ class AssignCardTransport extends StatelessWidget {
                                 color: Colors.red,
                               ),
                               onTap: () {
+                                print("פה זה הכפתור האדום");
                                 personalTransport.remove(transport.id);
+                                if (transport.currentNumOfCarriers ==
+                                    transport.totalNumOfCarriers) {
+                                  db.updateTransportFields(transport.id, {
+                                    'Status Of Transport':
+                                        "waitingForVolunteers"
+                                  });
+                                }
                                 db.updateGivitUserFields(
                                     {'Transports': personalTransport});
                                 db.updateTransportFields(transport.id, {
@@ -87,39 +96,42 @@ class AssignCardTransport extends StatelessWidget {
                   Text(
                     body,
                     style: TextStyle(fontSize: 16),
+                    textAlign: TextAlign.center,
                   ),
-                  type == CardType.main
-                      ? Column(
-                          children: [
-                            snapshotProduct.data!.docs
-                                .map((DocumentSnapshot document) {
-                              if (transport.products.contains(document.id)) {
-                                var snapshotData = document.data() as Map;
-                                Product product = Product.productFromDocument(
-                                    snapshotData, document.id);
-                                if (transport.status.toString() !=
-                                    ProductStatus.searching.toString()) {
-                                  return Text(
-                                    product.name,
-                                    style: TextStyle(fontSize: 18),
-                                  );
-                                } else {
-                                  return Container();
-                                }
-                              } else {
-                                return Container();
-                              }
-                            }).toList(),
-                            [
-                              ElevatedButton(
+                  Column(
+                    children: [
+                      snapshotProduct.data!.docs
+                          .map((DocumentSnapshot document) {
+                        if (transport.products.contains(document.id)) {
+                          var snapshotData = document.data() as Map;
+                          Product product = Product.productFromDocument(
+                              snapshotData, document.id);
+                          if (transport.status.toString() !=
+                              ProductStatus.searching.toString()) {
+                            return Text(
+                              "${++i}. " + product.name,
+                              style: TextStyle(fontSize: 18),
+                            );
+                          } else {
+                            return Container();
+                          }
+                        } else {
+                          return Container();
+                        }
+                      }).toList(),
+                      [
+                        Text(
+                          'נרשמו ${transport.currentNumOfCarriers} מתוך  ${transport.totalNumOfCarriers} מובילים',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        type == CardType.main
+                            ? (ElevatedButton(
                                 onPressed: () {
                                   db.updateGivitUserFields({
                                     "Transports": FieldValue.arrayUnion(
                                         ['${transport.id}'])
                                   });
                                   db.updateTransportFields(transport.id, {
-                                    'Current Number Of Carriers':
-                                        transport.currentNumOfCarriers + 1,
                                     'Status Of Transport':
                                         transport.currentNumOfCarriers + 1 ==
                                                 transport.totalNumOfCarriers
@@ -130,19 +142,35 @@ class AssignCardTransport extends StatelessWidget {
                                                 .waitingForVolunteers
                                                 .toString()
                                                 .split('.')[1],
+                                    'Current Number Of Carriers':
+                                        transport.currentNumOfCarriers + 1,
                                   });
                                 },
                                 child: Text(schedule),
-                              ),
-                            ]
-                          ].expand((element) => element).toList(),
-                        )
-                      : type == CardType.personal
-                          ? Text(
-                              'נרשמו ${transport.currentNumOfCarriers} מתוך  ${transport.totalNumOfCarriers} מובילים',
-                              style: TextStyle(fontSize: 16),
-                            )
-                          : Container(), // transport in admin
+                              ))
+                            : type == CardType.personal
+                                ? Text(
+                                    "\"עם הרשמות להובלה גדולה מגיעה אחריות גדולה\"",
+                                    style: TextStyle(fontSize: 14),
+                                  )
+                                : (transport.currentNumOfCarriers ==
+                                        transport.totalNumOfCarriers
+                                    ? ElevatedButton(
+                                        onPressed: () {
+                                          db.updateTransportFields(
+                                              transport.id, {
+                                            'Status Of Transport':
+                                                TransportStatus.carriedOut
+                                                    .toString()
+                                                    .split('.')[1],
+                                          });
+                                        },
+                                        child: Text("אישור ביצוע ההובלה"),
+                                      )
+                                    : Container())
+                      ]
+                    ].expand((element) => element).toList(),
+                  ),
                 ],
               ),
             ),
