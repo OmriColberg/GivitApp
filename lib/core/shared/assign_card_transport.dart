@@ -73,7 +73,6 @@ class AssignCardTransport extends StatelessWidget {
                                 color: Colors.red,
                               ),
                               onTap: () {
-                                print("פה זה הכפתור האדום");
                                 personalTransport.remove(transport.id);
                                 if (transport.currentNumOfCarriers ==
                                     transport.totalNumOfCarriers) {
@@ -86,7 +85,9 @@ class AssignCardTransport extends StatelessWidget {
                                     {'Transports': personalTransport});
                                 db.updateTransportFields(transport.id, {
                                   'Current Number Of Carriers':
-                                      transport.currentNumOfCarriers - 1
+                                      transport.currentNumOfCarriers - 1,
+                                  "Carriers":
+                                      FieldValue.arrayRemove(['${db.uid}'])
                                 });
                               },
                             )
@@ -144,6 +145,8 @@ class AssignCardTransport extends StatelessWidget {
                                                 .split('.')[1],
                                     'Current Number Of Carriers':
                                         transport.currentNumOfCarriers + 1,
+                                    "Carriers":
+                                        FieldValue.arrayUnion(['${db.uid}'])
                                   });
                                 },
                                 child: Text(schedule),

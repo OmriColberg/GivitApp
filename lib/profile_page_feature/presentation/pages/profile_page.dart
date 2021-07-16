@@ -162,15 +162,10 @@ AssignCardProduct createDeliveryAssignFromProductSnapshot(
 
 AssignCardTransport createDeliveryAssignFromTransportSnapshot(
     Transport transport, List<String> transports, Size size) {
-  String date;
-  if (transport.datePickUp != null) {
-    date =
-        DateFormat('yyyy-MM-dd hh:mm').format(transport.datePickUp).toString();
-  } else {
-    date = '';
-  }
+  String date =
+      DateFormat('yyyy-MM-dd hh:mm').format(transport.datePickUp).toString();
   return AssignCardTransport(
-    title: date + ' :הובלה ב',
+    title: date + ' :הובלה ב' + '\n' + transport.pickUpAddress + ' :יוצאת מ',
     body: transport.notes,
     schedule: 'לשיבוץ הובלה',
     type: CardType.personal,

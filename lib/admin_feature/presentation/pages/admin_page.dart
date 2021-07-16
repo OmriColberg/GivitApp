@@ -109,81 +109,69 @@ class _AdminPageState extends State<AdminPage> {
                     ':מוצרים זמינים להובלה',
                     style: TextStyle(fontSize: 16),
                   ),
-                  SingleChildScrollView(
-                    child: StreamBuilder<QuerySnapshot>(
-                      stream: db.transportsData,
-                      builder: (context, snapshotTransport) {
-                        if (snapshotTransport.hasError) {
-                          return Text('Something went wrong');
-                        }
+                  StreamBuilder<QuerySnapshot>(
+                    stream: db.transportsData,
+                    builder: (context, snapshotTransport) {
+                      if (snapshotTransport.hasError) {
+                        return Text('Something went wrong');
+                      }
 
-                        if (snapshotTransport.connectionState ==
-                            ConnectionState.waiting) {
-                          return Loading();
-                        }
+                      if (snapshotTransport.connectionState ==
+                          ConnectionState.waiting) {
+                        return Loading();
+                      }
 
-                        return Column(
-                          children: [
-                            [
-                              Wrap(
-                                direction: Axis.vertical,
-                                alignment: WrapAlignment.center,
-                                spacing: 8.0,
-                                runAlignment: WrapAlignment.center,
-                                runSpacing: 8.0,
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                verticalDirection: VerticalDirection.up,
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: _products.map((Product? product) {
-                                      return Padding(
+                      return Container(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              [
+                                Wrap(
+                                  children: _products.map((Product? product) {
+                                    return Padding(
                                         padding:
                                             EdgeInsets.symmetric(horizontal: 2),
                                         child: ElevatedButton(
                                           onPressed: () {},
                                           child: Text(
-                                              '${product!.name}\n${product.pickUpAddress}'),
+                                            '${product!.name}\n${product.pickUpAddress}',
+                                            style: TextStyle(fontSize: 16),
+                                          ),
                                           style: ElevatedButton.styleFrom(
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(30.0),
                                             ),
                                           ),
-                                        ),
-                                      );
-                                    }).toList(),
-                                  ),
-                                ],
-                              ),
-                              Text(
-                                ':הובלות עתידיות',
-                                style: TextStyle(fontSize: 16),
-                              ),
-                            ],
-                            snapshotTransport.data!.docs
-                                .map((DocumentSnapshot document) {
-                              var snapshotData = document.data() as Map;
-                              // TODO: add if statement to show only by relevant status
-                              Transport transport =
-                                  Transport.transportFromDocument(
-                                      snapshotData, document.id);
-                              if (transport.status !=
-                                  TransportStatus.carriedOut) {
-                                return createDeliveryAssignFromTransportSnapshot(
-                                    transport,
-                                    givitUser!.transports,
-                                    widget.size);
-                              } else {
-                                return Container();
-                              }
-                            }).toList(),
-                          ].expand((element) => element).toList(),
-                        );
-                      },
-                    ),
+                                        ));
+                                  }).toList(),
+                                ),
+                                Text(
+                                  ':הובלות עתידיות',
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ],
+                              snapshotTransport.data!.docs
+                                  .map((DocumentSnapshot document) {
+                                var snapshotData = document.data() as Map;
+                                Transport transport =
+                                    Transport.transportFromDocument(
+                                        snapshotData, document.id);
+                                if (transport.status !=
+                                    TransportStatus.carriedOut) {
+                                  return createDeliveryAssignFromTransportSnapshot(
+                                      transport,
+                                      givitUser!.transports,
+                                      widget.size);
+                                } else {
+                                  return Container();
+                                }
+                              }).toList(),
+                            ].expand((element) => element).toList(),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -210,15 +198,10 @@ AssignCardProduct createDeliveryAssignFromProductSnapshot(
 
 AssignCardTransport createDeliveryAssignFromTransportSnapshot(
     Transport transport, List<String> transports, Size size) {
-  String date;
-  if (transport.datePickUp != null) {
-    date =
-        DateFormat('yyyy-MM-dd hh:mm').format(transport.datePickUp).toString();
-  } else {
-    date = '';
-  }
+  String date =
+      DateFormat('yyyy-MM-dd hh:mm').format(transport.datePickUp).toString();
   return AssignCardTransport(
-    title: date + ' :הובלה ב',
+    title: date + ' :הובלה ב' + '\n' + transport.pickUpAddress + ' :יוצאת מ',
     body: transport.notes,
     schedule: 'לשיבוץ הובלה',
     type: CardType.admin,
