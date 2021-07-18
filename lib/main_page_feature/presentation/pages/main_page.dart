@@ -56,7 +56,6 @@ class _MainPageState extends State<MainPage> {
 
                 return Container(
                   color: Colors.blue[100],
-                  height: 400.0,
                   alignment: Alignment.topCenter,
                   child: SingleChildScrollView(
                     child: Column(

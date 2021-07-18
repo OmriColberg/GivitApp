@@ -70,59 +70,59 @@ class _AdminPageState extends State<AdminPage> {
             return Container(
               color: Colors.blue[100],
               alignment: Alignment.center,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () => {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  AddProductPage(size: widget.size),
-                            ),
-                          ),
-                        },
-                        child: Text('הוספת מוצר חדש לחיפוש'),
-                      ),
-                      SizedBox(width: 20),
-                      ElevatedButton(
-                        onPressed: () => {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AddTransportPage(
-                                size: widget.size,
-                                productsToBeDelivered: _productToDelivery,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () => {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    AddProductPage(size: widget.size),
                               ),
                             ),
-                          ),
-                        },
-                        child: Text('הוספת הובלה חדשה'),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    ':מוצרים זמינים להובלה',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  StreamBuilder<QuerySnapshot>(
-                    stream: db.transportsData,
-                    builder: (context, snapshotTransport) {
-                      if (snapshotTransport.hasError) {
-                        return Text('Something went wrong');
-                      }
+                          },
+                          child: Text('הוספת מוצר חדש לחיפוש'),
+                        ),
+                        SizedBox(width: 20),
+                        ElevatedButton(
+                          onPressed: () => {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddTransportPage(
+                                  size: widget.size,
+                                  productsToBeDelivered: _productToDelivery,
+                                ),
+                              ),
+                            ),
+                          },
+                          child: Text('הוספת הובלה חדשה'),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      ':מוצרים זמינים להובלה',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    StreamBuilder<QuerySnapshot>(
+                      stream: db.transportsData,
+                      builder: (context, snapshotTransport) {
+                        if (snapshotTransport.hasError) {
+                          return Text('Something went wrong');
+                        }
 
-                      if (snapshotTransport.connectionState ==
-                          ConnectionState.waiting) {
-                        return Loading();
-                      }
+                        if (snapshotTransport.connectionState ==
+                            ConnectionState.waiting) {
+                          return Loading();
+                        }
 
-                      return Container(
-                        child: SingleChildScrollView(
+                        return Container(
                           child: Column(
                             children: [
                               [
@@ -135,9 +135,14 @@ class _AdminPageState extends State<AdminPage> {
                                           onPressed: () {},
                                           child: Text(
                                             '${product!.name}\n${product.pickUpAddress}',
-                                            style: TextStyle(fontSize: 16),
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.white,
+                                            ),
                                           ),
                                           style: ElevatedButton.styleFrom(
+                                            primary: Colors.blue,
+                                            onPrimary: Colors.blue,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(30.0),
@@ -169,11 +174,11 @@ class _AdminPageState extends State<AdminPage> {
                               }).toList(),
                             ].expand((element) => element).toList(),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             );
           },

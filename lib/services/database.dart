@@ -134,4 +134,8 @@ class DatabaseService {
   Stream<GivitUser> get userData {
     return usersCollection.doc(uid).snapshots().map(_givitUserDataFromSnapshot);
   }
+
+  Stream<QuerySnapshot<Object?>> get usersData {
+    return usersCollection.snapshots();
+  }
 }
