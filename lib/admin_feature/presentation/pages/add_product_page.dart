@@ -71,7 +71,6 @@ class _AddProductPageState extends State<AddProductPage> {
                           showDialogHelper(
                               "קרתה תקלה, נסה שוב ($error)", widget.size);
                         });
-                        //Navigator.of(context).pop();
                       }
                     },
                   ),

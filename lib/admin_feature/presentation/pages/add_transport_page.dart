@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
-import 'package:givit_app/core/shared/assign_card.dart';
+import 'package:givit_app/core/shared/assign_card_product.dart';
 import 'package:givit_app/core/shared/constant.dart';
 import 'package:givit_app/core/shared/loading.dart';
 import 'package:givit_app/services/database.dart';
@@ -178,16 +178,15 @@ class _AddTransportPageState extends State<AddTransportPage> {
   }
 }
 
-DeliveryAssign createDeliveryAssignFromProductSnapshot(
+AssignCardProduct createDeliveryAssignFromProductSnapshot(
     Product product, Size size) {
-  return DeliveryAssign(
+  return AssignCardProduct(
     title: product.name,
     body: product.notes,
     schedule: 'לשיבוץ חיפוש',
-    isProduct: true,
-    isMain: true,
-    contant: product.id,
-    contantList: [],
+    type: CardType.admin,
+    product: product,
+    personalProducts: [],
     size: size,
   );
 }

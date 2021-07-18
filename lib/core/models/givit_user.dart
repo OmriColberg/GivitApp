@@ -21,16 +21,16 @@ class GivitUser {
     this.transports = const [],
   });
 
-  factory GivitUser.fromFirestorUser(DocumentSnapshot userSnapshout) {
+  factory GivitUser.fromFirestorUser(DocumentSnapshot userSnapshot) {
     return GivitUser(
-      uid: userSnapshout.id,
-      email: userSnapshout['Email'],
-      password: userSnapshout['Password'],
-      fullName: userSnapshout['Full Name'],
-      phoneNumber: userSnapshout['Phone Number'],
-      role: userSnapshout['Role'],
-      products: List.from(userSnapshout['Products']),
-      transports: List.from(userSnapshout['Transports']),
+      uid: userSnapshot.id,
+      email: userSnapshot['Email'],
+      password: userSnapshot['Password'],
+      fullName: userSnapshot['Full Name'],
+      phoneNumber: userSnapshot['Phone Number'],
+      role: userSnapshot['Role'],
+      products: List.from(userSnapshot['Products']),
+      transports: List.from(userSnapshot['Transports']),
     );
   }
 }
