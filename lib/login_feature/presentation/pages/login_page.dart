@@ -17,7 +17,6 @@ class _LoginPageState extends State<LoginPage> {
   String error = '';
   bool loading = false;
 
-  // text field state
   String email = '';
   String password = '';
 
@@ -31,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
               appBar: AppBar(
                 backgroundColor: Colors.blue[400],
                 elevation: 0.0,
-                title: Text('Sign in to Givit'),
+                title: Text('הירשם לגיביט'),
                 actions: <Widget>[
                   TextButton.icon(
                     icon: Icon(
@@ -39,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
                       color: Colors.black,
                     ),
                     label: Text(
-                      'Register',
+                      'הירשם',
                       style: TextStyle(color: Colors.black),
                     ),
                     onPressed: () => widget.toggleView(),
@@ -55,9 +54,9 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(height: 20.0),
                       TextFormField(
                         decoration:
-                            textInputDecoration.copyWith(hintText: 'email'),
+                            textInputDecoration.copyWith(hintText: 'אי-מייל'),
                         validator: (val) =>
-                            val!.isEmpty ? 'Enter an email' : null,
+                            val!.isEmpty ? 'הכנס אי-מייל' : null,
                         onChanged: (val) {
                           setState(() => email = val);
                         },
@@ -66,9 +65,9 @@ class _LoginPageState extends State<LoginPage> {
                       TextFormField(
                         obscureText: true,
                         decoration:
-                            textInputDecoration.copyWith(hintText: 'password'),
+                            textInputDecoration.copyWith(hintText: 'סיסמא'),
                         validator: (val) => val!.length < 6
-                            ? 'Enter a password 6+ characters long'
+                            ? 'הכנס סיסמא באורך של לפחות 6 תווים'
                             : null,
                         onChanged: (val) {
                           setState(() => password = val);
@@ -77,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(height: 20.0),
                       ElevatedButton(
                           child: Text(
-                            'Sign In',
+                            'התחבר',
                             style: TextStyle(color: Colors.white),
                           ),
                           onPressed: () async {
@@ -89,7 +88,7 @@ class _LoginPageState extends State<LoginPage> {
                                 setState(() {
                                   loading = false;
                                   error =
-                                      'Could not sign in with those credentials';
+                                      'לא ניתן להתחבר עם אמצעי הזיהוי שסופקו';
                                 });
                               }
                             }

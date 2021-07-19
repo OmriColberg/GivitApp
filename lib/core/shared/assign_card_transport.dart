@@ -39,7 +39,7 @@ class AssignCardTransport extends StatelessWidget {
       stream: db.usersData,
       builder: (context, snapshotUsers) {
         if (snapshotUsers.hasError) {
-          return Text('Something went wrong');
+          return Text('אירעה תקלה, נא לפנות למנהלים');
         }
 
         if (snapshotUsers.connectionState == ConnectionState.waiting) {
@@ -50,7 +50,7 @@ class AssignCardTransport extends StatelessWidget {
           stream: db.producstData,
           builder: (context, snapshotProduct) {
             if (snapshotProduct.hasError) {
-              return Text('Something went wrong');
+              return Text('אירעה תקלה, נא לפנות למנהלים');
             }
 
             if (snapshotProduct.connectionState == ConnectionState.waiting) {

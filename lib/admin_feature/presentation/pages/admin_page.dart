@@ -29,7 +29,7 @@ class _AdminPageState extends State<AdminPage> {
       stream: db.userData,
       builder: (context, snapshotGivitUser) {
         if (snapshotGivitUser.hasError) {
-          return Text('Something went wrong');
+          return Text('אירעה תקלה, נא לפנות למנהלים');
         }
 
         if (snapshotGivitUser.connectionState == ConnectionState.waiting) {
@@ -41,7 +41,7 @@ class _AdminPageState extends State<AdminPage> {
           stream: db.producstData,
           builder: (context, snapshotProduct) {
             if (snapshotProduct.hasError) {
-              return Text('Something went wrong');
+              return Text('אירעה תקלה, נא לפנות למנהלים');
             }
 
             if (snapshotProduct.connectionState == ConnectionState.waiting) {
@@ -114,7 +114,7 @@ class _AdminPageState extends State<AdminPage> {
                       stream: db.transportsData,
                       builder: (context, snapshotTransport) {
                         if (snapshotTransport.hasError) {
-                          return Text('Something went wrong');
+                          return Text('אירעה תקלה, נא לפנות למנהלים');
                         }
 
                         if (snapshotTransport.connectionState ==

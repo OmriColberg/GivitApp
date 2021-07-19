@@ -3,7 +3,6 @@ import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
 import 'package:givit_app/core/shared/assign_card_product.dart';
 import 'package:givit_app/core/shared/constant.dart';
-import 'package:givit_app/core/shared/loading.dart';
 import 'package:givit_app/services/database.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:provider/provider.dart';

@@ -23,7 +23,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-    
+  flutter_localizations: 
+    sdk: flutter
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -55,6 +56,13 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  flutter_launcher_icons: "^0.9.0"
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "lib/core/assets/givit_logo.png"
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -71,6 +79,7 @@ flutter:
     - lib/core/assets/givit-white.png
     - lib/core/assets/default_profile_pic.png
     - lib/core/assets/sofa_icon.svg
+    - lib/core/assets/givit_logo.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

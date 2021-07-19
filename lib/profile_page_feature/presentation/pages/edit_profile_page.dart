@@ -22,7 +22,6 @@ class MapScreenState extends State<EditProfilePage>
   final FocusNode myFocusNode = FocusNode();
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
   final Size size;
 
@@ -30,7 +29,6 @@ class MapScreenState extends State<EditProfilePage>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -136,7 +134,7 @@ class MapScreenState extends State<EditProfilePage>
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
                                             Text(
-                                              'Personal Information',
+                                              'פרטיים אישיים',
                                               style: TextStyle(
                                                   fontSize: 18.0,
                                                   fontWeight: FontWeight.bold),
@@ -155,27 +153,20 @@ class MapScreenState extends State<EditProfilePage>
                                         )
                                       ],
                                     )),
-                                SubTitlePersonalArea(title: 'Name'),
+                                SubTitlePersonalArea(title: 'שם פרטי ומשפחה'),
                                 ParamInfoPersonalArea(
                                     controller: fullNameController,
                                     paramInfo: givitUser!.fullName,
                                     obscure: false,
                                     status: _status),
-                                SubTitlePersonalArea(title: 'Email'),
+                                SubTitlePersonalArea(title: 'אי-מייל'),
                                 ParamInfoPersonalArea(
                                   controller: emailController,
                                   paramInfo: givitUser.email,
                                   obscure: false,
                                   status: _status,
                                 ),
-                                SubTitlePersonalArea(title: 'Password'),
-                                ParamInfoPersonalArea(
-                                  controller: passwordController,
-                                  paramInfo: givitUser.password,
-                                  obscure: true,
-                                  status: _status,
-                                ),
-                                SubTitlePersonalArea(title: 'Phone Number'),
+                                SubTitlePersonalArea(title: 'מספר טלפון'),
                                 ParamInfoPersonalArea(
                                   controller: phoneNumberController,
                                   paramInfo: givitUser.phoneNumber.toString(),
@@ -202,7 +193,6 @@ class MapScreenState extends State<EditProfilePage>
     // Clean up the controller when the Widget is disposed
     myFocusNode.dispose();
     emailController.dispose();
-    passwordController.dispose();
     phoneNumberController.dispose();
     fullNameController.dispose();
     super.dispose();
@@ -215,7 +205,7 @@ class MapScreenState extends State<EditProfilePage>
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          _saveCancelButton('Save', () async {
+          _saveCancelButton('שמור', () async {
             await db.updateGivitUserFields({
               'Email': emailController.text == ''
                   ? givitUser.email
@@ -223,9 +213,6 @@ class MapScreenState extends State<EditProfilePage>
               'Full Name': fullNameController.text == ''
                   ? givitUser.fullName
                   : fullNameController.text,
-              'Password': passwordController.text == ''
-                  ? givitUser.password
-                  : passwordController.text,
               'Phone Number': phoneNumberController.text == ''
                   ? givitUser.phoneNumber
                   : int.parse(phoneNumberController.text),
@@ -235,7 +222,7 @@ class MapScreenState extends State<EditProfilePage>
               FocusScope.of(context).requestFocus(FocusNode());
             });
           }),
-          _saveCancelButton('Cancel', () {
+          _saveCancelButton('בטל', () {
             setState(() {
               _status = true;
               FocusScope.of(context).requestFocus(FocusNode());

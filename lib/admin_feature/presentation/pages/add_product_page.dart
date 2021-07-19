@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/shared/constant.dart';
-import 'package:givit_app/core/shared/loading.dart';
 import 'package:givit_app/services/database.dart';
 import 'package:provider/provider.dart';
 

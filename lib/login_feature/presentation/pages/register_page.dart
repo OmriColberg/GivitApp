@@ -33,7 +33,7 @@ class _RegisterPageState extends State<RegisterPage> {
               appBar: AppBar(
                 backgroundColor: Colors.blue[400],
                 elevation: 0.0,
-                title: Text('Register to Givit'),
+                title: Text('הירשם לגיביט'),
                 actions: <Widget>[
                   TextButton.icon(
                     icon: Icon(
@@ -41,7 +41,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       color: Colors.black,
                     ),
                     label: Text(
-                      'Sign In',
+                      'התחבר',
                       style: TextStyle(color: Colors.black),
                     ),
                     onPressed: () => widget.toggleView(),
@@ -57,9 +57,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       SizedBox(height: 20.0),
                       TextFormField(
                         decoration:
-                            textInputDecoration.copyWith(hintText: 'email'),
+                            textInputDecoration.copyWith(hintText: 'אי-מייל'),
                         validator: (val) =>
-                            val!.isEmpty ? 'Enter an email' : null,
+                            val!.isEmpty ? 'הכנס/י אי-מייל' : null,
                         onChanged: (val) {
                           setState(() => email = val);
                         },
@@ -67,10 +67,10 @@ class _RegisterPageState extends State<RegisterPage> {
                       SizedBox(height: 20.0),
                       TextFormField(
                         decoration:
-                            textInputDecoration.copyWith(hintText: 'password'),
+                            textInputDecoration.copyWith(hintText: 'סיסמא'),
                         obscureText: true,
                         validator: (val) => val!.length < 6
-                            ? 'Enter a password 6+ characters long'
+                            ? 'הכנס סיסמא באורך של לפחות 6 תווים'
                             : null,
                         onChanged: (val) {
                           setState(() => password = val);
@@ -78,8 +78,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       SizedBox(height: 20.0),
                       TextFormField(
-                        decoration:
-                            textInputDecoration.copyWith(hintText: 'Full Name'),
+                        decoration: textInputDecoration.copyWith(
+                            hintText: 'שם פרטי ומשפחה'),
                         onChanged: (val) {
                           setState(() => fullName = val);
                         },
@@ -87,9 +87,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       SizedBox(height: 20.0),
                       TextFormField(
                         decoration: textInputDecoration.copyWith(
-                            hintText: 'Phone Number'),
+                            hintText: 'מספר טלפון'),
                         validator: (val) => val!.length != 10
-                            ? "Enter a valid phone number"
+                            ? "נא להכניס מספר טלפון חוקי, בעל 10 ספרות ללא מקף"
                             : null,
                         onChanged: (val) {
                           setState(() => phoneNumber = int.parse(val));
@@ -98,7 +98,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       SizedBox(height: 20.0),
                       ElevatedButton(
                         child: Text(
-                          'Register',
+                          'הירשם',
                           style: TextStyle(color: Colors.white),
                         ),
                         onPressed: () async {
@@ -110,7 +110,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             if (result == null) {
                               setState(() {
                                 loading = false;
-                                error = 'Please supply a valid email';
+                                error = 'נא לספק אי-מייל חוקי';
                               });
                             }
                           }
