@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:givit_app/core/models/givit_user.dart';
@@ -28,7 +30,11 @@ class DatabaseService {
       'Full Name': fullName,
       'Password': password,
       'Phone Number': phoneNumber,
+<<<<<<< Updated upstream
       'Profile Picture URL': url,
+=======
+      'Profile Picture Path': '',
+>>>>>>> Stashed changes
       'Products': [],
       'Transports': [],
       'Role': 'User',
@@ -123,6 +129,10 @@ class DatabaseService {
     return productsCollection.snapshots();
   }
 
+  Future<void> uploadingFile(File file) async {
+    //return await FirebaseStorage
+  }
+
   GivitUser _givitUserDataFromSnapshot(DocumentSnapshot snapshot) {
     var snapshotData = snapshot.data() as Map;
     return GivitUser(
@@ -133,6 +143,7 @@ class DatabaseService {
       phoneNumber: snapshotData['Phone Number'],
       profilePictureURL: snapshotData['Profile Picture URL'],
       role: snapshotData['Role'],
+      profilePicture64: snapshotData['Profile Picture'],
       products: List.from(snapshotData['Products']),
       transports: List.from(snapshotData['Transports']),
     );

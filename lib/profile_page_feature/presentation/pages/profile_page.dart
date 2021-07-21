@@ -50,8 +50,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              EditProfilePage(size: widget.size),
+                          builder: (context) => EditProfilePage(
+                            widget.size,
+                            givitUser,
+                          ),
                         ),
                       ),
                     },
