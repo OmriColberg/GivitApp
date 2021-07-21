@@ -30,11 +30,7 @@ class DatabaseService {
       'Full Name': fullName,
       'Password': password,
       'Phone Number': phoneNumber,
-<<<<<<< Updated upstream
       'Profile Picture URL': url,
-=======
-      'Profile Picture Path': '',
->>>>>>> Stashed changes
       'Products': [],
       'Transports': [],
       'Role': 'User',
@@ -143,7 +139,6 @@ class DatabaseService {
       phoneNumber: snapshotData['Phone Number'],
       profilePictureURL: snapshotData['Profile Picture URL'],
       role: snapshotData['Role'],
-      profilePicture64: snapshotData['Profile Picture'],
       products: List.from(snapshotData['Products']),
       transports: List.from(snapshotData['Transports']),
     );

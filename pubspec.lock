@@ -79,11 +79,7 @@ packages:
     source: hosted
     version: "1.15.0"
   cross_file:
-<<<<<<< Updated upstream
     dependency: transitive
-=======
-    dependency: "direct main"
->>>>>>> Stashed changes
     description:
       name: cross_file
       url: "https://pub.dartlang.org"
@@ -262,11 +258,7 @@ packages:
       name: image_picker_for_web
       url: "https://pub.dartlang.org"
     source: hosted
-<<<<<<< Updated upstream
     version: "2.1.1"
-=======
-    version: "2.1.0"
->>>>>>> Stashed changes
   image_picker_platform_interface:
     dependency: transitive
     description:
