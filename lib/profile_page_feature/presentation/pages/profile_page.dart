@@ -29,6 +29,7 @@ class _ProfilePageState extends State<ProfilePage> {
       stream: db.userData,
       builder: (context, snapshotGivitUser) {
         if (snapshotGivitUser.hasError) {
+          print(snapshotGivitUser.error);
           return Text('אירעה תקלה, נא לפנות למנהלים');
         }
 

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
 import 'package:givit_app/core/models/transport.dart';
@@ -8,6 +9,7 @@ class DatabaseService {
   final String? uid;
   DatabaseService({this.uid});
 
+  final FirebaseStorage storage = FirebaseStorage.instance;
   final FirebaseFirestore db = FirebaseFirestore.instance;
   final CollectionReference usersCollection =
       FirebaseFirestore.instance.collection('Users');
@@ -23,6 +25,7 @@ class DatabaseService {
       'Full Name': fullName,
       'Password': password,
       'Phone Number': phoneNumber,
+      'Profile Picture Path': '',
       'Products': [],
       'Transports': [],
       'Role': 'User',
@@ -125,6 +128,7 @@ class DatabaseService {
       password: snapshotData['Password'],
       fullName: snapshotData['Full Name'],
       phoneNumber: snapshotData['Phone Number'],
+      profilePicturePath: snapshotData['Profile Picture Path'],
       role: snapshotData['Role'],
       products: List.from(snapshotData['Products']),
       transports: List.from(snapshotData['Transports']),

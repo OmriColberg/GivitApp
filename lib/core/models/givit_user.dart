@@ -6,6 +6,7 @@ class GivitUser {
   final String password;
   final String fullName;
   final int phoneNumber;
+  final String profilePicturePath;
   final String role;
   final List<String> products;
   final List<String> transports;
@@ -16,6 +17,7 @@ class GivitUser {
     this.fullName = '',
     this.phoneNumber = 0,
     this.role = 'User',
+    this.profilePicturePath = '',
     this.uid = '',
     this.products = const [],
     this.transports = const [],
@@ -28,6 +30,7 @@ class GivitUser {
       password: userSnapshot['Password'],
       fullName: userSnapshot['Full Name'],
       phoneNumber: userSnapshot['Phone Number'],
+      profilePicturePath: userSnapshot['Profile Picture Path'],
       role: userSnapshot['Role'],
       products: List.from(userSnapshot['Products']),
       transports: List.from(userSnapshot['Transports']),

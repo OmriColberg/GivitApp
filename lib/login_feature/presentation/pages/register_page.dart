@@ -33,7 +33,7 @@ class _RegisterPageState extends State<RegisterPage> {
               appBar: AppBar(
                 backgroundColor: Colors.blue[400],
                 elevation: 0.0,
-                title: Text('הירשם לגיביט'),
+                title: Text('הרשמה לגיביט'),
                 actions: <Widget>[
                   TextButton.icon(
                     icon: Icon(
@@ -41,7 +41,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       color: Colors.black,
                     ),
                     label: Text(
-                      'התחבר',
+                      'התחברות',
                       style: TextStyle(color: Colors.black),
                     ),
                     onPressed: () => widget.toggleView(),
@@ -98,7 +98,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       SizedBox(height: 20.0),
                       ElevatedButton(
                         child: Text(
-                          'הירשם',
+                          'הרשמה',
                           style: TextStyle(color: Colors.white),
                         ),
                         onPressed: () async {

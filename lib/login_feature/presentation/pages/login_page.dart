@@ -30,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
               appBar: AppBar(
                 backgroundColor: Colors.blue[400],
                 elevation: 0.0,
-                title: Text('הירשם לגיביט'),
+                title: Text('התחברות לגיביט'),
                 actions: <Widget>[
                   TextButton.icon(
                     icon: Icon(
@@ -38,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
                       color: Colors.black,
                     ),
                     label: Text(
-                      'הירשם',
+                      'הרשמה',
                       style: TextStyle(color: Colors.black),
                     ),
                     onPressed: () => widget.toggleView(),
@@ -76,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(height: 20.0),
                       ElevatedButton(
                           child: Text(
-                            'התחבר',
+                            'התחברות',
                             style: TextStyle(color: Colors.white),
                           ),
                           onPressed: () async {
