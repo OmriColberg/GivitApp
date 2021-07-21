@@ -27,12 +27,13 @@ class AssignCardTransport extends StatelessWidget {
     required this.type,
   });
 
+  int prodIndex = 0;
+  int userIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     final GivitUser givitUser = Provider.of<GivitUser>(context);
     final DatabaseService db = DatabaseService(uid: givitUser.uid);
-    int prodIndex = 0;
-    int userIndex = 0;
 
     return StreamBuilder<QuerySnapshot>(
       stream: db.usersData,
@@ -152,7 +153,7 @@ class AssignCardTransport extends StatelessWidget {
                                 SizedBox(width: 10),
                                 ClipOval(
                                   child: Image.network(
-                                    user.profilePicturePath,
+                                    user.profilePictureURL,
                                     fit: BoxFit.fill,
                                     height: 30,
                                     width: 30,

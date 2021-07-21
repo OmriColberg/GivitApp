@@ -20,12 +20,15 @@ class DatabaseService {
 
   Future<void> addGivitUser(
       String email, String fullName, String password, int phoneNumber) async {
+    Reference ref =
+        FirebaseStorage.instance.ref().child("/default_profile_pic.png");
+    String url = (await ref.getDownloadURL()).toString();
     return await usersCollection.doc(uid).set({
       'Email': email,
       'Full Name': fullName,
       'Password': password,
       'Phone Number': phoneNumber,
-      'Profile Picture Path': '',
+      'Profile Picture URL': url,
       'Products': [],
       'Transports': [],
       'Role': 'User',
@@ -128,7 +131,7 @@ class DatabaseService {
       password: snapshotData['Password'],
       fullName: snapshotData['Full Name'],
       phoneNumber: snapshotData['Phone Number'],
-      profilePicturePath: snapshotData['Profile Picture Path'],
+      profilePictureURL: snapshotData['Profile Picture URL'],
       role: snapshotData['Role'],
       products: List.from(snapshotData['Products']),
       transports: List.from(snapshotData['Transports']),

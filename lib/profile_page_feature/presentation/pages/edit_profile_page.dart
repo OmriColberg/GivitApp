@@ -85,7 +85,7 @@ class MapScreenState extends State<EditProfilePage>
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: <Widget>[
-                                        givitUser!.profilePicturePath == ''
+                                        givitUser!.profilePictureURL == ''
                                             ? Container(
                                                 width: 140.0,
                                                 height: 140.0,
@@ -100,7 +100,7 @@ class MapScreenState extends State<EditProfilePage>
                                               )
                                             : ClipOval(
                                                 child: Image.network(
-                                                  givitUser.profilePicturePath,
+                                                  givitUser.profilePictureURL,
                                                   fit: BoxFit.fill,
                                                   height: 140,
                                                   width: 140,
@@ -141,7 +141,7 @@ class MapScreenState extends State<EditProfilePage>
                                                         .getDownloadURL()
                                                         .then((fileURL) => {
                                                               db.updateGivitUserFields({
-                                                                'Profile Picture Path':
+                                                                'Profile Picture URL':
                                                                     fileURL
                                                               })
                                                             }));
