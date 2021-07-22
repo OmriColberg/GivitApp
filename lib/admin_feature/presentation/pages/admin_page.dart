@@ -132,7 +132,42 @@ class _AdminPageState extends State<AdminPage> {
                                         padding:
                                             EdgeInsets.symmetric(horizontal: 2),
                                         child: ElevatedButton(
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            if (product != null) {
+                                              String length = product.length !=
+                                                      0
+                                                  ? product.length.toString()
+                                                  : '';
+                                              String width = product.width != 0
+                                                  ? product.width.toString()
+                                                  : '';
+                                              String weight = product.weight !=
+                                                      0
+                                                  ? product.weight.toString()
+                                                  : '';
+                                              showDialogHelper(
+                                                  product.ownerName +
+                                                      " :שם הבעלים\n" +
+                                                      product.ownerPhoneNumber +
+                                                      " :מספר טלפון\n" +
+                                                      product.pickUpAddress +
+                                                      " :כתובת לאיסוף\n" +
+                                                      product.timeForPickUp +
+                                                      " :זמן לאיסוף המוצר\n" +
+                                                      Product.hebrewFromEnum(
+                                                          product.state) +
+                                                      " :מצב המוצר\n" +
+                                                      length +
+                                                      " :אורך המוצר\n" +
+                                                      width +
+                                                      " :רוחב המוצר\n" +
+                                                      weight +
+                                                      " :משקל המוצר\n" +
+                                                      product.notes +
+                                                      " :הערות\n",
+                                                  widget.size);
+                                            }
+                                          },
                                           child: Text(
                                             '${product!.name}\n${product.pickUpAddress}',
                                             style: TextStyle(
@@ -141,8 +176,6 @@ class _AdminPageState extends State<AdminPage> {
                                             ),
                                           ),
                                           style: ElevatedButton.styleFrom(
-                                            primary: Colors.blue,
-                                            onPrimary: Colors.blue,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(30.0),
@@ -182,6 +215,30 @@ class _AdminPageState extends State<AdminPage> {
               ),
             );
           },
+        );
+      },
+    );
+  }
+
+  void showDialogHelper(String dialogText, Size size) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: size.height * 0.5,
+          child: AlertDialog(
+            title: Text(dialogText),
+            content: Stack(
+              children: <Widget>[
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("לחזרה"),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
