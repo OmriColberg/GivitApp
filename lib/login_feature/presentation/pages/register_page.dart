@@ -55,45 +55,57 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Column(
                     children: <Widget>[
                       SizedBox(height: 20.0),
-                      TextFormField(
-                        decoration:
-                            textInputDecoration.copyWith(hintText: 'אי-מייל'),
-                        validator: (val) =>
-                            val!.isEmpty ? 'הכנס/י אי-מייל' : null,
-                        onChanged: (val) {
-                          setState(() => email = val);
-                        },
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: TextFormField(
+                          decoration:
+                              textInputDecoration.copyWith(hintText: 'אי-מייל'),
+                          validator: (val) =>
+                              val!.isEmpty ? 'הכנס/י אי-מייל' : null,
+                          onChanged: (val) {
+                            setState(() => email = val);
+                          },
+                        ),
                       ),
                       SizedBox(height: 20.0),
-                      TextFormField(
-                        decoration:
-                            textInputDecoration.copyWith(hintText: 'סיסמא'),
-                        obscureText: true,
-                        validator: (val) => val!.length < 6
-                            ? 'הכנס סיסמא באורך של לפחות 6 תווים'
-                            : null,
-                        onChanged: (val) {
-                          setState(() => password = val);
-                        },
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: TextFormField(
+                          decoration:
+                              textInputDecoration.copyWith(hintText: 'סיסמא'),
+                          obscureText: true,
+                          validator: (val) => val!.length < 6
+                              ? 'הכנס סיסמא באורך של לפחות 6 תווים'
+                              : null,
+                          onChanged: (val) {
+                            setState(() => password = val);
+                          },
+                        ),
                       ),
                       SizedBox(height: 20.0),
-                      TextFormField(
-                        decoration: textInputDecoration.copyWith(
-                            hintText: 'שם פרטי ומשפחה'),
-                        onChanged: (val) {
-                          setState(() => fullName = val);
-                        },
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: TextFormField(
+                          decoration: textInputDecoration.copyWith(
+                              hintText: 'שם פרטי ומשפחה'),
+                          onChanged: (val) {
+                            setState(() => fullName = val);
+                          },
+                        ),
                       ),
                       SizedBox(height: 20.0),
-                      TextFormField(
-                        decoration: textInputDecoration.copyWith(
-                            hintText: 'מספר טלפון'),
-                        validator: (val) => val!.length != 10
-                            ? "נא להכניס מספר טלפון חוקי, בעל 10 ספרות ללא מקף"
-                            : null,
-                        onChanged: (val) {
-                          setState(() => phoneNumber = int.parse(val));
-                        },
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: TextFormField(
+                          decoration: textInputDecoration.copyWith(
+                              hintText: 'מספר טלפון'),
+                          validator: (val) => val!.length != 10
+                              ? "נא להכניס מספר טלפון חוקי, בעל 10 ספרות ללא מקף"
+                              : null,
+                          onChanged: (val) {
+                            setState(() => phoneNumber = int.parse(val));
+                          },
+                        ),
                       ),
                       SizedBox(height: 20.0),
                       ElevatedButton(

@@ -38,21 +38,27 @@ class _AddProductPageState extends State<AddProductPage> {
               child: Column(
                 children: <Widget>[
                   SizedBox(height: 20.0),
-                  TextFormField(
-                    decoration:
-                        textInputDecoration.copyWith(hintText: 'שם המוצר'),
-                    //validator: (val) => val!.isEmpty ? 'הכנס שם מוצר' : null,
-                    onChanged: (val) {
-                      setState(() => name = val);
-                    },
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: TextFormField(
+                      decoration:
+                          textInputDecoration.copyWith(hintText: 'שם המוצר'),
+                      //validator: (val) => val!.isEmpty ? 'הכנס שם מוצר' : null,
+                      onChanged: (val) {
+                        setState(() => name = val);
+                      },
+                    ),
                   ),
                   SizedBox(height: 20.0),
-                  TextFormField(
-                    decoration:
-                        textInputDecoration.copyWith(hintText: 'הערות נוספות'),
-                    onChanged: (val) {
-                      setState(() => notes = val);
-                    },
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: TextFormField(
+                      decoration: textInputDecoration.copyWith(
+                          hintText: 'הערות נוספות'),
+                      onChanged: (val) {
+                        setState(() => notes = val);
+                      },
+                    ),
                   ),
                   SizedBox(height: 20.0),
                   ElevatedButton(

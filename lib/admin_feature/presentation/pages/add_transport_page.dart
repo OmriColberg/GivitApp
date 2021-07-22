@@ -48,54 +48,70 @@ class _AddTransportPageState extends State<AddTransportPage> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  MultiSelectDialogField<Product?>(
-                    items: widget.productsToBeDelivered,
-                    title: Text("מוצרים לבחירה"),
-                    selectedColor: Colors.blue,
-                    buttonText:
-                        Text("                            בחר/י מוצרים להובלה"),
-                    onConfirm: (results) {
-                      products = results
-                          .map((Product? product) => product!.id)
-                          .toList()
-                          .cast<String>();
-                    },
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: MultiSelectDialogField<Product?>(
+                      items: widget.productsToBeDelivered,
+                      title: Text("מוצרים לבחירה"),
+                      selectedColor: Colors.blue,
+                      buttonText: Text("בחר/י מוצרים להובלה"),
+                      onConfirm: (results) {
+                        products = results
+                            .map((Product? product) => product!.id)
+                            .toList()
+                            .cast<String>();
+                      },
+                    ),
                   ),
                   SizedBox(height: 20.0),
-                  TextFormField(
-                    decoration:
-                        textInputDecoration.copyWith(hintText: 'מספר מובילים'),
-                    validator: (val) =>
-                        val!.isEmpty ? 'הכנס מספר מובילים' : null,
-                    onChanged: (val) {
-                      setState(() => totalNumOfCarriers = int.parse(val));
-                    },
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: TextFormField(
+                      decoration: textInputDecoration.copyWith(
+                          hintText: 'מספר מובילים'),
+                      validator: (val) =>
+                          val!.isEmpty ? 'הכנס מספר מובילים' : null,
+                      onChanged: (val) {
+                        setState(() => totalNumOfCarriers = int.parse(val));
+                      },
+                    ),
                   ),
                   SizedBox(height: 20.0),
-                  TextFormField(
-                    decoration:
-                        textInputDecoration.copyWith(hintText: 'כתובת יעד'),
-                    validator: (val) => val!.isEmpty ? 'הכנס כתובת יעד' : null,
-                    onChanged: (val) {
-                      setState(() => destinationAddress = val);
-                    },
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: TextFormField(
+                      decoration:
+                          textInputDecoration.copyWith(hintText: 'כתובת יעד'),
+                      validator: (val) =>
+                          val!.isEmpty ? 'הכנס כתובת יעד' : null,
+                      onChanged: (val) {
+                        setState(() => destinationAddress = val);
+                      },
+                    ),
                   ),
                   SizedBox(height: 20.0),
-                  TextFormField(
-                    decoration:
-                        textInputDecoration.copyWith(hintText: 'כתובת התחלה'),
-                    validator: (val) =>
-                        val!.isEmpty ? 'הכנס כתובת התחלה' : null,
-                    onChanged: (val) {
-                      setState(() => pickUpAddress = val);
-                    },
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: TextFormField(
+                      decoration:
+                          textInputDecoration.copyWith(hintText: 'כתובת התחלה'),
+                      validator: (val) =>
+                          val!.isEmpty ? 'הכנס כתובת התחלה' : null,
+                      onChanged: (val) {
+                        setState(() => pickUpAddress = val);
+                      },
+                    ),
                   ),
                   SizedBox(height: 20.0),
-                  TextFormField(
-                    decoration: textInputDecoration.copyWith(hintText: 'הערות'),
-                    onChanged: (val) {
-                      setState(() => notes = val);
-                    },
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: TextFormField(
+                      decoration:
+                          textInputDecoration.copyWith(hintText: 'הערות'),
+                      onChanged: (val) {
+                        setState(() => notes = val);
+                      },
+                    ),
                   ),
                   SizedBox(height: 12.0),
                   ElevatedButton(

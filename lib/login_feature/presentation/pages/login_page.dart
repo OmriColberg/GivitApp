@@ -52,26 +52,32 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     children: <Widget>[
                       SizedBox(height: 20.0),
-                      TextFormField(
-                        decoration:
-                            textInputDecoration.copyWith(hintText: 'אי-מייל'),
-                        validator: (val) =>
-                            val!.isEmpty ? 'הכנס אי-מייל' : null,
-                        onChanged: (val) {
-                          setState(() => email = val);
-                        },
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: TextFormField(
+                          decoration:
+                              textInputDecoration.copyWith(hintText: 'אי-מייל'),
+                          validator: (val) =>
+                              val!.isEmpty ? 'הכנס אי-מייל' : null,
+                          onChanged: (val) {
+                            setState(() => email = val);
+                          },
+                        ),
                       ),
                       SizedBox(height: 20.0),
-                      TextFormField(
-                        obscureText: true,
-                        decoration:
-                            textInputDecoration.copyWith(hintText: 'סיסמא'),
-                        validator: (val) => val!.length < 6
-                            ? 'הכנס סיסמא באורך של לפחות 6 תווים'
-                            : null,
-                        onChanged: (val) {
-                          setState(() => password = val);
-                        },
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: TextFormField(
+                          obscureText: true,
+                          decoration:
+                              textInputDecoration.copyWith(hintText: 'סיסמא'),
+                          validator: (val) => val!.length < 6
+                              ? 'הכנס סיסמא באורך של לפחות 6 תווים'
+                              : null,
+                          onChanged: (val) {
+                            setState(() => password = val);
+                          },
+                        ),
                       ),
                       SizedBox(height: 20.0),
                       ElevatedButton(

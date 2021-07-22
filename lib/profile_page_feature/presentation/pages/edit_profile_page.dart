@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,8 +9,6 @@ import 'package:givit_app/profile_page_feature/presentation/pages/sub_title_prof
 import 'package:givit_app/services/database.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io' as Io;
 import 'package:flutter/foundation.dart';
 
 class EditProfilePage extends StatefulWidget {
@@ -167,7 +164,6 @@ class MapScreenState extends State<EditProfilePage>
                             child: Padding(
                               padding: EdgeInsets.only(bottom: 25.0),
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: <Widget>[
                                   Padding(
@@ -178,6 +174,16 @@ class MapScreenState extends State<EditProfilePage>
                                             MainAxisAlignment.spaceBetween,
                                         mainAxisSize: MainAxisSize.max,
                                         children: <Widget>[
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              _status
+                                                  ? _getEditIcon()
+                                                  : Container(),
+                                            ],
+                                          ),
                                           Column(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
@@ -191,38 +197,38 @@ class MapScreenState extends State<EditProfilePage>
                                                         FontWeight.bold),
                                               ),
                                             ],
-                                          ),
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              _status
-                                                  ? _getEditIcon()
-                                                  : Container(),
-                                            ],
                                           )
                                         ],
                                       )),
                                   SubTitlePersonalArea(title: 'שם פרטי ומשפחה'),
-                                  ParamInfoPersonalArea(
-                                      controller: fullNameController,
-                                      paramInfo: givitUser.fullName,
-                                      obscure: false,
-                                      status: _status),
+                                  Directionality(
+                                    textDirection: TextDirection.rtl,
+                                    child: ParamInfoPersonalArea(
+                                        controller: fullNameController,
+                                        paramInfo: givitUser.fullName,
+                                        obscure: false,
+                                        status: _status),
+                                  ),
                                   SubTitlePersonalArea(title: 'אי-מייל'),
-                                  ParamInfoPersonalArea(
-                                    controller: emailController,
-                                    paramInfo: givitUser.email,
-                                    obscure: false,
-                                    status: _status,
+                                  Directionality(
+                                    textDirection: TextDirection.rtl,
+                                    child: ParamInfoPersonalArea(
+                                      controller: emailController,
+                                      paramInfo: givitUser.email,
+                                      obscure: false,
+                                      status: _status,
+                                    ),
                                   ),
                                   SubTitlePersonalArea(title: 'מספר טלפון'),
-                                  ParamInfoPersonalArea(
-                                    controller: phoneNumberController,
-                                    paramInfo: givitUser.phoneNumber.toString(),
-                                    obscure: false,
-                                    status: _status,
+                                  Directionality(
+                                    textDirection: TextDirection.rtl,
+                                    child: ParamInfoPersonalArea(
+                                      controller: phoneNumberController,
+                                      paramInfo:
+                                          givitUser.phoneNumber.toString(),
+                                      obscure: false,
+                                      status: _status,
+                                    ),
                                   ),
                                   !_status
                                       ? _getActionButtons(db, givitUser)
