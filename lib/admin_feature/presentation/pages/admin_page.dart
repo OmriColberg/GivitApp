@@ -134,38 +134,8 @@ class _AdminPageState extends State<AdminPage> {
                                         child: ElevatedButton(
                                           onPressed: () {
                                             if (product != null) {
-                                              String length = product.length !=
-                                                      0
-                                                  ? product.length.toString()
-                                                  : '';
-                                              String width = product.width != 0
-                                                  ? product.width.toString()
-                                                  : '';
-                                              String weight = product.weight !=
-                                                      0
-                                                  ? product.weight.toString()
-                                                  : '';
                                               showDialogHelper(
-                                                  product.ownerName +
-                                                      " :שם הבעלים\n" +
-                                                      product.ownerPhoneNumber +
-                                                      " :מספר טלפון\n" +
-                                                      product.pickUpAddress +
-                                                      " :כתובת לאיסוף\n" +
-                                                      product.timeForPickUp +
-                                                      " :זמן לאיסוף המוצר\n" +
-                                                      Product.hebrewFromEnum(
-                                                          product.state) +
-                                                      " :מצב המוצר\n" +
-                                                      length +
-                                                      " :אורך המוצר\n" +
-                                                      width +
-                                                      " :רוחב המוצר\n" +
-                                                      weight +
-                                                      " :משקל המוצר\n" +
-                                                      product.notes +
-                                                      " :הערות\n",
-                                                  widget.size);
+                                                  product, widget.size);
                                             }
                                           },
                                           child: Text(
@@ -220,14 +190,35 @@ class _AdminPageState extends State<AdminPage> {
     );
   }
 
-  void showDialogHelper(String dialogText, Size size) {
+  void showDialogHelper(Product product, Size size) {
+    String length = product.length != 0 ? product.length.toString() : '';
+    String width = product.width != 0 ? product.width.toString() : '';
+    String weight = product.weight != 0 ? product.weight.toString() : '';
+    String body = product.ownerName +
+        " :שם הבעלים\n" +
+        product.ownerPhoneNumber +
+        " :מספר טלפון\n" +
+        product.pickUpAddress +
+        " :כתובת לאיסוף\n" +
+        product.timeForPickUp +
+        " :זמן לאיסוף המוצר\n" +
+        Product.hebrewFromEnum(product.state) +
+        " :מצב המוצר\n" +
+        length +
+        " :אורך המוצר\n" +
+        width +
+        " :רוחב המוצר\n" +
+        weight +
+        " :משקל המוצר\n" +
+        product.notes +
+        " :הערות\n";
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return Container(
           height: size.height * 0.5,
           child: AlertDialog(
-            title: Text(dialogText),
+            title: Text(body),
             content: Stack(
               children: <Widget>[
                 ElevatedButton(

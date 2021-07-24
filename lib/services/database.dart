@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:givit_app/core/models/givit_user.dart';
@@ -102,6 +100,9 @@ class DatabaseService {
   }
 
   Future<String> addProduct({String? name, String? notes}) async {
+    Reference ref =
+        FirebaseStorage.instance.ref().child("/default_furniture_pic.jpg");
+    String url = (await ref.getDownloadURL()).toString();
     return await productsCollection.add({
       'Notes': notes,
       'Product Name': name,
@@ -110,6 +111,7 @@ class DatabaseService {
       "Owner's Phone Number": 0,
       'Time Span For Pick Up': '',
       'Pick Up Address': '',
+      'Product Picture URL': url,
       'Weight': 0,
       'Length': 0,
       'Width': 0,
@@ -123,10 +125,6 @@ class DatabaseService {
 
   Stream<QuerySnapshot<Object?>> get producstData {
     return productsCollection.snapshots();
-  }
-
-  Future<void> uploadingFile(File file) async {
-    //return await FirebaseStorage
   }
 
   GivitUser _givitUserDataFromSnapshot(DocumentSnapshot snapshot) {

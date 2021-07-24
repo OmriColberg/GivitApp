@@ -122,9 +122,22 @@ class AssignCardTransport extends StatelessWidget {
                                 snapshotData, document.id);
                             if (transport.status.toString() !=
                                 ProductStatus.searching.toString()) {
-                              return Text(
-                                "${++prodIndex}. " + product.name,
-                                style: TextStyle(fontSize: 18),
+                              return Row(
+                                children: [
+                                  Text(
+                                    "${++prodIndex}. " + product.name,
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                  SizedBox(width: 10),
+                                  ClipOval(
+                                    child: Image.network(
+                                      product.productPictureURL,
+                                      fit: BoxFit.fill,
+                                      height: 30,
+                                      width: 30,
+                                    ),
+                                  ),
+                                ],
                               );
                             } else {
                               return Container();

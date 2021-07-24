@@ -88,7 +88,7 @@ class AssignCardProduct extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (context) => ProductFoundForm(
                                   size: size,
-                                  id: product.id,
+                                  product: product,
                                   products: personalProducts),
                             ),
                           );

@@ -83,6 +83,7 @@ flutter:
   assets:
     - lib/core/assets/givit-white.png
     - lib/core/assets/default_profile_pic.png
+    - lib/core/assets/default_furniture_pic.jpg
     - lib/core/assets/sofa_icon.svg
     - lib/core/assets/givit_logo.png
 
