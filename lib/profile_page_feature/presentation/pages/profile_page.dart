@@ -29,7 +29,8 @@ class _ProfilePageState extends State<ProfilePage> {
       stream: db.userData,
       builder: (context, snapshotGivitUser) {
         if (snapshotGivitUser.hasError) {
-          return Text('Something went wrong');
+          print(snapshotGivitUser.error);
+          return Text('אירעה תקלה, נא לפנות למנהלים');
         }
 
         if (snapshotGivitUser.connectionState == ConnectionState.waiting) {
@@ -44,25 +45,27 @@ class _ProfilePageState extends State<ProfilePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Hello ${givitUser!.fullName}',
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                  SizedBox(width: 20),
                   ElevatedButton(
                     onPressed: () => {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              EditProfilePage(size: widget.size),
+                          builder: (context) => EditProfilePage(
+                            size: widget.size,
+                            givitUser: givitUser,
+                          ),
                         ),
                       ),
                     },
                     child: Text('עריכת פרטים אישיים'),
-                  )
+                  ),
+                  SizedBox(width: 20),
+                  Text(
+                    'שלום ${givitUser!.fullName}',
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
                 ],
               ),
               SingleChildScrollView(
@@ -70,7 +73,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   stream: db.producstData,
                   builder: (context, snapshotProduct) {
                     if (snapshotProduct.hasError) {
-                      return Text('Something went wrong');
+                      return Text('אירעה תקלה, נא לפנות למנהלים');
                     }
 
                     if (snapshotProduct.connectionState ==
@@ -82,7 +85,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       stream: db.transportsData,
                       builder: (context, snapshotTransport) {
                         if (snapshotTransport.hasError) {
-                          return Text('Something went wrong');
+                          return Text('אירעה תקלה, נא לפנות למנהלים');
                         }
 
                         if (snapshotTransport.connectionState ==

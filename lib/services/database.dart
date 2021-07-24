@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
 import 'package:givit_app/core/models/transport.dart';
@@ -8,6 +9,7 @@ class DatabaseService {
   final String? uid;
   DatabaseService({this.uid});
 
+  final FirebaseStorage storage = FirebaseStorage.instance;
   final FirebaseFirestore db = FirebaseFirestore.instance;
   final CollectionReference usersCollection =
       FirebaseFirestore.instance.collection('Users');
@@ -18,11 +20,15 @@ class DatabaseService {
 
   Future<void> addGivitUser(
       String email, String fullName, String password, int phoneNumber) async {
+    Reference ref =
+        FirebaseStorage.instance.ref().child("/default_profile_pic.png");
+    String url = (await ref.getDownloadURL()).toString();
     return await usersCollection.doc(uid).set({
       'Email': email,
       'Full Name': fullName,
       'Password': password,
       'Phone Number': phoneNumber,
+      'Profile Picture URL': url,
       'Products': [],
       'Transports': [],
       'Role': 'User',
@@ -94,6 +100,9 @@ class DatabaseService {
   }
 
   Future<String> addProduct({String? name, String? notes}) async {
+    Reference ref =
+        FirebaseStorage.instance.ref().child("/default_furniture_pic.jpg");
+    String url = (await ref.getDownloadURL()).toString();
     return await productsCollection.add({
       'Notes': notes,
       'Product Name': name,
@@ -102,6 +111,7 @@ class DatabaseService {
       "Owner's Phone Number": 0,
       'Time Span For Pick Up': '',
       'Pick Up Address': '',
+      'Product Picture URL': url,
       'Weight': 0,
       'Length': 0,
       'Width': 0,
@@ -125,6 +135,7 @@ class DatabaseService {
       password: snapshotData['Password'],
       fullName: snapshotData['Full Name'],
       phoneNumber: snapshotData['Phone Number'],
+      profilePictureURL: snapshotData['Profile Picture URL'],
       role: snapshotData['Role'],
       products: List.from(snapshotData['Products']),
       transports: List.from(snapshotData['Transports']),

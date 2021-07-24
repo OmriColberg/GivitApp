@@ -35,7 +35,7 @@ class _MainPageState extends State<MainPage> {
           stream: db.producstData,
           builder: (context, snapshotProduct) {
             if (snapshotProduct.hasError) {
-              return Text('Something went wrong');
+              return Text('אירעה תקלה, נא לפנות למנהלים');
             }
 
             if (snapshotProduct.connectionState == ConnectionState.waiting) {
@@ -46,7 +46,7 @@ class _MainPageState extends State<MainPage> {
               stream: db.transportsData,
               builder: (context, snapshotTransport) {
                 if (snapshotTransport.hasError) {
-                  return Text('Something went wrong');
+                  return Text('אירעה תקלה, נא לפנות למנהלים');
                 }
 
                 if (snapshotTransport.connectionState ==

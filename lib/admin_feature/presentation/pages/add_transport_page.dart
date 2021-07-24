@@ -3,7 +3,6 @@ import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
 import 'package:givit_app/core/shared/assign_card_product.dart';
 import 'package:givit_app/core/shared/constant.dart';
-import 'package:givit_app/core/shared/loading.dart';
 import 'package:givit_app/services/database.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:provider/provider.dart';
@@ -49,54 +48,70 @@ class _AddTransportPageState extends State<AddTransportPage> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  MultiSelectDialogField<Product?>(
-                    items: widget.productsToBeDelivered,
-                    title: Text("מוצרים לבחירה"),
-                    selectedColor: Colors.blue,
-                    buttonText:
-                        Text("                            בחר/י מוצרים להובלה"),
-                    onConfirm: (results) {
-                      products = results
-                          .map((Product? product) => product!.id)
-                          .toList()
-                          .cast<String>();
-                    },
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: MultiSelectDialogField<Product?>(
+                      items: widget.productsToBeDelivered,
+                      title: Text("מוצרים לבחירה"),
+                      selectedColor: Colors.blue,
+                      buttonText: Text("בחר/י מוצרים להובלה"),
+                      onConfirm: (results) {
+                        products = results
+                            .map((Product? product) => product!.id)
+                            .toList()
+                            .cast<String>();
+                      },
+                    ),
                   ),
                   SizedBox(height: 20.0),
-                  TextFormField(
-                    decoration:
-                        textInputDecoration.copyWith(hintText: 'מספר מובילים'),
-                    validator: (val) =>
-                        val!.isEmpty ? 'הכנס מספר מובילים' : null,
-                    onChanged: (val) {
-                      setState(() => totalNumOfCarriers = int.parse(val));
-                    },
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: TextFormField(
+                      decoration: textInputDecoration.copyWith(
+                          hintText: 'מספר מובילים'),
+                      validator: (val) =>
+                          val!.isEmpty ? 'הכנס מספר מובילים' : null,
+                      onChanged: (val) {
+                        setState(() => totalNumOfCarriers = int.parse(val));
+                      },
+                    ),
                   ),
                   SizedBox(height: 20.0),
-                  TextFormField(
-                    decoration:
-                        textInputDecoration.copyWith(hintText: 'כתובת יעד'),
-                    validator: (val) => val!.isEmpty ? 'הכנס כתובת יעד' : null,
-                    onChanged: (val) {
-                      setState(() => destinationAddress = val);
-                    },
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: TextFormField(
+                      decoration:
+                          textInputDecoration.copyWith(hintText: 'כתובת יעד'),
+                      validator: (val) =>
+                          val!.isEmpty ? 'הכנס כתובת יעד' : null,
+                      onChanged: (val) {
+                        setState(() => destinationAddress = val);
+                      },
+                    ),
                   ),
                   SizedBox(height: 20.0),
-                  TextFormField(
-                    decoration:
-                        textInputDecoration.copyWith(hintText: 'כתובת התחלה'),
-                    validator: (val) =>
-                        val!.isEmpty ? 'הכנס כתובת התחלה' : null,
-                    onChanged: (val) {
-                      setState(() => pickUpAddress = val);
-                    },
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: TextFormField(
+                      decoration:
+                          textInputDecoration.copyWith(hintText: 'כתובת התחלה'),
+                      validator: (val) =>
+                          val!.isEmpty ? 'הכנס כתובת התחלה' : null,
+                      onChanged: (val) {
+                        setState(() => pickUpAddress = val);
+                      },
+                    ),
                   ),
                   SizedBox(height: 20.0),
-                  TextFormField(
-                    decoration: textInputDecoration.copyWith(hintText: 'הערות'),
-                    onChanged: (val) {
-                      setState(() => notes = val);
-                    },
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: TextFormField(
+                      decoration:
+                          textInputDecoration.copyWith(hintText: 'הערות'),
+                      onChanged: (val) {
+                        setState(() => notes = val);
+                      },
+                    ),
                   ),
                   SizedBox(height: 12.0),
                   ElevatedButton(
@@ -107,7 +122,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         if (products.isNotEmpty) {
-                          db
+                          await db
                               .addTransport(
                             products: products,
                             datePickUp: datePickUp,
@@ -125,7 +140,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
                             showDialogHelper(
                                 "קרתה תקלה, נסה שוב ($error)", widget.size);
                           });
-                          db
+                          await db
                               .updateAssignProductsToTransport(products)
                               .then((_) => products.forEach((id) {
                                     print(
@@ -133,6 +148,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
                                   }))
                               .onError((error, stackTrace) =>
                                   print("קרתה תקלה, נסה שוב ($error)"));
+                          _formKey.currentState!.reset();
                         } else {
                           error = 'ההובלה חייבת לכלול לפחות מוצר 1';
                         }

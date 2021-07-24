@@ -15,7 +15,7 @@ class GivitCommunityPage extends StatelessWidget {
       stream: db.transportsData,
       builder: (context, snapshotTransport) {
         if (snapshotTransport.hasError) {
-          return Text('Something went wrong');
+          return Text('אירעה תקלה, נא לפנות למנהלים');
         }
 
         if (snapshotTransport.connectionState == ConnectionState.waiting) {

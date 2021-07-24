@@ -29,7 +29,7 @@ class _AdminPageState extends State<AdminPage> {
       stream: db.userData,
       builder: (context, snapshotGivitUser) {
         if (snapshotGivitUser.hasError) {
-          return Text('Something went wrong');
+          return Text('אירעה תקלה, נא לפנות למנהלים');
         }
 
         if (snapshotGivitUser.connectionState == ConnectionState.waiting) {
@@ -41,7 +41,7 @@ class _AdminPageState extends State<AdminPage> {
           stream: db.producstData,
           builder: (context, snapshotProduct) {
             if (snapshotProduct.hasError) {
-              return Text('Something went wrong');
+              return Text('אירעה תקלה, נא לפנות למנהלים');
             }
 
             if (snapshotProduct.connectionState == ConnectionState.waiting) {
@@ -114,7 +114,7 @@ class _AdminPageState extends State<AdminPage> {
                       stream: db.transportsData,
                       builder: (context, snapshotTransport) {
                         if (snapshotTransport.hasError) {
-                          return Text('Something went wrong');
+                          return Text('אירעה תקלה, נא לפנות למנהלים');
                         }
 
                         if (snapshotTransport.connectionState ==
@@ -132,7 +132,12 @@ class _AdminPageState extends State<AdminPage> {
                                         padding:
                                             EdgeInsets.symmetric(horizontal: 2),
                                         child: ElevatedButton(
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            if (product != null) {
+                                              showDialogHelper(
+                                                  product, widget.size);
+                                            }
+                                          },
                                           child: Text(
                                             '${product!.name}\n${product.pickUpAddress}',
                                             style: TextStyle(
@@ -141,8 +146,6 @@ class _AdminPageState extends State<AdminPage> {
                                             ),
                                           ),
                                           style: ElevatedButton.styleFrom(
-                                            primary: Colors.blue,
-                                            onPrimary: Colors.blue,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(30.0),
@@ -186,6 +189,51 @@ class _AdminPageState extends State<AdminPage> {
       },
     );
   }
+
+  void showDialogHelper(Product product, Size size) {
+    String length = product.length != 0 ? product.length.toString() : '';
+    String width = product.width != 0 ? product.width.toString() : '';
+    String weight = product.weight != 0 ? product.weight.toString() : '';
+    String body = product.ownerName +
+        " :שם הבעלים\n" +
+        product.ownerPhoneNumber +
+        " :מספר טלפון\n" +
+        product.pickUpAddress +
+        " :כתובת לאיסוף\n" +
+        product.timeForPickUp +
+        " :זמן לאיסוף המוצר\n" +
+        Product.hebrewFromEnum(product.state) +
+        " :מצב המוצר\n" +
+        length +
+        " :אורך המוצר\n" +
+        width +
+        " :רוחב המוצר\n" +
+        weight +
+        " :משקל המוצר\n" +
+        product.notes +
+        " :הערות\n";
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: size.height * 0.5,
+          child: AlertDialog(
+            title: Text(body),
+            content: Stack(
+              children: <Widget>[
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("לחזרה"),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
 
 AssignCardProduct createDeliveryAssignFromProductSnapshot(
@@ -207,7 +255,7 @@ AssignCardTransport createDeliveryAssignFromTransportSnapshot(
       DateFormat('yyyy-MM-dd hh:mm').format(transport.datePickUp).toString();
   return AssignCardTransport(
     title: date + ' :הובלה ב' + '\n' + transport.pickUpAddress + ' :יוצאת מ',
-    body: transport.notes,
+    body: transport.notes + " :הערות",
     schedule: 'לשיבוץ הובלה',
     type: CardType.admin,
     transport: transport,

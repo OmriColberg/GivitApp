@@ -17,7 +17,6 @@ class _LoginPageState extends State<LoginPage> {
   String error = '';
   bool loading = false;
 
-  // text field state
   String email = '';
   String password = '';
 
@@ -31,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
               appBar: AppBar(
                 backgroundColor: Colors.blue[400],
                 elevation: 0.0,
-                title: Text('Sign in to Givit'),
+                title: Text('התחברות לגיביט'),
                 actions: <Widget>[
                   TextButton.icon(
                     icon: Icon(
@@ -39,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
                       color: Colors.black,
                     ),
                     label: Text(
-                      'Register',
+                      'הרשמה',
                       style: TextStyle(color: Colors.black),
                     ),
                     onPressed: () => widget.toggleView(),
@@ -53,31 +52,37 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     children: <Widget>[
                       SizedBox(height: 20.0),
-                      TextFormField(
-                        decoration:
-                            textInputDecoration.copyWith(hintText: 'email'),
-                        validator: (val) =>
-                            val!.isEmpty ? 'Enter an email' : null,
-                        onChanged: (val) {
-                          setState(() => email = val);
-                        },
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: TextFormField(
+                          decoration:
+                              textInputDecoration.copyWith(hintText: 'אי-מייל'),
+                          validator: (val) =>
+                              val!.isEmpty ? 'הכנס אי-מייל' : null,
+                          onChanged: (val) {
+                            setState(() => email = val);
+                          },
+                        ),
                       ),
                       SizedBox(height: 20.0),
-                      TextFormField(
-                        obscureText: true,
-                        decoration:
-                            textInputDecoration.copyWith(hintText: 'password'),
-                        validator: (val) => val!.length < 6
-                            ? 'Enter a password 6+ characters long'
-                            : null,
-                        onChanged: (val) {
-                          setState(() => password = val);
-                        },
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: TextFormField(
+                          obscureText: true,
+                          decoration:
+                              textInputDecoration.copyWith(hintText: 'סיסמא'),
+                          validator: (val) => val!.length < 6
+                              ? 'הכנס סיסמא באורך של לפחות 6 תווים'
+                              : null,
+                          onChanged: (val) {
+                            setState(() => password = val);
+                          },
+                        ),
                       ),
                       SizedBox(height: 20.0),
                       ElevatedButton(
                           child: Text(
-                            'Sign In',
+                            'התחברות',
                             style: TextStyle(color: Colors.white),
                           ),
                           onPressed: () async {
@@ -85,11 +90,12 @@ class _LoginPageState extends State<LoginPage> {
                               setState(() => loading = true);
                               dynamic result = await _auth
                                   .signInWithEmailAndPassword(email, password);
+                              _formKey.currentState!.reset();
                               if (result == null) {
                                 setState(() {
                                   loading = false;
                                   error =
-                                      'Could not sign in with those credentials';
+                                      'לא ניתן להתחבר עם אמצעי הזיהוי שסופקו';
                                 });
                               }
                             }

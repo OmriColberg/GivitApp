@@ -9,7 +9,6 @@ import 'package:givit_app/core/shared/loading.dart';
 import 'package:givit_app/services/database.dart';
 import 'package:provider/provider.dart';
 
-// ignore: must_be_immutable
 class AssignCardTransport extends StatelessWidget {
   final String title;
   final String schedule;
@@ -28,18 +27,20 @@ class AssignCardTransport extends StatelessWidget {
     required this.type,
   });
 
-  var prodIndex = 0;
-  var userIndex = 0;
+  int prodIndex = 0;
+  int userIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     final GivitUser givitUser = Provider.of<GivitUser>(context);
     final DatabaseService db = DatabaseService(uid: givitUser.uid);
+
     return StreamBuilder<QuerySnapshot>(
       stream: db.usersData,
       builder: (context, snapshotUsers) {
         if (snapshotUsers.hasError) {
-          return Text('Something went wrong');
+          print(snapshotUsers.error);
+          return Text('אירעה תקלה, נא לפנות למנהלים');
         }
 
         if (snapshotUsers.connectionState == ConnectionState.waiting) {
@@ -50,7 +51,8 @@ class AssignCardTransport extends StatelessWidget {
           stream: db.producstData,
           builder: (context, snapshotProduct) {
             if (snapshotProduct.hasError) {
-              return Text('Something went wrong');
+              print(snapshotProduct.error);
+              return Text('אירעה תקלה, נא לפנות למנהלים');
             }
 
             if (snapshotProduct.connectionState == ConnectionState.waiting) {
@@ -111,6 +113,7 @@ class AssignCardTransport extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                     Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         snapshotProduct.data!.docs
                             .map((DocumentSnapshot document) {
@@ -120,9 +123,23 @@ class AssignCardTransport extends StatelessWidget {
                                 snapshotData, document.id);
                             if (transport.status.toString() !=
                                 ProductStatus.searching.toString()) {
-                              return Text(
-                                "${++prodIndex}. " + product.name,
-                                style: TextStyle(fontSize: 18),
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "${++prodIndex}. " + product.name,
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                  SizedBox(width: 10),
+                                  ClipOval(
+                                    child: Image.network(
+                                      product.productPictureURL,
+                                      fit: BoxFit.fill,
+                                      height: 30,
+                                      width: 30,
+                                    ),
+                                  ),
+                                ],
                               );
                             } else {
                               return Container();
@@ -141,9 +158,23 @@ class AssignCardTransport extends StatelessWidget {
                             .map((DocumentSnapshot document) {
                           GivitUser user = GivitUser.fromFirestorUser(document);
                           if (transport.carriers.contains(user.uid)) {
-                            return Text(
-                              "${++userIndex}. " + user.fullName,
-                              style: TextStyle(fontSize: 16),
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  user.fullName + " .${++userIndex}",
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                SizedBox(width: 10),
+                                ClipOval(
+                                  child: Image.network(
+                                    user.profilePictureURL,
+                                    fit: BoxFit.fill,
+                                    height: 30,
+                                    width: 30,
+                                  ),
+                                ),
+                              ],
                             );
                           } else {
                             return Container();

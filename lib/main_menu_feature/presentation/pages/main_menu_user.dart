@@ -35,7 +35,7 @@ class MainMenuUser extends StatelessWidget {
                     color: Colors.black,
                   ),
                   label: Text(
-                    'logout',
+                    'התנתק',
                     style: TextStyle(color: Colors.black),
                   ),
                   onPressed: () async {
