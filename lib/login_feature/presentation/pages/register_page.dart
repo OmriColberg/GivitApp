@@ -119,6 +119,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             dynamic result =
                                 await _auth.registerWithEmailAndPassword(
                                     email, fullName, password, phoneNumber);
+                            _formKey.currentState!.reset();
                             if (result == null) {
                               setState(() {
                                 loading = false;

@@ -122,7 +122,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         if (products.isNotEmpty) {
-                          db
+                          await db
                               .addTransport(
                             products: products,
                             datePickUp: datePickUp,
@@ -140,7 +140,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
                             showDialogHelper(
                                 "קרתה תקלה, נסה שוב ($error)", widget.size);
                           });
-                          db
+                          await db
                               .updateAssignProductsToTransport(products)
                               .then((_) => products.forEach((id) {
                                     print(
@@ -148,6 +148,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
                                   }))
                               .onError((error, stackTrace) =>
                                   print("קרתה תקלה, נסה שוב ($error)"));
+                          _formKey.currentState!.reset();
                         } else {
                           error = 'ההובלה חייבת לכלול לפחות מוצר 1';
                         }

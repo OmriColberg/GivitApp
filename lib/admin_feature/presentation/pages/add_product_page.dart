@@ -68,7 +68,9 @@ class _AddProductPageState extends State<AddProductPage> {
                     ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        db.addProduct(name: name, notes: notes).then((_result) {
+                        await db
+                            .addProduct(name: name, notes: notes)
+                            .then((_result) {
                           print(
                               'This is the ID of the product that just added: $_result');
                           showDialogHelper("המוצר התווסף בהצלחה", widget.size);
@@ -76,6 +78,7 @@ class _AddProductPageState extends State<AddProductPage> {
                           showDialogHelper(
                               "קרתה תקלה, נסה שוב ($error)", widget.size);
                         });
+                        _formKey.currentState!.reset();
                       }
                     },
                   ),

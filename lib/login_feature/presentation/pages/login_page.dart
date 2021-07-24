@@ -90,6 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                               setState(() => loading = true);
                               dynamic result = await _auth
                                   .signInWithEmailAndPassword(email, password);
+                              _formKey.currentState!.reset();
                               if (result == null) {
                                 setState(() {
                                   loading = false;

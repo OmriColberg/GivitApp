@@ -113,6 +113,7 @@ class AssignCardTransport extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                     Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         snapshotProduct.data!.docs
                             .map((DocumentSnapshot document) {
@@ -123,6 +124,7 @@ class AssignCardTransport extends StatelessWidget {
                             if (transport.status.toString() !=
                                 ProductStatus.searching.toString()) {
                               return Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
                                     "${++prodIndex}. " + product.name,
