@@ -69,7 +69,7 @@ class _AdminPageState extends State<AdminPage> {
                 .toList();
             return Container(
               color: Colors.blue[100],
-              alignment: Alignment.center,
+              alignment: Alignment.topCenter,
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,

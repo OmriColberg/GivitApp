@@ -141,7 +141,8 @@ class _AddTransportPageState extends State<AddTransportPage> {
                                 "קרתה תקלה, נסה שוב ($error)", widget.size);
                           });
                           await db
-                              .updateAssignProductsToTransport(products)
+                              .updateAssignProducts(
+                                  products, ProductStatus.assignToDelivery)
                               .then((_) => products.forEach((id) {
                                     print(
                                         'the product with the id: $id were updated to delivery');

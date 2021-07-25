@@ -8,6 +8,7 @@ class Transport {
   final String pickUpAddress;
   final String destinationAddress;
   final TransportStatus status;
+  final List<String> pictures;
   final String notes;
 
   Transport({
@@ -19,6 +20,7 @@ class Transport {
     this.notes = '',
     this.carriers = const [],
     this.products = const [],
+    this.pictures = const [],
     this.status = TransportStatus.waitingForVolunteers,
     required this.datePickUp,
   });
@@ -36,6 +38,7 @@ class Transport {
       products: List.from(trasnportMap['Products']),
       status: Transport.transportStatusFromString(
           trasnportMap["Status Of Transport"]),
+      pictures: List.from(trasnportMap['Pictures']),
       notes: trasnportMap['Notes'] ?? '',
     );
   }
