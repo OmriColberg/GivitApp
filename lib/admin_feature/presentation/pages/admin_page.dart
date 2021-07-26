@@ -191,27 +191,30 @@ class _AdminPageState extends State<AdminPage> {
   }
 
   void showDialogHelper(Product product, Size size) {
-    String length = product.length != 0 ? product.length.toString() : '';
-    String width = product.width != 0 ? product.width.toString() : '';
-    String weight = product.weight != 0 ? product.weight.toString() : '';
-    String body = product.ownerName +
-        " :שם הבעלים\n" +
+    String length = product.length != 0
+        ? "\nאורך המוצר בס''מ: " + product.length.toString()
+        : '';
+    String width = product.width != 0
+        ? "\nרוחב המוצר בס''מ: " + product.width.toString()
+        : '';
+    String weight = product.weight != 0
+        ? "\nמשקל המוצר בקילוגרמים: " + product.weight.toString()
+        : '';
+    String body = "שם הבעלים: " +
+        product.ownerName +
+        "\nמספר טלפון: " +
         product.ownerPhoneNumber +
-        " :מספר טלפון\n" +
+        "\nכתוב לאיסוף: " +
         product.pickUpAddress +
-        " :כתובת לאיסוף\n" +
+        "\nזמן לאיסוף מוצר: " +
         product.timeForPickUp +
-        " :זמן לאיסוף המוצר\n" +
+        "\nמצב המוצר: " +
         Product.hebrewFromEnum(product.state) +
-        " :מצב המוצר\n" +
         length +
-        " :אורך המוצר\n" +
         width +
-        " :רוחב המוצר\n" +
         weight +
-        " :משקל המוצר\n" +
-        product.notes +
-        " :הערות\n";
+        "\nהערות: " +
+        product.notes;
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -219,8 +222,17 @@ class _AdminPageState extends State<AdminPage> {
           height: size.height * 0.5,
           child: AlertDialog(
             title: Text(body),
-            content: Stack(
+            content: Column(
               children: <Widget>[
+                Container(
+                  width: 150,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(product.productPictureURL),
+                    ),
+                  ),
+                ),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop();

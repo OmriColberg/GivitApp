@@ -71,7 +71,7 @@ class MainMenuAdmin extends StatelessWidget {
             body: TabBarView(
               children: [
                 AdminPage(size: size),
-                GivitCommunityPage(),
+                GivitCommunityPage(size: size),
                 ProfilePage(size: size),
                 MainPage(size: size),
               ],
