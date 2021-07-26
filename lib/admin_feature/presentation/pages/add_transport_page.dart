@@ -6,6 +6,7 @@ import 'package:givit_app/core/shared/constant.dart';
 import 'package:givit_app/services/database.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 class AddTransportPage extends StatefulWidget {
   final Size size;
@@ -113,6 +114,23 @@ class _AddTransportPageState extends State<AddTransportPage> {
                       },
                     ),
                   ),
+                  SizedBox(height: 12.0),
+                  TextButton(
+                      // TODO: complete
+                      onPressed: () {
+                        DatePicker.showDatePicker(context,
+                            showTitleActions: true,
+                            minTime: DateTime(2018, 3, 5),
+                            maxTime: DateTime(2019, 6, 7), onChanged: (date) {
+                          print('change $date');
+                        }, onConfirm: (date) {
+                          print('confirm $date');
+                        }, currentTime: DateTime.now(), locale: LocaleType.zh);
+                      },
+                      child: Text(
+                        'show date time picker (Chinese)',
+                        style: TextStyle(color: Colors.blue),
+                      )),
                   SizedBox(height: 12.0),
                   ElevatedButton(
                     child: Text(
