@@ -14,7 +14,7 @@ import 'package:provider/provider.dart';
 class ProfilePage extends StatefulWidget {
   final Size size;
 
-  const ProfilePage({required this.size});
+  ProfilePage({required this.size});
 
   @override
   _ProfilePageState createState() => _ProfilePageState();

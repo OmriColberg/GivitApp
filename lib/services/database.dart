@@ -35,14 +35,14 @@ class DatabaseService {
     });
   }
 
-  Future<void> updateAssignProductsToTransport(List<String> products) async {
+  Future<void> updateAssignProducts(
+      List<String> products, ProductStatus productStatus) async {
     Set mySet = products.toSet();
     await productsCollection.get().then((QuerySnapshot querySnapshot) => {
           querySnapshot.docs.forEach((product) {
             if (mySet.contains(product.id)) {
               updateProductFields(product.id, {
-                'Status Of Product':
-                    ProductStatus.assignToDelivery.toString().split('.')[1],
+                'Status Of Product': productStatus.toString().split('.')[1],
               });
             }
           })
@@ -91,6 +91,7 @@ class DatabaseService {
       'Carriers': [],
       'Status Of Transport':
           TransportStatus.waitingForVolunteers.toString().split('.')[1],
+      'Pictures': [],
       'Notes': notes ?? '',
     }).then((value) => value.id);
   }

@@ -261,6 +261,7 @@ class _ProductFoundFormState extends State<ProductFoundForm> {
                                   db.updateProductFields(widget.product.id,
                                       {'Product Picture URL': fileURL})
                                 }));
+                        _formKey.currentState!.reset();
                       }
                     },
                   ),

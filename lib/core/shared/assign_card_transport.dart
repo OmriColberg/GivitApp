@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
@@ -7,6 +9,7 @@ import 'package:givit_app/core/models/transport.dart';
 import 'package:givit_app/core/shared/assign_card_product.dart';
 import 'package:givit_app/core/shared/loading.dart';
 import 'package:givit_app/services/database.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class AssignCardTransport extends StatelessWidget {
@@ -216,14 +219,23 @@ class AssignCardTransport extends StatelessWidget {
                                   : (transport.currentNumOfCarriers ==
                                           transport.totalNumOfCarriers
                                       ? ElevatedButton(
-                                          onPressed: () {
-                                            db.updateTransportFields(
+                                          onPressed: () async {
+                                            showDialogHelper(
+                                                "לבחירת תמונות מההובלה",
+                                                size,
+                                                context,
+                                                db,
+                                                transport);
+                                            await db.updateTransportFields(
                                                 transport.id, {
                                               'Status Of Transport':
                                                   TransportStatus.carriedOut
                                                       .toString()
                                                       .split('.')[1],
                                             });
+                                            await db.updateAssignProducts(
+                                                personalTransport,
+                                                ProductStatus.delivered);
                                           },
                                           child: Text("אישור ביצוע ההובלה"),
                                         )
@@ -236,6 +248,41 @@ class AssignCardTransport extends StatelessWidget {
               ),
             );
           },
+        );
+      },
+    );
+  }
+
+  void showDialogHelper(String dialogText, Size size, BuildContext context,
+      DatabaseService db, Transport transport) {
+    final ImagePicker _picker = ImagePicker();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: size.height * 0.5,
+          child: AlertDialog(
+            title: Text(dialogText),
+            content: ElevatedButton(
+              onPressed: () async {
+                final List<XFile>? images = await _picker.pickMultiImage();
+
+                for (int i = 0; i < images!.length; i++) {
+                  Reference reference = db.storage
+                      .ref()
+                      .child('Transport pictures/${transport.id}/$i');
+                  reference.putFile((File(images[i].path))).whenComplete(() =>
+                      reference.getDownloadURL().then(
+                          (fileURL) => db.updateTransportFields(transport.id, {
+                                'Pictures': FieldValue.arrayUnion(['$fileURL}'])
+                              })));
+                  Navigator.of(context).pop();
+                }
+              },
+              child: Text("לבחירת תמונות"),
+            ),
+          ),
         );
       },
     );
