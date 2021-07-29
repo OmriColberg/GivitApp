@@ -57,7 +57,8 @@ class _GivitCommunityPageState extends State<GivitCommunityPage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(transport.sumUp),
+                              Text(transport.sumUp,
+                                  style: TextStyle(fontSize: 20)),
                               Wrap(
                                 children: transport.pictures
                                     .map(
