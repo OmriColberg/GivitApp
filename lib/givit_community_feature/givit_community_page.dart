@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:gallery_view/gallery_view.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/transport.dart';
 import 'package:givit_app/core/shared/loading.dart';
@@ -38,37 +37,55 @@ class _GivitCommunityPageState extends State<GivitCommunityPage> {
           height: widget.size.height,
           color: Colors.blue[100],
           alignment: Alignment.topCenter,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: snapshotTransport.data!.docs.map(
-              (DocumentSnapshot document) {
-                var snapshotData = document.data() as Map;
-                Transport transport =
-                    Transport.transportFromDocument(snapshotData, document.id);
-                if (transport.status == TransportStatus.carriedOut) {
-                  return Wrap(
-                    children:
-                        //Text(transport.id),
-                        transport.pictures
-                            .map(
-                              (url) => Container(
-                                height: 100,
-                                width: 100,
-                                child: Text(''),
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: NetworkImage(url),
-                                  ),
-                                ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: snapshotTransport.data!.docs.map(
+                (DocumentSnapshot document) {
+                  var snapshotData = document.data() as Map;
+                  Transport transport = Transport.transportFromDocument(
+                      snapshotData, document.id);
+                  if (transport.status == TransportStatus.carriedOut) {
+                    return Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.deepPurple[200],
+                            border: Border.all(color: Colors.black, width: 1),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(transport.sumUp),
+                              Wrap(
+                                children: transport.pictures
+                                    .map(
+                                      (url) => Container(
+                                        height: 150,
+                                        width: 150,
+                                        child: Text(''),
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            image: NetworkImage(url),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
                               ),
-                            )
-                            .toList(),
-                  );
-                } else {
-                  return Container(height: 1);
-                }
-              },
-            ).toList(),
+                            ],
+                          ),
+                        ),
+                        Divider(height: 4)
+                      ],
+                    );
+                  } else {
+                    return Container(height: 1);
+                  }
+                },
+              ).toList(),
+            ),
           ),
         );
       },

@@ -93,6 +93,7 @@ class DatabaseService {
           TransportStatus.waitingForVolunteers.toString().split('.')[1],
       'Pictures': [],
       'Notes': notes ?? '',
+      'SumUp': '',
     }).then((value) => value.id);
   }
 

@@ -10,6 +10,7 @@ class Transport {
   final TransportStatus status;
   final List<String> pictures;
   final String notes;
+  final String sumUp;
 
   Transport({
     this.id = '',
@@ -22,6 +23,7 @@ class Transport {
     this.products = const [],
     this.pictures = const [],
     this.status = TransportStatus.waitingForVolunteers,
+    this.sumUp = '',
     required this.datePickUp,
   });
 
@@ -40,6 +42,7 @@ class Transport {
           trasnportMap["Status Of Transport"]),
       pictures: List.from(trasnportMap['Pictures']),
       notes: trasnportMap['Notes'] ?? '',
+      sumUp: trasnportMap['SumUp'] ?? '',
     );
   }
 
