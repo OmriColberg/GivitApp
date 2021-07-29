@@ -7,10 +7,12 @@ import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
 import 'package:givit_app/core/models/transport.dart';
 import 'package:givit_app/core/shared/assign_card_product.dart';
+import 'package:givit_app/core/shared/constant.dart';
 import 'package:givit_app/core/shared/loading.dart';
 import 'package:givit_app/services/database.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class AssignCardTransport extends StatelessWidget {
   final String title;
@@ -221,7 +223,7 @@ class AssignCardTransport extends StatelessWidget {
                                       ? ElevatedButton(
                                           onPressed: () async {
                                             showDialogHelper(
-                                                "לבחירת תמונות מההובלה",
+                                                "הוספת פוסט לקהילת גיביט",
                                                 size,
                                                 context,
                                                 db,
@@ -260,27 +262,57 @@ class AssignCardTransport extends StatelessWidget {
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        String sumUp = '';
+        List<XFile>? images = [];
         return Container(
-          height: size.height * 0.5,
+          height: size.height * 0.3,
           child: AlertDialog(
+            backgroundColor: Colors.blue[300],
             title: Text(dialogText),
-            content: ElevatedButton(
-              onPressed: () async {
-                final List<XFile>? images = await _picker.pickMultiImage();
+            content: Column(
+              children: [
+                TextField(
+                  minLines: 3,
+                  maxLines: 5,
+                  decoration: textInputDecoration.copyWith(
+                      hintText: 'פירוט אודות ההובלה לקבילת גיביט'),
+                  onChanged: (sumUPText) {
+                    sumUp = sumUPText;
+                  },
+                ),
+                SizedBox(height: 5),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (await Permission.accessMediaLocation
+                        .request()
+                        .isGranted) {
+                      images = await _picker.pickMultiImage();
+                    }
+                  },
+                  child: Text("לבחירת תמונות"),
+                ),
+                SizedBox(height: 5),
+                ElevatedButton(
+                  onPressed: () async {
+                    await db
+                        .updateTransportFields(transport.id, {'SumUp': sumUp});
 
-                for (int i = 0; i < images!.length; i++) {
-                  Reference reference = db.storage
-                      .ref()
-                      .child('Transport pictures/${transport.id}/$i');
-                  reference.putFile((File(images[i].path))).whenComplete(() =>
-                      reference.getDownloadURL().then(
-                          (fileURL) => db.updateTransportFields(transport.id, {
+                    for (int i = 0; i < images!.length; i++) {
+                      Reference reference = db.storage
+                          .ref()
+                          .child('Transport pictures/${transport.id}/$i');
+                      reference.putFile((File(images![i].path))).whenComplete(
+                          () => reference.getDownloadURL().then((fileURL) =>
+                              db.updateTransportFields(transport.id, {
                                 'Pictures': FieldValue.arrayUnion(['$fileURL}'])
                               })));
-                  Navigator.of(context).pop();
-                }
-              },
-              child: Text("לבחירת תמונות"),
+                    }
+
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("לאישור"),
+                ),
+              ],
             ),
           ),
         );
