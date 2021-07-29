@@ -4,9 +4,11 @@ import 'package:givit_app/core/models/product.dart';
 import 'package:givit_app/core/shared/assign_card_product.dart';
 import 'package:givit_app/core/shared/constant.dart';
 import 'package:givit_app/services/database.dart';
+import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'dart:ui' as ui;
 
 class AddTransportPage extends StatefulWidget {
   final Size size;
@@ -50,7 +52,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
               child: Column(
                 children: [
                   Directionality(
-                    textDirection: TextDirection.rtl,
+                    textDirection: ui.TextDirection.rtl,
                     child: MultiSelectDialogField<Product?>(
                       items: widget.productsToBeDelivered,
                       title: Text("מוצרים לבחירה"),
@@ -66,7 +68,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
                   ),
                   SizedBox(height: 20.0),
                   Directionality(
-                    textDirection: TextDirection.rtl,
+                    textDirection: ui.TextDirection.rtl,
                     child: TextFormField(
                       decoration: textInputDecoration.copyWith(
                           hintText: 'מספר מובילים'),
@@ -79,7 +81,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
                   ),
                   SizedBox(height: 20.0),
                   Directionality(
-                    textDirection: TextDirection.rtl,
+                    textDirection: ui.TextDirection.rtl,
                     child: TextFormField(
                       decoration:
                           textInputDecoration.copyWith(hintText: 'כתובת יעד'),
@@ -92,7 +94,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
                   ),
                   SizedBox(height: 20.0),
                   Directionality(
-                    textDirection: TextDirection.rtl,
+                    textDirection: ui.TextDirection.rtl,
                     child: TextFormField(
                       decoration:
                           textInputDecoration.copyWith(hintText: 'כתובת התחלה'),
@@ -105,7 +107,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
                   ),
                   SizedBox(height: 20.0),
                   Directionality(
-                    textDirection: TextDirection.rtl,
+                    textDirection: ui.TextDirection.rtl,
                     child: TextFormField(
                       decoration:
                           textInputDecoration.copyWith(hintText: 'הערות'),
@@ -115,22 +117,34 @@ class _AddTransportPageState extends State<AddTransportPage> {
                     ),
                   ),
                   SizedBox(height: 12.0),
-                  TextButton(
-                      // TODO: complete
-                      onPressed: () {
-                        DatePicker.showDatePicker(context,
-                            showTitleActions: true,
-                            minTime: DateTime(2018, 3, 5),
-                            maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-                          print('change $date');
-                        }, onConfirm: (date) {
-                          print('confirm $date');
-                        }, currentTime: DateTime.now(), locale: LocaleType.zh);
-                      },
-                      child: Text(
-                        'show date time picker (Chinese)',
-                        style: TextStyle(color: Colors.blue),
-                      )),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    textDirection: ui.TextDirection.rtl,
+                    children: [
+                      Text(
+                        "\t:בחר תאריך ושעת הובלה",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      GestureDetector(
+                        child: Icon(Icons.calendar_today_outlined,
+                            color: Colors.black),
+                        onTap: () {
+                          DatePicker.showDateTimePicker(context,
+                              showTitleActions: true,
+                              minTime: DateTime(DateTime.now().year,
+                                  DateTime.now().month, DateTime.now().day, 0),
+                              maxTime: DateTime(
+                                  DateTime.now().year + 3, 12, 31, 23, 59),
+                              onChanged: (date) {}, onConfirm: (date) {
+                            print('CHOSEN DATE: $date');
+                            setState(() => datePickUp = date);
+                          },
+                              currentTime: DateTime.now(),
+                              locale: LocaleType.en);
+                        },
+                      ),
+                    ],
+                  ),
                   SizedBox(height: 12.0),
                   ElevatedButton(
                     child: Text(
