@@ -53,6 +53,7 @@ dependencies:
   flutter_svg: ^0.22.0
 
   image_picker: ^0.8.2
+  flutter_datetime_picker: ^1.5.1
 
   gallery_view: ^1.0.0+1
 
