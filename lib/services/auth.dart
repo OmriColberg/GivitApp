@@ -6,6 +6,7 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   GivitUser _givitUserFromFireBaseUser(User? user) {
+    //signOut();
     return user != null
         ? GivitUser(uid: user.uid, email: user.email)
         : GivitUser();
@@ -39,6 +40,7 @@ class AuthService {
           .addGivitUser(email, fullName, password, phoneNumber);
       return _givitUserFromFireBaseUser(user);
     } catch (error) {
+      await signOut();
       print(error.toString());
       return null;
     }
@@ -47,7 +49,6 @@ class AuthService {
   // sign out
   Future signOut() async {
     try {
-      print('try to logout');
       return await _auth.signOut();
     } catch (error) {
       print(error.toString());

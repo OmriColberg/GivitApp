@@ -33,7 +33,7 @@ class _RegisterPageState extends State<RegisterPage> {
               appBar: AppBar(
                 backgroundColor: Colors.blue[400],
                 elevation: 0.0,
-                title: Text('Register to Givit'),
+                title: Text('הרשמה לגיביט'),
                 actions: <Widget>[
                   TextButton.icon(
                     icon: Icon(
@@ -41,7 +41,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       color: Colors.black,
                     ),
                     label: Text(
-                      'Sign In',
+                      'התחברות',
                       style: TextStyle(color: Colors.black),
                     ),
                     onPressed: () => widget.toggleView(),
@@ -55,50 +55,62 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Column(
                     children: <Widget>[
                       SizedBox(height: 20.0),
-                      TextFormField(
-                        decoration:
-                            textInputDecoration.copyWith(hintText: 'email'),
-                        validator: (val) =>
-                            val!.isEmpty ? 'Enter an email' : null,
-                        onChanged: (val) {
-                          setState(() => email = val);
-                        },
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: TextFormField(
+                          decoration:
+                              textInputDecoration.copyWith(hintText: 'אי-מייל'),
+                          validator: (val) =>
+                              val!.isEmpty ? 'הכנס/י אי-מייל' : null,
+                          onChanged: (val) {
+                            setState(() => email = val);
+                          },
+                        ),
                       ),
                       SizedBox(height: 20.0),
-                      TextFormField(
-                        decoration:
-                            textInputDecoration.copyWith(hintText: 'password'),
-                        obscureText: true,
-                        validator: (val) => val!.length < 6
-                            ? 'Enter a password 6+ characters long'
-                            : null,
-                        onChanged: (val) {
-                          setState(() => password = val);
-                        },
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: TextFormField(
+                          decoration:
+                              textInputDecoration.copyWith(hintText: 'סיסמא'),
+                          obscureText: true,
+                          validator: (val) => val!.length < 6
+                              ? 'הכנס סיסמא באורך של לפחות 6 תווים'
+                              : null,
+                          onChanged: (val) {
+                            setState(() => password = val);
+                          },
+                        ),
                       ),
                       SizedBox(height: 20.0),
-                      TextFormField(
-                        decoration:
-                            textInputDecoration.copyWith(hintText: 'Full Name'),
-                        onChanged: (val) {
-                          setState(() => fullName = val);
-                        },
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: TextFormField(
+                          decoration: textInputDecoration.copyWith(
+                              hintText: 'שם פרטי ומשפחה'),
+                          onChanged: (val) {
+                            setState(() => fullName = val);
+                          },
+                        ),
                       ),
                       SizedBox(height: 20.0),
-                      TextFormField(
-                        decoration: textInputDecoration.copyWith(
-                            hintText: 'Phone Number'),
-                        validator: (val) => val!.length != 10
-                            ? "Enter a valid phone number"
-                            : null,
-                        onChanged: (val) {
-                          setState(() => phoneNumber = int.parse(val));
-                        },
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: TextFormField(
+                          decoration: textInputDecoration.copyWith(
+                              hintText: 'מספר טלפון'),
+                          validator: (val) => val!.length != 10
+                              ? "נא להכניס מספר טלפון חוקי, בעל 10 ספרות ללא מקף"
+                              : null,
+                          onChanged: (val) {
+                            setState(() => phoneNumber = int.parse(val));
+                          },
+                        ),
                       ),
                       SizedBox(height: 20.0),
                       ElevatedButton(
                         child: Text(
-                          'Register',
+                          'הרשמה',
                           style: TextStyle(color: Colors.white),
                         ),
                         onPressed: () async {
@@ -107,10 +119,11 @@ class _RegisterPageState extends State<RegisterPage> {
                             dynamic result =
                                 await _auth.registerWithEmailAndPassword(
                                     email, fullName, password, phoneNumber);
+                            _formKey.currentState!.reset();
                             if (result == null) {
                               setState(() {
                                 loading = false;
-                                error = 'Please supply a valid email';
+                                error = 'נא לספק אי-מייל חוקי';
                               });
                             }
                           }

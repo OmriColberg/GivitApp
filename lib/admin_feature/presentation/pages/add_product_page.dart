@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/shared/constant.dart';
-import 'package:givit_app/core/shared/loading.dart';
 import 'package:givit_app/services/database.dart';
 import 'package:provider/provider.dart';
 
@@ -39,21 +38,27 @@ class _AddProductPageState extends State<AddProductPage> {
               child: Column(
                 children: <Widget>[
                   SizedBox(height: 20.0),
-                  TextFormField(
-                    decoration:
-                        textInputDecoration.copyWith(hintText: 'שם המוצר'),
-                    //validator: (val) => val!.isEmpty ? 'הכנס שם מוצר' : null,
-                    onChanged: (val) {
-                      setState(() => name = val);
-                    },
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: TextFormField(
+                      decoration:
+                          textInputDecoration.copyWith(hintText: 'שם המוצר'),
+                      //validator: (val) => val!.isEmpty ? 'הכנס שם מוצר' : null,
+                      onChanged: (val) {
+                        setState(() => name = val);
+                      },
+                    ),
                   ),
                   SizedBox(height: 20.0),
-                  TextFormField(
-                    decoration:
-                        textInputDecoration.copyWith(hintText: 'הערות נוספות'),
-                    onChanged: (val) {
-                      setState(() => notes = val);
-                    },
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: TextFormField(
+                      decoration: textInputDecoration.copyWith(
+                          hintText: 'הערות נוספות'),
+                      onChanged: (val) {
+                        setState(() => notes = val);
+                      },
+                    ),
                   ),
                   SizedBox(height: 20.0),
                   ElevatedButton(
@@ -63,7 +68,9 @@ class _AddProductPageState extends State<AddProductPage> {
                     ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        db.addProduct(name: name, notes: notes).then((_result) {
+                        await db
+                            .addProduct(name: name, notes: notes)
+                            .then((_result) {
                           print(
                               'This is the ID of the product that just added: $_result');
                           showDialogHelper("המוצר התווסף בהצלחה", widget.size);
@@ -71,7 +78,7 @@ class _AddProductPageState extends State<AddProductPage> {
                           showDialogHelper(
                               "קרתה תקלה, נסה שוב ($error)", widget.size);
                         });
-                        //Navigator.of(context).pop();
+                        _formKey.currentState!.reset();
                       }
                     },
                   ),

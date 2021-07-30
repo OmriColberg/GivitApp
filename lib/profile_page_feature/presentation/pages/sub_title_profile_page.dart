@@ -9,15 +9,20 @@ class SubTitlePersonalArea extends StatelessWidget {
     return Padding(
         padding: EdgeInsets.only(left: 25.0, right: 25.0, top: 25.0),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Text(
-                  title,
-                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: Text(
+                    title,
+                    style:
+                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ],
             ),

@@ -1,12 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
+import 'package:givit_app/core/models/transport.dart';
+import 'package:givit_app/core/shared/constant.dart';
 import 'package:intl/intl.dart';
 
 class DatabaseService {
   final String? uid;
   DatabaseService({this.uid});
 
+  final FirebaseStorage storage = FirebaseStorage.instance;
   final FirebaseFirestore db = FirebaseFirestore.instance;
   final CollectionReference usersCollection =
       FirebaseFirestore.instance.collection('Users');
@@ -22,24 +26,35 @@ class DatabaseService {
       'Full Name': fullName,
       'Password': password,
       'Phone Number': phoneNumber,
+      'Profile Picture URL': defaultProfileUrl,
       'Products': [],
       'Transports': [],
       'Role': 'User',
     });
   }
 
-  Future<void> updateAssignProductsToTransport(List<String> products) async {
+  Future<void> updateAssignProducts(
+      List<String> products, ProductStatus productStatus) async {
     Set mySet = products.toSet();
     await productsCollection.get().then((QuerySnapshot querySnapshot) => {
           querySnapshot.docs.forEach((product) {
             if (mySet.contains(product.id)) {
               updateProductFields(product.id, {
-                'Status Of Product':
-                    ProductStatus.assignToDelivery.toString().split('.')[1],
+                'Status Of Product': productStatus.toString().split('.')[1],
               });
             }
           })
         });
+  }
+
+  Future<Product> getProductByID(String id) async {
+    return await productsCollection
+        .doc(id)
+        .get()
+        .then((DocumentSnapshot<Object?> document) {
+      var snapshotData = document.data() as Map;
+      return Product.productFromDocument(snapshotData, document.id);
+    });
   }
 
   Future<void> updateGivitUserFields(Map<String, Object?> data) async {
@@ -72,7 +87,11 @@ class DatabaseService {
           DateFormat('yyyy-MM-dd hh:mm').format(datePickUp!).toString(),
       'Products': products ?? [],
       'Carriers': [],
+      'Status Of Transport':
+          TransportStatus.waitingForVolunteers.toString().split('.')[1],
+      'Pictures': [],
       'Notes': notes ?? '',
+      'SumUp': '',
     }).then((value) => value.id);
   }
 
@@ -81,6 +100,9 @@ class DatabaseService {
   }
 
   Future<String> addProduct({String? name, String? notes}) async {
+    Reference ref =
+        FirebaseStorage.instance.ref().child("/default_furniture_pic.jpg");
+    String url = (await ref.getDownloadURL()).toString();
     return await productsCollection.add({
       'Notes': notes,
       'Product Name': name,
@@ -89,6 +111,7 @@ class DatabaseService {
       "Owner's Phone Number": 0,
       'Time Span For Pick Up': '',
       'Pick Up Address': '',
+      'Product Picture URL': url,
       'Weight': 0,
       'Length': 0,
       'Width': 0,
@@ -112,6 +135,7 @@ class DatabaseService {
       password: snapshotData['Password'],
       fullName: snapshotData['Full Name'],
       phoneNumber: snapshotData['Phone Number'],
+      profilePictureURL: snapshotData['Profile Picture URL'],
       role: snapshotData['Role'],
       products: List.from(snapshotData['Products']),
       transports: List.from(snapshotData['Transports']),
@@ -120,5 +144,9 @@ class DatabaseService {
 
   Stream<GivitUser> get userData {
     return usersCollection.doc(uid).snapshots().map(_givitUserDataFromSnapshot);
+  }
+
+  Stream<QuerySnapshot<Object?>> get usersData {
+    return usersCollection.snapshots();
   }
 }

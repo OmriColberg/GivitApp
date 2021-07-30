@@ -6,6 +6,7 @@ class GivitUser {
   final String password;
   final String fullName;
   final int phoneNumber;
+  final String profilePictureURL;
   final String role;
   final List<String> products;
   final List<String> transports;
@@ -16,21 +17,23 @@ class GivitUser {
     this.fullName = '',
     this.phoneNumber = 0,
     this.role = 'User',
+    this.profilePictureURL = '',
     this.uid = '',
     this.products = const [],
     this.transports = const [],
   });
 
-  factory GivitUser.fromFirestorUser(DocumentSnapshot userSnapshout) {
+  factory GivitUser.fromFirestorUser(DocumentSnapshot userSnapshot) {
     return GivitUser(
-      uid: userSnapshout.id,
-      email: userSnapshout['Email'],
-      password: userSnapshout['Password'],
-      fullName: userSnapshout['Full Name'],
-      phoneNumber: userSnapshout['Phone Number'],
-      role: userSnapshout['Role'],
-      products: List.from(userSnapshout['Products']),
-      transports: List.from(userSnapshout['Transports']),
+      uid: userSnapshot.id,
+      email: userSnapshot['Email'],
+      password: userSnapshot['Password'],
+      fullName: userSnapshot['Full Name'],
+      phoneNumber: userSnapshot['Phone Number'],
+      profilePictureURL: userSnapshot['Profile Picture URL'],
+      role: userSnapshot['Role'],
+      products: List.from(userSnapshot['Products']),
+      transports: List.from(userSnapshot['Transports']),
     );
   }
 }

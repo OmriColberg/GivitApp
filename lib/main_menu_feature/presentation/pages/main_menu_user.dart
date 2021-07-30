@@ -35,7 +35,7 @@ class MainMenuUser extends StatelessWidget {
                     color: Colors.black,
                   ),
                   label: Text(
-                    'logout',
+                    'התנתק',
                     style: TextStyle(color: Colors.black),
                   ),
                   onPressed: () async {
@@ -65,7 +65,7 @@ class MainMenuUser extends StatelessWidget {
             ),
             body: TabBarView(
               children: [
-                GivitCommunityPage(),
+                GivitCommunityPage(size: size),
                 ProfilePage(size: size),
                 MainPage(size: size),
               ],
