@@ -4,7 +4,6 @@ import 'package:givit_app/core/models/product.dart';
 import 'package:givit_app/core/shared/assign_card_product.dart';
 import 'package:givit_app/core/shared/constant.dart';
 import 'package:givit_app/services/database.dart';
-import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -28,7 +27,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
   String pickUpAddress = '';
   String notes = '';
   List<String> products = const [];
-  DateTime datePickUp = DateTime.now(); // TODO: select date with calender
+  DateTime datePickUp = DateTime.now();
 
   @override
   Widget build(BuildContext context) {

@@ -3,6 +3,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
 import 'package:givit_app/core/models/transport.dart';
+import 'package:givit_app/core/shared/constant.dart';
 import 'package:intl/intl.dart';
 
 class DatabaseService {
@@ -20,15 +21,12 @@ class DatabaseService {
 
   Future<void> addGivitUser(
       String email, String fullName, String password, int phoneNumber) async {
-    Reference ref =
-        FirebaseStorage.instance.ref().child("/default_profile_pic.png");
-    String url = (await ref.getDownloadURL()).toString();
     return await usersCollection.doc(uid).set({
       'Email': email,
       'Full Name': fullName,
       'Password': password,
       'Phone Number': phoneNumber,
-      'Profile Picture URL': url,
+      'Profile Picture URL': defaultProfileUrl,
       'Products': [],
       'Transports': [],
       'Role': 'User',

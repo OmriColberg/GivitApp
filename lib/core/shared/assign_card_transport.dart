@@ -32,14 +32,12 @@ class AssignCardTransport extends StatelessWidget {
     required this.type,
   });
 
-  int prodIndex = 0;
-  int userIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     final GivitUser givitUser = Provider.of<GivitUser>(context);
     final DatabaseService db = DatabaseService(uid: givitUser.uid);
-
+    int prodIndex = 0;
+    int userIndex = 0;
     return StreamBuilder<QuerySnapshot>(
       stream: db.usersData,
       builder: (context, snapshotUsers) {
