@@ -22,6 +22,8 @@ class AssignCardTransport extends StatelessWidget {
   final List<String> personalTransport;
   final Size size;
   final CardType type;
+  final bool isAdmin;
+
   AssignCardTransport({
     required this.title,
     required this.body,
@@ -30,6 +32,7 @@ class AssignCardTransport extends StatelessWidget {
     required this.personalTransport,
     required this.size,
     required this.type,
+    required this.isAdmin,
   });
 
   @override
@@ -39,7 +42,7 @@ class AssignCardTransport extends StatelessWidget {
     int prodIndex = 0;
     int userIndex = 0;
     return StreamBuilder<QuerySnapshot>(
-      stream: db.usersData,
+      stream: db.givitUsersData,
       builder: (context, snapshotUsers) {
         if (snapshotUsers.hasError) {
           print(snapshotUsers.error);
@@ -88,18 +91,19 @@ class AssignCardTransport extends StatelessWidget {
                                   Icons.cancel_outlined,
                                   color: Colors.red,
                                 ),
-                                onTap: () {
+                                onTap: () async {
                                   personalTransport.remove(transport.id);
                                   if (transport.currentNumOfCarriers ==
                                       transport.totalNumOfCarriers) {
-                                    db.updateTransportFields(transport.id, {
+                                    await db.updateTransportFields(
+                                        transport.id, {
                                       'Status Of Transport':
                                           "waitingForVolunteers"
                                     });
                                   }
-                                  db.updateGivitUserFields(
+                                  await db.updateGivitUserFields(
                                       {'Transports': personalTransport});
-                                  db.updateTransportFields(transport.id, {
+                                  await db.updateTransportFields(transport.id, {
                                     'Current Number Of Carriers':
                                         transport.currentNumOfCarriers - 1,
                                     "Carriers":
@@ -107,7 +111,21 @@ class AssignCardTransport extends StatelessWidget {
                                   });
                                 },
                               )
-                            : Container()
+                            : isAdmin
+                                ? InkWell(
+                                    child: Icon(
+                                      Icons.delete_outline,
+                                      color: Colors.black,
+                                    ),
+                                    onTap: () {
+                                      showDialogDelete(
+                                          "אישור מחיקת הובלה ממאגר המידע",
+                                          size,
+                                          context,
+                                          db);
+                                    },
+                                  )
+                                : Container()
                       ],
                     ),
                     Text(
@@ -186,12 +204,13 @@ class AssignCardTransport extends StatelessWidget {
                         [
                           type == CardType.main
                               ? (ElevatedButton(
-                                  onPressed: () {
-                                    db.updateGivitUserFields({
+                                  onPressed: () async {
+                                    await db.updateGivitUserFields({
                                       "Transports": FieldValue.arrayUnion(
                                           ['${transport.id}'])
                                     });
-                                    db.updateTransportFields(transport.id, {
+                                    await db
+                                        .updateTransportFields(transport.id, {
                                       'Status Of Transport':
                                           transport.currentNumOfCarriers + 1 ==
                                                   transport.totalNumOfCarriers
@@ -220,7 +239,7 @@ class AssignCardTransport extends StatelessWidget {
                                           transport.totalNumOfCarriers
                                       ? ElevatedButton(
                                           onPressed: () async {
-                                            showDialogHelper(
+                                            showDialogPost(
                                                 "הוספת פוסט לקהילת גיביט",
                                                 size,
                                                 context,
@@ -234,8 +253,12 @@ class AssignCardTransport extends StatelessWidget {
                                                       .split('.')[1],
                                             });
                                             await db.updateAssignProducts(
-                                                personalTransport,
-                                                ProductStatus.delivered);
+                                                personalTransport, {
+                                              'Status Of Product': ProductStatus
+                                                  .delivered
+                                                  .toString()
+                                                  .split('.')[1],
+                                            });
                                           },
                                           child: Text("אישור ביצוע ההובלה"),
                                         )
@@ -253,7 +276,49 @@ class AssignCardTransport extends StatelessWidget {
     );
   }
 
-  void showDialogHelper(String dialogText, Size size, BuildContext context,
+  void showDialogDelete(
+      String dialogText, Size size, BuildContext context, DatabaseService db) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: size.height * 0.5,
+          child: AlertDialog(
+            title: Text(dialogText),
+            content: Row(
+              children: <Widget>[
+                ElevatedButton(
+                  onPressed: () async {
+                    await db.deleteTransportFromTransportList(transport.id);
+                    await db.updateAssignProducts(transport.products, {
+                      'Assigned Transport ID': '',
+                      'Status Of Product': ProductStatus.waitingToBeDelivered
+                          .toString()
+                          .split('.')[1]
+                    });
+                    await db.updateAssignGivitUsers(transport.carriers, {
+                      "Transports": FieldValue.arrayRemove(['${transport.id}'])
+                    });
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("מחיקה"),
+                ),
+                SizedBox(width: 5),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("ביטול"),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void showDialogPost(String dialogText, Size size, BuildContext context,
       DatabaseService db, Transport transport) {
     final ImagePicker _picker = ImagePicker();
 
@@ -300,12 +365,19 @@ class AssignCardTransport extends StatelessWidget {
                           .ref()
                           .child('Transport pictures/${transport.id}/$i');
                       reference.putFile((File(images![i].path))).whenComplete(
-                          () => reference.getDownloadURL().then((fileURL) =>
-                              db.updateTransportFields(transport.id, {
-                                'Pictures': FieldValue.arrayUnion(['$fileURL}'])
-                              })));
+                            () => reference.getDownloadURL().then(
+                                  (fileURL) => {
+                                    db.updateTransportFields(
+                                      transport.id,
+                                      {
+                                        'Pictures':
+                                            FieldValue.arrayUnion(['$fileURL}'])
+                                      },
+                                    ),
+                                  },
+                                ),
+                          );
                     }
-
                     Navigator.of(context).pop();
                   },
                   child: Text("לאישור"),

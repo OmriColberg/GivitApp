@@ -17,7 +17,7 @@ class MainMenu extends StatelessWidget {
     GivitUser user = Provider.of<GivitUser>(context);
     final DatabaseService db = DatabaseService(uid: user.uid);
     return StreamBuilder<GivitUser>(
-      stream: db.userData,
+      stream: db.givitUserData,
       builder: (context, snapshotGivitUser) {
         if (!snapshotGivitUser.hasData) {
           return Loading();

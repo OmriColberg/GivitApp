@@ -12,7 +12,7 @@ class DatabaseService {
 
   final FirebaseStorage storage = FirebaseStorage.instance;
   final FirebaseFirestore db = FirebaseFirestore.instance;
-  final CollectionReference usersCollection =
+  final CollectionReference givitUsersCollection =
       FirebaseFirestore.instance.collection('Users');
   final CollectionReference productsCollection =
       FirebaseFirestore.instance.collection('Products');
@@ -21,7 +21,7 @@ class DatabaseService {
 
   Future<void> addGivitUser(
       String email, String fullName, String password, int phoneNumber) async {
-    return await usersCollection.doc(uid).set({
+    return await givitUsersCollection.doc(uid).set({
       'Email': email,
       'Full Name': fullName,
       'Password': password,
@@ -34,31 +34,41 @@ class DatabaseService {
   }
 
   Future<void> updateAssignProducts(
-      List<String> products, ProductStatus productStatus) async {
+      List<String> products, Map<String, Object?> data) async {
     Set mySet = products.toSet();
     await productsCollection.get().then((QuerySnapshot querySnapshot) => {
           querySnapshot.docs.forEach((product) {
             if (mySet.contains(product.id)) {
-              updateProductFields(product.id, {
-                'Status Of Product': productStatus.toString().split('.')[1],
-              });
+              updateProductFields(product.id, data);
             }
           })
         });
   }
 
-  Future<Product> getProductByID(String id) async {
-    return await productsCollection
+  Future<void> updateAssignGivitUsers(
+      List<String> givitUsers, Map<String, Object?> data) async {
+    Set mySet = givitUsers.toSet();
+    await givitUsersCollection.get().then((QuerySnapshot querySnapshot) => {
+          querySnapshot.docs.forEach((givitUser) {
+            if (mySet.contains(givitUser.id)) {
+              updateGivitUserFields(data);
+            }
+          })
+        });
+  }
+
+  Future<Transport> getTransportByID(String id) async {
+    return await transportsCollection
         .doc(id)
         .get()
         .then((DocumentSnapshot<Object?> document) {
       var snapshotData = document.data() as Map;
-      return Product.productFromDocument(snapshotData, document.id);
+      return Transport.transportFromDocument(snapshotData, document.id);
     });
   }
 
   Future<void> updateGivitUserFields(Map<String, Object?> data) async {
-    return await usersCollection.doc(uid).update(data);
+    return await givitUsersCollection.doc(uid).update(data);
   }
 
   Future<void> updateProductFields(String id, Map<String, Object?> data) async {
@@ -112,6 +122,7 @@ class DatabaseService {
       'Time Span For Pick Up': '',
       'Pick Up Address': '',
       'Product Picture URL': url,
+      'Assigned Transport ID': '',
       'Weight': 0,
       'Length': 0,
       'Width': 0,
@@ -119,8 +130,34 @@ class DatabaseService {
     }).then((value) => value.id);
   }
 
+  Future<void> deleteProductFromGivitUserList(String productId) async {
+    return await givitUsersCollection
+        .get()
+        .then((QuerySnapshot<Object?> querySnapshot) => {
+              querySnapshot.docs.forEach((document) {
+                GivitUser givitUser = GivitUser.fromFirestorUser(document);
+                if (givitUser.products.contains(productId)) {
+                  updateGivitUserFields({
+                    "Products": FieldValue.arrayRemove(['$productId'])
+                  });
+                }
+              })
+            });
+  }
+
+  Future<void> deleteProductFromTransportList(
+      String productId, String transportId) async {
+    await transportsCollection.doc(transportId).update({
+      "Carriers": FieldValue.arrayRemove(['$productId'])
+    });
+  }
+
   Future<void> deleteProductFromProductList(String id) async {
     return await productsCollection.doc(id).delete();
+  }
+
+  Future<void> deleteTransportFromTransportList(String id) async {
+    return await transportsCollection.doc(id).delete();
   }
 
   Stream<QuerySnapshot<Object?>> get producstData {
@@ -142,11 +179,14 @@ class DatabaseService {
     );
   }
 
-  Stream<GivitUser> get userData {
-    return usersCollection.doc(uid).snapshots().map(_givitUserDataFromSnapshot);
+  Stream<GivitUser> get givitUserData {
+    return givitUsersCollection
+        .doc(uid)
+        .snapshots()
+        .map(_givitUserDataFromSnapshot);
   }
 
-  Stream<QuerySnapshot<Object?>> get usersData {
-    return usersCollection.snapshots();
+  Stream<QuerySnapshot<Object?>> get givitUsersData {
+    return givitUsersCollection.snapshots();
   }
 }

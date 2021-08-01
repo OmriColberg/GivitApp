@@ -26,7 +26,7 @@ class _AdminPageState extends State<AdminPage> {
     GivitUser user = Provider.of<GivitUser>(context);
     final DatabaseService db = DatabaseService(uid: user.uid);
     return StreamBuilder<GivitUser>(
-      stream: db.userData,
+      stream: db.givitUserData,
       builder: (context, snapshotGivitUser) {
         if (snapshotGivitUser.hasError) {
           return Text('אירעה תקלה, נא לפנות למנהלים');
@@ -258,6 +258,7 @@ AssignCardProduct createDeliveryAssignFromProductSnapshot(
     product: product,
     personalProducts: products,
     size: size,
+    isAdmin: true,
   );
 }
 
@@ -273,5 +274,6 @@ AssignCardTransport createDeliveryAssignFromTransportSnapshot(
     transport: transport,
     personalTransport: transports,
     size: size,
+    isAdmin: true,
   );
 }

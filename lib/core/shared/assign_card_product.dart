@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
+import 'package:givit_app/core/models/transport.dart';
 import 'package:givit_app/profile_page_feature/presentation/pages/product_found_form.dart';
 import 'package:givit_app/services/database.dart';
 import 'package:provider/provider.dart';
@@ -15,15 +16,16 @@ class AssignCardProduct extends StatelessWidget {
   final List<String> personalProducts;
   final Size size;
   final CardType type;
-  AssignCardProduct({
-    required this.title,
-    required this.body,
-    required this.schedule,
-    required this.product,
-    required this.personalProducts,
-    required this.size,
-    required this.type,
-  });
+  final bool isAdmin;
+  AssignCardProduct(
+      {required this.title,
+      required this.body,
+      required this.schedule,
+      required this.product,
+      required this.personalProducts,
+      required this.size,
+      required this.type,
+      required this.isAdmin});
 
   @override
   Widget build(BuildContext context) {
@@ -56,13 +58,24 @@ class AssignCardProduct extends StatelessWidget {
                           Icons.cancel_outlined,
                           color: Colors.red,
                         ),
-                        onTap: () {
+                        onTap: () async {
                           personalProducts.remove(product.id);
-                          db.updateGivitUserFields(
+                          await db.updateGivitUserFields(
                               {'Products': personalProducts});
                         },
                       )
-                    : Container()
+                    : isAdmin
+                        ? InkWell(
+                            child: Icon(
+                              Icons.delete_outline,
+                              color: Colors.black,
+                            ),
+                            onTap: () {
+                              showDialogHelper("אישור מחיקת מוצר ממאגר המידע",
+                                  size, context, db);
+                            },
+                          )
+                        : Container()
               ],
             ),
             Text(
@@ -99,6 +112,51 @@ class AssignCardProduct extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void showDialogHelper(
+      String dialogText, Size size, BuildContext context, DatabaseService db) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: size.height * 0.5,
+          child: AlertDialog(
+            title: Text(dialogText),
+            content: Row(
+              children: <Widget>[
+                ElevatedButton(
+                  onPressed: () async {
+                    await db.deleteProductFromProductList(product.id);
+                    await db.deleteProductFromTransportList(
+                        product.id, product.assignedTransportId);
+                    await db.deleteProductFromGivitUserList(product.id);
+                    Transport transport =
+                        await db.getTransportByID(product.assignedTransportId);
+                    if (transport.products.length == 0) {
+                      await db.deleteTransportFromTransportList(transport.id);
+                      await db.updateAssignGivitUsers(transport.carriers, {
+                        "Transports":
+                            FieldValue.arrayRemove(['${transport.id}'])
+                      });
+                    }
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("מחיקה"),
+                ),
+                SizedBox(width: 5),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("ביטול"),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

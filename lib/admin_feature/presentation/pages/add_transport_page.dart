@@ -151,6 +151,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
                       style: TextStyle(color: Colors.white),
                     ),
                     onPressed: () async {
+                      String transportID = '';
                       if (_formKey.currentState!.validate()) {
                         if (products.isNotEmpty) {
                           await db
@@ -163,6 +164,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
                             notes: notes,
                           )
                               .then((_result) {
+                            transportID = _result;
                             print(
                                 'This is the ID of the transport that just added: $_result');
                             showDialogHelper(
@@ -172,8 +174,13 @@ class _AddTransportPageState extends State<AddTransportPage> {
                                 "קרתה תקלה, נסה שוב ($error)", widget.size);
                           });
                           await db
-                              .updateAssignProducts(
-                                  products, ProductStatus.assignToDelivery)
+                              .updateAssignProducts(products, {
+                                'Status Of Product': ProductStatus
+                                    .assignToDelivery
+                                    .toString()
+                                    .split('.')[1],
+                                'Assigned Transport ID': transportID,
+                              })
                               .then((_) => products.forEach((id) {
                                     print(
                                         'the product with the id: $id were updated to delivery');
@@ -236,5 +243,6 @@ AssignCardProduct createDeliveryAssignFromProductSnapshot(
     product: product,
     personalProducts: [],
     size: size,
+    isAdmin: true,
   );
 }

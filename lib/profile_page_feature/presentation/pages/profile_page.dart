@@ -26,7 +26,7 @@ class _ProfilePageState extends State<ProfilePage> {
     GivitUser user = Provider.of<GivitUser>(context);
     final DatabaseService db = DatabaseService(uid: user.uid);
     return StreamBuilder<GivitUser>(
-      stream: db.userData,
+      stream: db.givitUserData,
       builder: (context, snapshotGivitUser) {
         if (snapshotGivitUser.hasError) {
           print(snapshotGivitUser.error);
@@ -110,7 +110,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                     return createDeliveryAssignFromProductSnapshot(
                                         product,
                                         givitUser.products,
-                                        widget.size);
+                                        widget.size,
+                                        givitUser.role == 'Admin');
                                   } else {
                                     return Container();
                                   }
@@ -130,7 +131,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                   return createDeliveryAssignFromTransportSnapshot(
                                       transport,
                                       givitUser.transports,
-                                      widget.size);
+                                      widget.size,
+                                      givitUser.role == 'Admin');
                                 } else
                                   return Container();
                               }).toList(),
@@ -151,7 +153,7 @@ class _ProfilePageState extends State<ProfilePage> {
 }
 
 AssignCardProduct createDeliveryAssignFromProductSnapshot(
-    Product product, List<String> products, Size size) {
+    Product product, List<String> products, Size size, bool isAdmin) {
   return AssignCardProduct(
     title: product.name,
     body: product.notes,
@@ -160,11 +162,12 @@ AssignCardProduct createDeliveryAssignFromProductSnapshot(
     product: product,
     personalProducts: products,
     size: size,
+    isAdmin: isAdmin,
   );
 }
 
 AssignCardTransport createDeliveryAssignFromTransportSnapshot(
-    Transport transport, List<String> transports, Size size) {
+    Transport transport, List<String> transports, Size size, bool isAdmin) {
   String date =
       DateFormat('yyyy-MM-dd hh:mm').format(transport.datePickUp).toString();
   return AssignCardTransport(
@@ -175,5 +178,6 @@ AssignCardTransport createDeliveryAssignFromTransportSnapshot(
     transport: transport,
     personalTransport: transports,
     size: size,
+    isAdmin: isAdmin,
   );
 }
