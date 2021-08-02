@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
-String defaultProfileUrl =
-    'https://firebasestorage.googleapis.com/v0/b/givitapp-4c707.appspot.com/o/default_profile_pic.png?alt=media&token=6c3c74ce-e55b-4137-af5a-5d587385eb66';
+const String defaultProfileUrl =
+    'https://firebasestorage.googleapis.com/v0/b/givitapp-4c707.appspot.com/o/default_profile_pic.png?alt=media&token=a9be15ee-dc72-41a0-9ff9-a3427fbc2b47';
+
+const String defaultFurnitureUrl =
+    'https://firebasestorage.googleapis.com/v0/b/givitapp-4c707.appspot.com/o/default_furniture_pic.jpeg?alt=media&token=a5cf7296-09cd-4df3-876f-7e1822e2b1b1';
 
 const textInputDecoration = InputDecoration(
   fillColor: Colors.white,

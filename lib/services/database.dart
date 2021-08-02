@@ -111,7 +111,7 @@ class DatabaseService {
 
   Future<String> addProduct({String? name, String? notes}) async {
     Reference ref =
-        FirebaseStorage.instance.ref().child("/default_furniture_pic.jpg");
+        FirebaseStorage.instance.ref().child("/default_furniture_pic.jpeg");
     String url = (await ref.getDownloadURL()).toString();
     return await productsCollection.add({
       'Notes': notes,

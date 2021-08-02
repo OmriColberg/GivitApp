@@ -103,7 +103,7 @@ class _ProductFoundFormState extends State<ProductFoundForm> {
                                 shape: BoxShape.circle,
                                 image: DecorationImage(
                                   image: ExactAssetImage(
-                                      'lib/core/assets/default_furniture_pic.jpg'),
+                                      'lib/core/assets/default_furniture_pic.jpeg'),
                                   fit: BoxFit.cover,
                                 ),
                               ),

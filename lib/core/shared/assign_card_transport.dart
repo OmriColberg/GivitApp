@@ -289,6 +289,7 @@ class AssignCardTransport extends StatelessWidget {
               children: <Widget>[
                 ElevatedButton(
                   onPressed: () async {
+                    Navigator.of(context).pop();
                     await db.deleteTransportFromTransportList(transport.id);
                     await db.updateAssignProducts(transport.products, {
                       'Assigned Transport ID': '',
@@ -299,7 +300,6 @@ class AssignCardTransport extends StatelessWidget {
                     await db.updateAssignGivitUsers(transport.carriers, {
                       "Transports": FieldValue.arrayRemove(['${transport.id}'])
                     });
-                    Navigator.of(context).pop();
                   },
                   child: Text("מחיקה"),
                 ),
