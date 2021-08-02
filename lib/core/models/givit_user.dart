@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class GivitUser {
-  final String? uid;
+  final String uid;
   final String? email;
   final String password;
   final String fullName;

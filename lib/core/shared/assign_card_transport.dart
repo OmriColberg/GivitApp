@@ -118,7 +118,7 @@ class AssignCardTransport extends StatelessWidget {
                                       color: Colors.black,
                                     ),
                                     onTap: () {
-                                      showDialogDelete(
+                                      showTransportDelete(
                                           "אישור מחיקת הובלה ממאגר המידע",
                                           size,
                                           context,
@@ -152,13 +152,19 @@ class AssignCardTransport extends StatelessWidget {
                                     style: TextStyle(fontSize: 18),
                                   ),
                                   SizedBox(width: 10),
-                                  ClipOval(
-                                    child: Image.network(
-                                      product.productPictureURL,
-                                      fit: BoxFit.fill,
-                                      height: 30,
-                                      width: 30,
+                                  GestureDetector(
+                                    child: ClipOval(
+                                      child: Image.network(
+                                        product.productPictureURL,
+                                        fit: BoxFit.fill,
+                                        height: 30,
+                                        width: 30,
+                                      ),
                                     ),
+                                    onTap: () {
+                                      showProductInfo(
+                                          product, size, context, db);
+                                    },
                                   ),
                                 ],
                               );
@@ -276,7 +282,90 @@ class AssignCardTransport extends StatelessWidget {
     );
   }
 
-  void showDialogDelete(
+  void showProductInfo(
+      Product product, Size size, BuildContext context, DatabaseService db) {
+    String length = product.length != 0
+        ? "\nאורך המוצר בס''מ: " + product.length.toString()
+        : '';
+    String width = product.width != 0
+        ? "\nרוחב המוצר בס''מ: " + product.width.toString()
+        : '';
+    String weight = product.weight != 0
+        ? "\nמשקל המוצר בקילוגרמים: " + product.weight.toString()
+        : '';
+    String body = "שם הבעלים: " +
+        product.ownerName +
+        "\nמספר טלפון: " +
+        product.ownerPhoneNumber +
+        "\nכתוב לאיסוף: " +
+        product.pickUpAddress +
+        "\nזמן לאיסוף מוצר: " +
+        product.timeForPickUp +
+        "\nמצב המוצר: " +
+        Product.hebrewFromEnum(product.state) +
+        length +
+        width +
+        weight +
+        "\nהערות: " +
+        product.notes;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: size.height * 0.5,
+          child: AlertDialog(
+            title: Text(body),
+            content: Column(
+              children: <Widget>[
+                Container(
+                  width: 150,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(product.productPictureURL),
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                        await db.deleteProductFromProductList(product.id);
+                        Transport transport = await db
+                            .getTransportByID(product.assignedTransportId);
+                        if (transport.products.length == 1) {
+                          await db
+                              .deleteTransportFromTransportList(transport.id);
+                          await db.updateAssignGivitUsers(transport.carriers, {
+                            "Transports":
+                                FieldValue.arrayRemove(['${transport.id}'])
+                          });
+                        } else {
+                          await db.deleteProductFromTransportList(
+                              product.id, product.assignedTransportId);
+                        }
+                      },
+                      child: Text('למחיקה'),
+                    ),
+                    SizedBox(width: 5),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text("לחזרה"),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void showTransportDelete(
       String dialogText, Size size, BuildContext context, DatabaseService db) {
     showDialog(
       context: context,

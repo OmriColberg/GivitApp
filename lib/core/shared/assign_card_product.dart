@@ -131,20 +131,6 @@ class AssignCardProduct extends StatelessWidget {
                     Navigator.of(context).pop();
                     await db.deleteProductFromProductList(product.id);
                     await db.deleteProductFromGivitUserList(product.id);
-                    if (product.assignedTransportId != '') {
-                      Transport transport = await db
-                          .getTransportByID(product.assignedTransportId);
-                      await db.deleteProductFromTransportList(
-                          product.id, product.assignedTransportId);
-
-                      if (transport.products.length == 0) {
-                        await db.deleteTransportFromTransportList(transport.id);
-                        await db.updateAssignGivitUsers(transport.carriers, {
-                          "Transports":
-                              FieldValue.arrayRemove(['${transport.id}'])
-                        });
-                      }
-                    }
                   },
                   child: Text("מחיקה"),
                 ),
