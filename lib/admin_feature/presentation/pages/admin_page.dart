@@ -170,7 +170,8 @@ class _AdminPageState extends State<AdminPage> {
                                     Transport.transportFromDocument(
                                         snapshotData, document.id);
                                 if (transport.status !=
-                                    TransportStatus.carriedOut) {
+                                        TransportStatus.carriedOut &&
+                                    transport.status != TransportStatus.mock) {
                                   return createDeliveryAssignFromTransportSnapshot(
                                       transport,
                                       givitUser!.transports,

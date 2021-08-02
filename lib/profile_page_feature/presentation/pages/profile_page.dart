@@ -107,17 +107,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                     Product product =
                                         Product.productFromDocument(
                                             snapshotData, document.id);
-                                    if (product.status.toString() !=
-                                        ProductStatus.assignToDelivery
-                                            .toString()) {
-                                      return createDeliveryAssignFromProductSnapshot(
-                                          product,
-                                          givitUser.products,
-                                          widget.size,
-                                          givitUser.role == 'Admin');
-                                    } else {
-                                      return Container();
-                                    }
+
+                                    return createDeliveryAssignFromProductSnapshot(
+                                        product,
+                                        givitUser.products,
+                                        widget.size,
+                                        givitUser.role == 'Admin');
                                   } else
                                     return Container();
                                 }).toList(),
@@ -128,9 +123,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       Transport.transportFromDocument(
                                           snapshotData, document.id);
                                   if (givitUser.transports
-                                          .contains(transport.id) &&
-                                      transport.status !=
-                                          TransportStatus.carriedOut) {
+                                      .contains(transport.id)) {
                                     return createDeliveryAssignFromTransportSnapshot(
                                         transport,
                                         givitUser.transports,

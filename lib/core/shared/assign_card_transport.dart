@@ -115,7 +115,7 @@ class AssignCardTransport extends StatelessWidget {
                                 ? InkWell(
                                     child: Icon(
                                       Icons.delete_outline,
-                                      color: Colors.black,
+                                      color: Colors.red[900],
                                     ),
                                     onTap: () {
                                       showTransportDelete(
@@ -265,6 +265,9 @@ class AssignCardTransport extends StatelessWidget {
                                                   .toString()
                                                   .split('.')[1],
                                             });
+                                            await db
+                                                .deleteTransportFromGivitUserList(
+                                                    transport.id);
                                           },
                                           child: Text("אישור ביצוע ההובלה"),
                                         )

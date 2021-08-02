@@ -150,6 +150,21 @@ class DatabaseService {
             });
   }
 
+  Future<void> deleteTransportFromGivitUserList(String transportId) async {
+    return await givitUsersCollection
+        .get()
+        .then((QuerySnapshot<Object?> querySnapshot) => {
+              querySnapshot.docs.forEach((document) {
+                GivitUser givitUser = GivitUser.fromFirestorUser(document);
+                if (givitUser.transports.contains(transportId)) {
+                  updateGivitUserFieldsById(givitUser.uid, {
+                    "Transports": FieldValue.arrayRemove(['$transportId'])
+                  });
+                }
+              })
+            });
+  }
+
   Future<void> deleteProductFromTransportList(
       String productId, String transportId) async {
     await transportsCollection.doc(transportId).update({
