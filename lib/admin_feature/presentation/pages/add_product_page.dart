@@ -68,6 +68,7 @@ class _AddProductPageState extends State<AddProductPage> {
                     ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
+                        notes = notes == '' ? 'אין הערות' : notes;
                         await db
                             .addProduct(name: name, notes: notes)
                             .then((_result) {

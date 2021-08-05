@@ -62,6 +62,8 @@ class _ProductFoundFormState extends State<ProductFoundForm> {
                     child: TextFormField(
                       decoration: textInputDecoration.copyWith(
                           hintText: 'שם מוסר/ת המוצר'),
+                      validator: (val) =>
+                          val!.isEmpty ? 'הכנס/י את שם מוסר/ת המוצר' : null,
                       onChanged: (val) {
                         setState(() => ownerName = val);
                       },
@@ -227,6 +229,7 @@ class _ProductFoundFormState extends State<ProductFoundForm> {
                     ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
+                        notes = notes == '' ? 'אין הערות' : notes;
                         await db.updateProductFields(widget.product.id, {
                           "Owner's Name": ownerName,
                           'State Of Product': state.toString().split('.')[1],
@@ -264,6 +267,12 @@ class _ProductFoundFormState extends State<ProductFoundForm> {
                                   db.updateProductFields(widget.product.id,
                                       {'Product Picture URL': fileURL})
                                 }));
+                        setState(() {
+                          notes = '';
+                          ownerName = '';
+                          pickUpAddress = '';
+                          timeForPickUp = '';
+                        });
                         _formKey.currentState!.reset();
                       }
                     },

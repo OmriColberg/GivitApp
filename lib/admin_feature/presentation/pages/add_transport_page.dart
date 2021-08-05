@@ -154,6 +154,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
                       String transportID = '';
                       if (_formKey.currentState!.validate()) {
                         if (products.isNotEmpty) {
+                          notes = notes == '' ? 'אין הערות' : notes;
                           await db
                               .addTransport(
                             products: products,
@@ -187,6 +188,14 @@ class _AddTransportPageState extends State<AddTransportPage> {
                                   }))
                               .onError((error, stackTrace) =>
                                   print("קרתה תקלה, נסה שוב ($error)"));
+                          setState(() {
+                            totalNumOfCarriers = 0;
+                            destinationAddress = '';
+                            pickUpAddress = '';
+                            notes = '';
+                            products = const [];
+                            datePickUp = DateTime.now();
+                          });
                           _formKey.currentState!.reset();
                         } else {
                           error = 'ההובלה חייבת לכלול לפחות מוצר 1';
