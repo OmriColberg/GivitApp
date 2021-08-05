@@ -102,13 +102,20 @@ class AssignCardTransport extends StatelessWidget {
                                           "waitingForVolunteers"
                                     });
                                   }
+                                  String userPhoneNumber =
+                                      (await db.getUserByID(db.uid))
+                                          .phoneNumber
+                                          .toString();
                                   await db.updateGivitUserFields(
                                       {'Transports': personalTransport});
                                   await db.updateTransportFields(transport.id, {
                                     'Current Number Of Carriers':
                                         transport.currentNumOfCarriers - 1,
                                     "Carriers":
-                                        FieldValue.arrayRemove(['${db.uid}'])
+                                        FieldValue.arrayRemove(['${db.uid}']),
+                                    "Carriers Phone Numbers":
+                                        FieldValue.arrayRemove(
+                                            ['$userPhoneNumber']),
                                   });
                                 },
                               )
@@ -179,7 +186,7 @@ class AssignCardTransport extends StatelessWidget {
                                 'נרשמו ${transport.currentNumOfCarriers} מתוך  ${transport.totalNumOfCarriers} מובילים',
                                 style: TextStyle(fontSize: 16),
                               ),
-                              isAdmin
+                              isAdmin && type == CardType.admin
                                   ? InkWell(
                                       child: Icon(
                                         Icons.sms,
@@ -232,6 +239,10 @@ class AssignCardTransport extends StatelessWidget {
                                       "Transports": FieldValue.arrayUnion(
                                           ['${transport.id}'])
                                     });
+                                    String userPhoneNumber =
+                                        (await db.getUserByID(db.uid))
+                                            .phoneNumber
+                                            .toString();
                                     await db
                                         .updateTransportFields(transport.id, {
                                       'Status Of Transport':
@@ -248,7 +259,10 @@ class AssignCardTransport extends StatelessWidget {
                                       'Current Number Of Carriers':
                                           transport.currentNumOfCarriers + 1,
                                       "Carriers":
-                                          FieldValue.arrayUnion(['${db.uid}'])
+                                          FieldValue.arrayUnion(['${db.uid}']),
+                                      "Carriers Phone Numbers":
+                                          FieldValue.arrayUnion(
+                                              ['$userPhoneNumber']),
                                     });
                                   },
                                   child: Text(schedule),
@@ -357,10 +371,7 @@ class AssignCardTransport extends StatelessWidget {
                     // print(
                     //     "תזכורת: בתאריך ה${transport.datePickUp.day}.${transport.datePickUp.month}.${transport.datePickUp.year} בשעה ${transport.datePickUp.hour}:${transport.datePickUp.minute} תתבצע הובלה מ${transport.pickUpAddress}. תודה על התנדבותך");
                     Navigator.of(context).pop();
-                    sendSMS(
-                        message:
-                            "תזכורת: בתאריך ה${transport.datePickUp.day}.${transport.datePickUp.month}.${transport.datePickUp.year} בשעה ${transport.datePickUp.hour}:${transport.datePickUp.minute} תתבצע הובלה מ${transport.pickUpAddress}. תודה על התנדבותך!",
-                        recipients: ["0526574745", "0544458840", "0504981020"]);
+                    smsSender(db, transport);
                     // telephony.sendSms(to: "0526574745", message: "its ALIVE");
                     // telephony.sendSms(to: "0544458840", message: "its ALIVE");
                   },
@@ -451,5 +462,22 @@ class AssignCardTransport extends StatelessWidget {
         );
       },
     );
+  }
+
+  void smsSender(DatabaseService db, Transport transport) {
+    print("ALL PHONE NUMBERS TO TRANSPORT:");
+    var index = 0;
+    transport.carriersPhoneNumbers.forEach((phoneNumber) {
+      if (phoneNumber[0] == '5') {
+        transport.carriersPhoneNumbers[index] = '0' + phoneNumber;
+        print(phoneNumber);
+        index++;
+      }
+    });
+    print(transport.carriersPhoneNumbers);
+    sendSMS(
+        message:
+            "תזכורת: בתאריך ה${transport.datePickUp.day}.${transport.datePickUp.month}.${transport.datePickUp.year} בשעה ${transport.datePickUp.hour}:${transport.datePickUp.minute} תתבצע הובלה מ${transport.pickUpAddress}. תודה על התנדבותך!",
+        recipients: transport.carriersPhoneNumbers);
   }
 }
