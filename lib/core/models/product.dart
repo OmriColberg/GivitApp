@@ -121,4 +121,5 @@ enum ProductStatus {
   waitingToBeDelivered,
   assignToDelivery,
   delivered,
+  mock,
 }

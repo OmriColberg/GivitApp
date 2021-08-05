@@ -7,8 +7,8 @@ import 'package:givit_app/core/shared/constant.dart';
 import 'package:intl/intl.dart';
 
 class DatabaseService {
-  final String? uid;
-  DatabaseService({this.uid});
+  final String uid;
+  DatabaseService({required this.uid});
 
   final FirebaseStorage storage = FirebaseStorage.instance;
   final FirebaseFirestore db = FirebaseFirestore.instance;
@@ -51,7 +51,7 @@ class DatabaseService {
     await givitUsersCollection.get().then((QuerySnapshot querySnapshot) => {
           querySnapshot.docs.forEach((givitUser) {
             if (mySet.contains(givitUser.id)) {
-              updateGivitUserFields(data);
+              updateGivitUserFieldsById(givitUser.id, data);
             }
           })
         });
@@ -78,6 +78,11 @@ class DatabaseService {
 
   Future<void> updateGivitUserFields(Map<String, Object?> data) async {
     return await givitUsersCollection.doc(uid).update(data);
+  }
+
+  Future<void> updateGivitUserFieldsById(
+      String id, Map<String, Object?> data) async {
+    return await givitUsersCollection.doc(id).update(data);
   }
 
   Future<void> updateProductFields(String id, Map<String, Object?> data) async {
@@ -121,7 +126,7 @@ class DatabaseService {
 
   Future<String> addProduct({String? name, String? notes}) async {
     Reference ref =
-        FirebaseStorage.instance.ref().child("/default_furniture_pic.jpg");
+        FirebaseStorage.instance.ref().child("/default_furniture_pic.jpeg");
     String url = (await ref.getDownloadURL()).toString();
     return await productsCollection.add({
       'Notes': notes,
@@ -147,8 +152,23 @@ class DatabaseService {
               querySnapshot.docs.forEach((document) {
                 GivitUser givitUser = GivitUser.fromFirestorUser(document);
                 if (givitUser.products.contains(productId)) {
-                  updateGivitUserFields({
+                  updateGivitUserFieldsById(givitUser.uid, {
                     "Products": FieldValue.arrayRemove(['$productId'])
+                  });
+                }
+              })
+            });
+  }
+
+  Future<void> deleteTransportFromGivitUserList(String transportId) async {
+    return await givitUsersCollection
+        .get()
+        .then((QuerySnapshot<Object?> querySnapshot) => {
+              querySnapshot.docs.forEach((document) {
+                GivitUser givitUser = GivitUser.fromFirestorUser(document);
+                if (givitUser.transports.contains(transportId)) {
+                  updateGivitUserFieldsById(givitUser.uid, {
+                    "Transports": FieldValue.arrayRemove(['$transportId'])
                   });
                 }
               })

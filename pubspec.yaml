@@ -74,7 +74,7 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "lib/core/assets/givit_logo.png"
+  image_path: "lib/core/assets/givit_symbol.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -91,9 +91,10 @@ flutter:
   assets:
     - lib/core/assets/givit-white.png
     - lib/core/assets/default_profile_pic.png
-    - lib/core/assets/default_furniture_pic.jpg
+    - lib/core/assets/default_furniture_pic.jpeg
     - lib/core/assets/sofa_icon.svg
     - lib/core/assets/givit_logo.png
+    - lib/core/assets/givit_symbol.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -103,7 +103,7 @@ class _ProductFoundFormState extends State<ProductFoundForm> {
                                 shape: BoxShape.circle,
                                 image: DecorationImage(
                                   image: ExactAssetImage(
-                                      'lib/core/assets/default_furniture_pic.jpg'),
+                                      'lib/core/assets/default_furniture_pic.jpeg'),
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -227,7 +227,7 @@ class _ProductFoundFormState extends State<ProductFoundForm> {
                     ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        db.updateProductFields(widget.product.id, {
+                        await db.updateProductFields(widget.product.id, {
                           "Owner's Name": ownerName,
                           'State Of Product': state.toString().split('.')[1],
                           "Owner's Phone Number": ownerPhoneNumber,
@@ -250,7 +250,10 @@ class _ProductFoundFormState extends State<ProductFoundForm> {
                               "קרתה תקלה, נסה שוב ($error)", widget.size);
                         });
                         widget.products.remove(widget.product.id);
-                        db.updateGivitUserFields({'Products': widget.products});
+                        await db.updateGivitUserFields(
+                            {'Products': widget.products});
+                        await db
+                            .deleteProductFromGivitUserList(widget.product.id);
                         Reference reference = db.storage
                             .ref()
                             .child('Products pictures/${widget.product.id}');

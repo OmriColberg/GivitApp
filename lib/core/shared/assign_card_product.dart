@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
-import 'package:givit_app/core/models/transport.dart';
 import 'package:givit_app/profile_page_feature/presentation/pages/product_found_form.dart';
 import 'package:givit_app/services/database.dart';
 import 'package:provider/provider.dart';
@@ -68,7 +67,7 @@ class AssignCardProduct extends StatelessWidget {
                         ? InkWell(
                             child: Icon(
                               Icons.delete_outline,
-                              color: Colors.black,
+                              color: Colors.red[900],
                             ),
                             onTap: () {
                               showDialogHelper("אישור מחיקת מוצר ממאגר המידע",
@@ -128,20 +127,9 @@ class AssignCardProduct extends StatelessWidget {
               children: <Widget>[
                 ElevatedButton(
                   onPressed: () async {
-                    await db.deleteProductFromProductList(product.id);
-                    await db.deleteProductFromTransportList(
-                        product.id, product.assignedTransportId);
-                    await db.deleteProductFromGivitUserList(product.id);
-                    Transport transport =
-                        await db.getTransportByID(product.assignedTransportId);
-                    if (transport.products.length == 0) {
-                      await db.deleteTransportFromTransportList(transport.id);
-                      await db.updateAssignGivitUsers(transport.carriers, {
-                        "Transports":
-                            FieldValue.arrayRemove(['${transport.id}'])
-                      });
-                    }
                     Navigator.of(context).pop();
+                    await db.deleteProductFromProductList(product.id);
+                    await db.deleteProductFromGivitUserList(product.id);
                   },
                   child: Text("מחיקה"),
                 ),

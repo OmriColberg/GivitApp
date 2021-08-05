@@ -12,6 +12,7 @@ import 'package:givit_app/services/database.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:provider/provider.dart';
+import 'dart:ui' as ui;
 
 class AdminPage extends StatefulWidget {
   AdminPage({required this.size});
@@ -135,14 +136,17 @@ class _AdminPageState extends State<AdminPage> {
                                           onPressed: () {
                                             if (product != null) {
                                               showDialogHelper(
-                                                  product, widget.size);
+                                                  product, widget.size, db);
                                             }
                                           },
-                                          child: Text(
-                                            '${product!.name}\n${product.pickUpAddress}',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.white,
+                                          child: Directionality(
+                                            textDirection: ui.TextDirection.rtl,
+                                            child: Text(
+                                              '${product!.name}\n${product.pickUpAddress}',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.white,
+                                              ),
                                             ),
                                           ),
                                           style: ElevatedButton.styleFrom(
@@ -166,7 +170,8 @@ class _AdminPageState extends State<AdminPage> {
                                     Transport.transportFromDocument(
                                         snapshotData, document.id);
                                 if (transport.status !=
-                                    TransportStatus.carriedOut) {
+                                        TransportStatus.carriedOut &&
+                                    transport.status != TransportStatus.mock) {
                                   return createDeliveryAssignFromTransportSnapshot(
                                       transport,
                                       givitUser!.transports,
@@ -190,7 +195,7 @@ class _AdminPageState extends State<AdminPage> {
     );
   }
 
-  void showDialogHelper(Product product, Size size) {
+  void showDialogHelper(Product product, Size size, DatabaseService db) {
     String length = product.length != 0
         ? "\nאורך המוצר בס''מ: " + product.length.toString()
         : '';
@@ -233,11 +238,23 @@ class _AdminPageState extends State<AdminPage> {
                     ),
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text("לחזרה"),
+                Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                        await db.deleteProductFromProductList(product.id);
+                      },
+                      child: Text('למחיקה'),
+                    ),
+                    SizedBox(width: 5),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text("לחזרה"),
+                    ),
+                  ],
                 ),
               ],
             ),

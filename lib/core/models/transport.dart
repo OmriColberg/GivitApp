@@ -63,4 +63,5 @@ enum TransportStatus {
   waitingForVolunteers,
   waitingForDueDate,
   carriedOut,
+  mock,
 }
