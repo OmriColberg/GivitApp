@@ -67,6 +67,15 @@ class DatabaseService {
     });
   }
 
+  Future<GivitUser> getUserByID(String? id) async {
+    return await givitUsersCollection
+        .doc(id)
+        .get()
+        .then((DocumentSnapshot<Object?> document) {
+      return GivitUser.fromFirestorUser(document);
+    });
+  }
+
   Future<void> updateGivitUserFields(Map<String, Object?> data) async {
     return await givitUsersCollection.doc(uid).update(data);
   }
@@ -102,6 +111,7 @@ class DatabaseService {
           DateFormat('yyyy-MM-dd hh:mm').format(datePickUp!).toString(),
       'Products': products ?? [],
       'Carriers': [],
+      'Carriers Phone Numbers': [],
       'Status Of Transport':
           TransportStatus.waitingForVolunteers.toString().split('.')[1],
       'Pictures': [],
