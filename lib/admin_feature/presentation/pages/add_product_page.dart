@@ -14,7 +14,6 @@ class AddProductPage extends StatefulWidget {
 
 class _AddProductPageState extends State<AddProductPage> {
   final _formKey = GlobalKey<FormState>();
-
   String name = '';
   String notes = '';
 
@@ -43,7 +42,8 @@ class _AddProductPageState extends State<AddProductPage> {
                     child: TextFormField(
                       decoration:
                           textInputDecoration.copyWith(hintText: 'שם המוצר'),
-                      //validator: (val) => val!.isEmpty ? 'הכנס שם מוצר' : null,
+                      validator: (val) =>
+                          val!.isEmpty ? 'הכנס/י שם מוצר' : null,
                       onChanged: (val) {
                         setState(() => name = val);
                       },
@@ -77,6 +77,10 @@ class _AddProductPageState extends State<AddProductPage> {
                         }).catchError((error) {
                           showDialogHelper(
                               "קרתה תקלה, נסה שוב ($error)", widget.size);
+                        });
+                        setState(() {
+                          notes = '';
+                          name = '';
                         });
                         _formKey.currentState!.reset();
                       }
