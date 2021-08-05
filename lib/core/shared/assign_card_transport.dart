@@ -288,23 +288,6 @@ class AssignCardTransport extends StatelessWidget {
                                                 context,
                                                 db,
                                                 transport);
-                                            await db.updateTransportFields(
-                                                transport.id, {
-                                              'Status Of Transport':
-                                                  TransportStatus.carriedOut
-                                                      .toString()
-                                                      .split('.')[1],
-                                            });
-                                            await db.updateAssignProducts(
-                                                personalTransport, {
-                                              'Status Of Product': ProductStatus
-                                                  .delivered
-                                                  .toString()
-                                                  .split('.')[1],
-                                            });
-                                            await db
-                                                .deleteTransportFromGivitUserList(
-                                                    transport.id);
                                           },
                                           child: Text("אישור ביצוע ההובלה"),
                                         )
@@ -544,6 +527,15 @@ class AssignCardTransport extends StatelessWidget {
                                 ),
                           );
                     }
+                    await db.updateTransportFields(transport.id, {
+                      'Status Of Transport':
+                          TransportStatus.carriedOut.toString().split('.')[1],
+                    });
+                    await db.updateAssignProducts(personalTransport, {
+                      'Status Of Product':
+                          ProductStatus.delivered.toString().split('.')[1],
+                    });
+                    await db.deleteTransportFromGivitUserList(transport.id);
                     Navigator.of(context).pop();
                   },
                   child: Text("לאישור"),
