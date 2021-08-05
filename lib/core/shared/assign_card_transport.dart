@@ -562,11 +562,9 @@ class AssignCardTransport extends StatelessWidget {
     transport.carriersPhoneNumbers.forEach((phoneNumber) {
       if (phoneNumber[0] == '5') {
         transport.carriersPhoneNumbers[index] = '0' + phoneNumber;
-        print(phoneNumber);
         index++;
       }
     });
-    print(transport.carriersPhoneNumbers);
     sendSMS(
         message:
             "תזכורת: בתאריך ה${transport.datePickUp.day}.${transport.datePickUp.month}.${transport.datePickUp.year} בשעה ${transport.datePickUp.hour}:${transport.datePickUp.minute} תתבצע הובלה מ${transport.pickUpAddress}. תודה על התנדבותך!",
