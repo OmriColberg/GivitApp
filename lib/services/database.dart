@@ -124,24 +124,39 @@ class DatabaseService {
     return transportsCollection.snapshots();
   }
 
-  Future<String> addProduct({String? name, String? notes}) async {
+  Future<String> addProduct(
+      {String? name,
+      String? notes,
+      String? productState,
+      String? ownerName,
+      int? ownerPhoneNumber,
+      String? timePickUp,
+      String? pickUpAddress,
+      String? productPictureUrl,
+      String? assignTransportId,
+      int? weight,
+      int? length,
+      int? width,
+      String? productStatus}) async {
     Reference ref =
         FirebaseStorage.instance.ref().child("/default_furniture_pic.jpeg");
-    String url = (await ref.getDownloadURL()).toString();
+    String? url = productPictureUrl == ''
+        ? (await ref.getDownloadURL()).toString()
+        : productPictureUrl;
     return await productsCollection.add({
       'Notes': notes,
       'Product Name': name,
-      'State Of Product': ProductState.unknown.toString().split('.')[1],
-      "Owner's Name": '',
-      "Owner's Phone Number": 0,
-      'Time Span For Pick Up': '',
-      'Pick Up Address': '',
+      'State Of Product': productState,
+      "Owner's Name": ownerName,
+      "Owner's Phone Number": ownerPhoneNumber,
+      'Time Span For Pick Up': timePickUp,
+      'Pick Up Address': pickUpAddress,
       'Product Picture URL': url,
-      'Assigned Transport ID': '',
-      'Weight': 0,
-      'Length': 0,
-      'Width': 0,
-      'Status Of Product': ProductStatus.searching.toString().split('.')[1],
+      'Assigned Transport ID': assignTransportId,
+      'Weight': weight,
+      'Length': length,
+      'Width': width,
+      'Status Of Product': productStatus,
     }).then((value) => value.id);
   }
 

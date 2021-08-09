@@ -171,7 +171,8 @@ class MapScreenState extends State<EditProfilePage>
                               textDirection: TextDirection.rtl,
                               child: ParamInfoPersonalArea(
                                 controller: phoneNumberController,
-                                paramInfo: givitUser!.phoneNumber.toString(),
+                                paramInfo:
+                                    '0' + givitUser!.phoneNumber.toString(),
                                 obscure: false,
                                 status: _status,
                               ),

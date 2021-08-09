@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:givit_app/admin_feature/presentation/pages/add_product_page.dart';
+import 'package:givit_app/admin_feature/presentation/pages/add_product_warehouse_page.dart';
 import 'package:givit_app/admin_feature/presentation/pages/add_transport_page.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
@@ -75,8 +76,9 @@ class _AdminPageState extends State<AdminPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 20,
                       children: [
                         ElevatedButton(
                           onPressed: () => {
@@ -90,7 +92,19 @@ class _AdminPageState extends State<AdminPage> {
                           },
                           child: Text('הוספת מוצר חדש לחיפוש'),
                         ),
-                        SizedBox(width: 20),
+                        ElevatedButton(
+                          onPressed: () => {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddProductWarehousePage(
+                                  size: widget.size,
+                                ),
+                              ),
+                            ),
+                          },
+                          child: Text('הוספת מוצר שקיים במחסן'),
+                        ),
                         ElevatedButton(
                           onPressed: () => {
                             Navigator.push(
