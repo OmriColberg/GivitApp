@@ -278,8 +278,9 @@ class AssignCardTransport extends StatelessWidget {
                                       "\"עם הרשמות להובלה גדולה מגיעה אחריות גדולה\"",
                                       style: TextStyle(fontSize: 14),
                                     )
-                                  : (transport.currentNumOfCarriers ==
-                                          transport.totalNumOfCarriers
+                                  : (transport.datePickUp
+                                              .compareTo(DateTime.now()) <=
+                                          0
                                       ? ElevatedButton(
                                           onPressed: () async {
                                             showDialogPost(
