@@ -92,7 +92,7 @@ class AssignCardProduct extends StatelessWidget {
                               height: size.height * 0.5,
                               child: AlertDialog(
                                 title: Text(
-                                    'השתבצת לחיפוש מוצר, תודה רבה\nתוכל/י לראות את פרטי המוצר המבוקש באזור האישי'),
+                                    'תודה רבה! השתבצת לחיפוש מוצר. \nתוכל/י לראות את פרטי המוצר המבוקש באזור האישי.\nחיפוש נעים :)'),
                                 content: ElevatedButton(
                                   onPressed: () async {
                                     Navigator.of(context).pop();

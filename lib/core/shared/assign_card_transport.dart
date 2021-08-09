@@ -248,7 +248,7 @@ class AssignCardTransport extends StatelessWidget {
                                           height: size.height * 0.5,
                                           child: AlertDialog(
                                             title: Text(
-                                                'השתבצת להובלה, תודה רבה\nתוכל/י לראות את פרטי ההובלה באזור האישי'),
+                                                'השתבצת להובלה, תודה רבה וכל הכבוד!\nתוכל/י לראות את פרטי ההובלה באזור האישי\n"גם כשלא מבקשים ממכם אצבע, תדאגו לבדוק אולי למישהו חסרה יד" :)'),
                                             content: ElevatedButton(
                                               onPressed: () async {
                                                 Navigator.of(context).pop();
