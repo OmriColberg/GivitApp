@@ -84,8 +84,26 @@ class AssignCardProduct extends StatelessWidget {
             type == CardType.main
                 ? Column(children: [
                     ElevatedButton(
-                      onPressed: () {
-                        db.updateGivitUserFields({
+                      onPressed: () async {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Container(
+                              height: size.height * 0.5,
+                              child: AlertDialog(
+                                title: Text(
+                                    'השתבצת לחיפוש מוצר, תודה רבה\nתוכל/י לראות את פרטי המוצר המבוקש באזור האישי'),
+                                content: ElevatedButton(
+                                  onPressed: () async {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("אישור"),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                        await db.updateGivitUserFields({
                           "Products": FieldValue.arrayUnion(['${product.id}'])
                         });
                       },

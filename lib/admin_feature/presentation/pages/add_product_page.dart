@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:givit_app/core/models/givit_user.dart';
+import 'package:givit_app/core/models/product.dart';
 import 'package:givit_app/core/shared/constant.dart';
 import 'package:givit_app/services/database.dart';
 import 'package:provider/provider.dart';
@@ -70,7 +71,24 @@ class _AddProductPageState extends State<AddProductPage> {
                       if (_formKey.currentState!.validate()) {
                         notes = notes == '' ? 'אין הערות' : notes;
                         await db
-                            .addProduct(name: name, notes: notes)
+                            .addProduct(
+                                name: name,
+                                notes: notes,
+                                productState: ProductState.unknown
+                                    .toString()
+                                    .split('.')[1],
+                                ownerName: '',
+                                ownerPhoneNumber: 0,
+                                timePickUp: '',
+                                pickUpAddress: '',
+                                productPictureUrl: '',
+                                assignTransportId: '',
+                                weight: 0,
+                                length: 0,
+                                width: 0,
+                                productStatus: ProductStatus.searching
+                                    .toString()
+                                    .split('.')[1])
                             .then((_result) {
                           print(
                               'This is the ID of the product that just added: $_result');
