@@ -241,6 +241,24 @@ class AssignCardTransport extends StatelessWidget {
                           type == CardType.main
                               ? (ElevatedButton(
                                   onPressed: () async {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return Container(
+                                          height: size.height * 0.5,
+                                          child: AlertDialog(
+                                            title: Text(
+                                                'השתבצת להובלה, תודה רבה\nתוכל/י לראות את פרטי ההובלה באזור האישי'),
+                                            content: ElevatedButton(
+                                              onPressed: () async {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text("אישור"),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
                                     await db.updateGivitUserFields({
                                       "Transports": FieldValue.arrayUnion(
                                           ['${transport.id}'])
@@ -443,12 +461,8 @@ class AssignCardTransport extends StatelessWidget {
               children: <Widget>[
                 ElevatedButton(
                   onPressed: () async {
-                    // print(
-                    //     "תזכורת: בתאריך ה${transport.datePickUp.day}.${transport.datePickUp.month}.${transport.datePickUp.year} בשעה ${transport.datePickUp.hour}:${transport.datePickUp.minute} תתבצע הובלה מ${transport.pickUpAddress}. תודה על התנדבותך");
                     Navigator.of(context).pop();
                     smsSender(db, transport);
-                    // telephony.sendSms(to: "0526574745", message: "its ALIVE");
-                    // telephony.sendSms(to: "0544458840", message: "its ALIVE");
                   },
                   child: Text("שליחת הודעות"),
                 ),
