@@ -145,6 +145,22 @@ class _AddTransportPageState extends State<AddTransportPage> {
                     ],
                   ),
                   SizedBox(height: 12.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    textDirection: ui.TextDirection.rtl,
+                    children: [
+                      isDatePicked(datePickUp)
+                          ? Text(
+                              "תאריך הובלה הנבחר: ${datePickUp.day.toString().padLeft(2, '0')}-${datePickUp.month.toString().padLeft(2, '0')}-${datePickUp.year.toString()} בשעה ${datePickUp.hour.toString().padLeft(2, '0')}:${datePickUp.minute.toString()}",
+                              style: TextStyle(fontSize: 14),
+                            )
+                          : Text(
+                              "תאריך הובלה לא נבחר",
+                              style: TextStyle(fontSize: 12, color: Colors.red),
+                            ),
+                    ],
+                  ),
+                  SizedBox(height: 12.0),
                   ElevatedButton(
                     child: Text(
                       'הוסף הובלה למערכת',
@@ -152,45 +168,50 @@ class _AddTransportPageState extends State<AddTransportPage> {
                     ),
                     onPressed: () async {
                       String transportID = '';
-                      if (_formKey.currentState!.validate()) {
-                        if (products.isNotEmpty) {
-                          await db
-                              .addTransport(
-                            products: products,
-                            datePickUp: datePickUp,
-                            totalNumOfCarriers: totalNumOfCarriers,
-                            destinationAddress: destinationAddress,
-                            pickUpAddress: pickUpAddress,
-                            notes: notes,
-                          )
-                              .then((_result) {
-                            transportID = _result;
-                            print(
-                                'This is the ID of the transport that just added: $_result');
-                            showDialogHelper(
-                                "ההובלה התווספה בהצלחה", widget.size);
-                          }).catchError((error) {
-                            showDialogHelper(
-                                "קרתה תקלה, נסה שוב ($error)", widget.size);
-                          });
-                          await db
-                              .updateAssignProducts(products, {
-                                'Status Of Product': ProductStatus
-                                    .assignToDelivery
-                                    .toString()
-                                    .split('.')[1],
-                                'Assigned Transport ID': transportID,
-                              })
-                              .then((_) => products.forEach((id) {
-                                    print(
-                                        'the product with the id: $id were updated to delivery');
-                                  }))
-                              .onError((error, stackTrace) =>
-                                  print("קרתה תקלה, נסה שוב ($error)"));
-                          _formKey.currentState!.reset();
-                        } else {
-                          error = 'ההובלה חייבת לכלול לפחות מוצר 1';
+                      if (isDatePicked(datePickUp)) {
+                        if (_formKey.currentState!.validate()) {
+                          if (products.isNotEmpty) {
+                            await db
+                                .addTransport(
+                              products: products,
+                              datePickUp: datePickUp,
+                              totalNumOfCarriers: totalNumOfCarriers,
+                              destinationAddress: destinationAddress,
+                              pickUpAddress: pickUpAddress,
+                              notes: notes,
+                            )
+                                .then((_result) {
+                              transportID = _result;
+                              print(
+                                  'This is the ID of the transport that just added: $_result');
+                              showDialogHelper(
+                                  "ההובלה התווספה בהצלחה", widget.size);
+                            }).catchError((error) {
+                              showDialogHelper(
+                                  "קרתה תקלה, נסה שוב ($error)", widget.size);
+                            });
+                            await db
+                                .updateAssignProducts(products, {
+                                  'Status Of Product': ProductStatus
+                                      .assignToDelivery
+                                      .toString()
+                                      .split('.')[1],
+                                  'Assigned Transport ID': transportID,
+                                })
+                                .then((_) => products.forEach((id) {
+                                      print(
+                                          'the product with the id: $id were updated to delivery');
+                                    }))
+                                .onError((error, stackTrace) =>
+                                    print("קרתה תקלה, נסה שוב ($error)"));
+                            _formKey.currentState!.reset();
+                          } else {
+                            error = 'ההובלה חייבת לכלול לפחות מוצר 1';
+                          }
                         }
+                      } else {
+                        showDialogHelper(
+                            "נא לבחור תאריך ושעה להובלה", widget.size);
                       }
                     },
                   ),
@@ -245,4 +266,11 @@ AssignCardProduct createDeliveryAssignFromProductSnapshot(
     size: size,
     isAdmin: true,
   );
+}
+
+bool isDatePicked(DateTime datePicked) {
+  return !(datePicked.year == DateTime.now().year &&
+      datePicked.month == DateTime.now().month &&
+      datePicked.day == DateTime.now().day &&
+      datePicked.hour == DateTime.now().hour);
 }
