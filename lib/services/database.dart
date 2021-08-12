@@ -107,7 +107,7 @@ class DatabaseService {
       'Destination Address': destinationAddress ?? '',
       'Pick Up Address': pickUpAddress ?? '',
       'Date For Pick Up':
-          DateFormat('yyyy-MM-dd hh:mm').format(datePickUp!).toString(),
+          DateFormat('yyyy-MM-dd HH:mm').format(datePickUp!).toString(),
       'Products': products ?? [],
       'Carriers': [],
       'Carriers Phone Numbers': [],

@@ -124,7 +124,7 @@ AssignCardProduct createDeliveryAssignFromProductSnapshot(
 AssignCardTransport createDeliveryAssignFromTransportSnapshot(
     Transport transport, Size size, bool isAdmin) {
   String date =
-      DateFormat('yyyy-MM-dd hh:mm').format(transport.datePickUp).toString();
+      DateFormat('yyyy-MM-dd HH:mm').format(transport.datePickUp).toString();
 
   return AssignCardTransport(
     title: date + ' :הובלה ב' + '\n' + transport.pickUpAddress + ' :יוצאת מ',

@@ -26,10 +26,6 @@ class _AddProductWarehousePageState extends State<AddProductWarehousePage> {
   int length = 0;
   int width = 0;
   ProductState state = ProductState.unknown;
-  String ownerName = '';
-  late String ownerPhoneNumber;
-  String pickUpAddress = '';
-  String timeForPickUp = '';
   String notes = '';
   ProductStatus status = ProductStatus.searching;
 
@@ -63,19 +59,6 @@ class _AddProductWarehousePageState extends State<AddProductWarehousePage> {
                           val!.isEmpty ? 'הכנס/י שם מוצר' : null,
                       onChanged: (val) {
                         setState(() => produtcName = val);
-                      },
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Directionality(
-                    textDirection: TextDirection.rtl,
-                    child: TextFormField(
-                      decoration: textInputDecoration.copyWith(
-                          hintText: 'שם מוסר/ת המוצר'),
-                      validator: (val) =>
-                          val!.isEmpty ? 'הכנס/י את שם מוסר/ת המוצר' : null,
-                      onChanged: (val) {
-                        setState(() => ownerName = val);
                       },
                     ),
                   ),
@@ -147,46 +130,6 @@ class _AddProductWarehousePageState extends State<AddProductWarehousePage> {
                       Text("   :מצב המוצר"),
                     ],
                   ),
-                  SizedBox(height: 10),
-                  Directionality(
-                    textDirection: TextDirection.rtl,
-                    child: TextFormField(
-                      decoration: textInputDecoration.copyWith(
-                          hintText: 'טלפון מוסר/ת המוצר'),
-                      validator: (val) => val!.length != 10
-                          ? "הכנס מס' טלפון של מוסר המוצר"
-                          : null,
-                      onChanged: (val) {
-                        setState(() => ownerPhoneNumber = (val));
-                      },
-                    ),
-                  ),
-                  SizedBox(height: 15),
-                  Directionality(
-                    textDirection: TextDirection.rtl,
-                    child: TextFormField(
-                      decoration: textInputDecoration.copyWith(
-                          hintText: 'כתובת לאיסוף'),
-                      validator: (val) =>
-                          val!.isEmpty ? "הכנס כתובת לאיסוף המוצר" : null,
-                      onChanged: (val) {
-                        setState(() => pickUpAddress = val);
-                      },
-                    ),
-                  ),
-                  SizedBox(height: 15),
-                  Directionality(
-                    textDirection: TextDirection.rtl,
-                    child: TextFormField(
-                      decoration: textInputDecoration.copyWith(
-                          hintText: 'מועד לאיסוף המוצר'),
-                      validator: (val) =>
-                          val!.isEmpty ? "הכנס מועד לאיסוף המוצר" : null,
-                      onChanged: (val) {
-                        setState(() => timeForPickUp = val);
-                      },
-                    ),
-                  ),
                   SizedBox(height: 15),
                   Directionality(
                     textDirection: TextDirection.rtl,
@@ -246,10 +189,10 @@ class _AddProductWarehousePageState extends State<AddProductWarehousePage> {
                                 name: produtcName,
                                 notes: notes,
                                 productState: state.toString().split('.')[1],
-                                ownerName: ownerName,
-                                ownerPhoneNumber: ownerPhoneNumber,
-                                timePickUp: timeForPickUp,
-                                pickUpAddress: pickUpAddress,
+                                ownerName: "",
+                                ownerPhoneNumber: "",
+                                timePickUp: "המוצר במחסן - זמין בעת הצורך",
+                                pickUpAddress: "כתובת המחסן",
                                 productPictureUrl: '',
                                 assignTransportId: '',
                                 weight: weight,
@@ -281,9 +224,6 @@ class _AddProductWarehousePageState extends State<AddProductWarehousePage> {
                         setState(() {
                           notes = '';
                           produtcName = '';
-                          ownerName = '';
-                          pickUpAddress = '';
-                          timeForPickUp = '';
                           productImagePath = '';
                           pickedImage = false;
                         });
