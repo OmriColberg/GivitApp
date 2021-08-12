@@ -47,7 +47,8 @@ class AssignCardTransport extends StatelessWidget {
       builder: (context, snapshotUsers) {
         if (snapshotUsers.hasError) {
           print(snapshotUsers.error);
-          return Text('אירעה תקלה, נא לפנות למנהלים');
+          return Text(
+              snapshotUsers.error.toString() + 'אירעה תקלה, נא לפנות למנהלים');
         }
 
         if (snapshotUsers.connectionState == ConnectionState.waiting) {
@@ -59,7 +60,8 @@ class AssignCardTransport extends StatelessWidget {
           builder: (context, snapshotProduct) {
             if (snapshotProduct.hasError) {
               print(snapshotProduct.error);
-              return Text('אירעה תקלה, נא לפנות למנהלים');
+              return Text(snapshotProduct.error.toString() +
+                  'אירעה תקלה, נא לפנות למנהלים');
             }
 
             if (snapshotProduct.connectionState == ConnectionState.waiting) {

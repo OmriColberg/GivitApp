@@ -26,7 +26,8 @@ class _GivitCommunityPageState extends State<GivitCommunityPage> {
       builder: (context, snapshotTransport) {
         if (snapshotTransport.hasError) {
           print(snapshotTransport.error);
-          return Text('אירעה תקלה, נא לפנות למנהלים');
+          return Text(snapshotTransport.error.toString() +
+              'אירעה תקלה, נא לפנות למנהלים');
         }
 
         if (snapshotTransport.connectionState == ConnectionState.waiting) {

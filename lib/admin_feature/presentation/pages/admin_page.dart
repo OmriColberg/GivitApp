@@ -31,7 +31,8 @@ class _AdminPageState extends State<AdminPage> {
       stream: db.givitUserData,
       builder: (context, snapshotGivitUser) {
         if (snapshotGivitUser.hasError) {
-          return Text('אירעה תקלה, נא לפנות למנהלים');
+          return Text(snapshotGivitUser.error.toString() +
+              'אירעה תקלה, נא לפנות למנהלים');
         }
 
         if (snapshotGivitUser.connectionState == ConnectionState.waiting) {
@@ -43,7 +44,8 @@ class _AdminPageState extends State<AdminPage> {
           stream: db.producstData,
           builder: (context, snapshotProduct) {
             if (snapshotProduct.hasError) {
-              return Text('אירעה תקלה, נא לפנות למנהלים');
+              return Text(snapshotProduct.error.toString() +
+                  'אירעה תקלה, נא לפנות למנהלים');
             }
 
             if (snapshotProduct.connectionState == ConnectionState.waiting) {
@@ -129,7 +131,8 @@ class _AdminPageState extends State<AdminPage> {
                       stream: db.transportsData,
                       builder: (context, snapshotTransport) {
                         if (snapshotTransport.hasError) {
-                          return Text('אירעה תקלה, נא לפנות למנהלים');
+                          return Text(snapshotTransport.error.toString() +
+                              'אירעה תקלה, נא לפנות למנהלים');
                         }
 
                         if (snapshotTransport.connectionState ==

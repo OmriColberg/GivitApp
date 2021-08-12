@@ -128,7 +128,7 @@ class DatabaseService {
       String? notes,
       String? productState,
       String? ownerName,
-      int? ownerPhoneNumber,
+      String? ownerPhoneNumber,
       String? timePickUp,
       String? pickUpAddress,
       String? productPictureUrl,

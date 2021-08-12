@@ -78,7 +78,7 @@ class _AddProductPageState extends State<AddProductPage> {
                                     .toString()
                                     .split('.')[1],
                                 ownerName: '',
-                                ownerPhoneNumber: 0,
+                                ownerPhoneNumber: '',
                                 timePickUp: '',
                                 pickUpAddress: '',
                                 productPictureUrl: '',
