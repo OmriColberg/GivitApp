@@ -189,7 +189,7 @@ class _AddProductWarehousePageState extends State<AddProductWarehousePage> {
                                 name: produtcName,
                                 notes: notes,
                                 productState: state.toString().split('.')[1],
-                                ownerName: "",
+                                ownerName: "מחסן גיביט",
                                 ownerPhoneNumber: "",
                                 timePickUp: "המוצר במחסן - זמין בעת הצורך",
                                 pickUpAddress: "כתובת המחסן",
