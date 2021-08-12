@@ -42,7 +42,7 @@ class AssignCardTransport extends StatelessWidget {
     final DatabaseService db = DatabaseService(uid: givitUser.uid);
     int prodIndex = 0;
     int userIndex = 0;
-    return StreamBuilder<QuerySnapshot>(
+    return StreamBuilder<QuerySnapshot<Object?>>(
       stream: db.givitUsersData,
       builder: (context, snapshotUsers) {
         if (snapshotUsers.hasError) {
@@ -54,7 +54,7 @@ class AssignCardTransport extends StatelessWidget {
           return Loading();
         }
 
-        return StreamBuilder<QuerySnapshot>(
+        return StreamBuilder<QuerySnapshot<Object?>>(
           stream: db.producstData,
           builder: (context, snapshotProduct) {
             if (snapshotProduct.hasError) {
@@ -104,8 +104,7 @@ class AssignCardTransport extends StatelessWidget {
                                   }
                                   String userPhoneNumber =
                                       (await db.getUserByID(db.uid))
-                                          .phoneNumber
-                                          .toString();
+                                          .phoneNumber;
                                   await db.updateGivitUserFields(
                                       {'Transports': personalTransport});
                                   await db.updateTransportFields(transport.id, {
@@ -265,8 +264,7 @@ class AssignCardTransport extends StatelessWidget {
                                     });
                                     String userPhoneNumber =
                                         (await db.getUserByID(db.uid))
-                                            .phoneNumber
-                                            .toString();
+                                            .phoneNumber;
                                     await db
                                         .updateTransportFields(transport.id, {
                                       'Status Of Transport':
@@ -564,14 +562,6 @@ class AssignCardTransport extends StatelessWidget {
   }
 
   void smsSender(DatabaseService db, Transport transport) {
-    print("ALL PHONE NUMBERS TO TRANSPORT:");
-    var index = 0;
-    transport.carriersPhoneNumbers.forEach((phoneNumber) {
-      if (phoneNumber[0] == '5') {
-        transport.carriersPhoneNumbers[index] = '0' + phoneNumber;
-        index++;
-      }
-    });
     sendSMS(
         message:
             "תזכורת: בתאריך ה${transport.datePickUp.day}.${transport.datePickUp.month}.${transport.datePickUp.year} בשעה ${transport.datePickUp.hour}:${transport.datePickUp.minute} תתבצע הובלה מ${transport.pickUpAddress}. תודה על התנדבותך!",

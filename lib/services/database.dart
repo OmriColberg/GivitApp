@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:givit_app/core/models/givit_user.dart';
-import 'package:givit_app/core/models/product.dart';
 import 'package:givit_app/core/models/transport.dart';
 import 'package:givit_app/core/shared/constant.dart';
 import 'package:intl/intl.dart';
@@ -19,8 +18,8 @@ class DatabaseService {
   final CollectionReference transportsCollection =
       FirebaseFirestore.instance.collection('Transports');
 
-  Future<void> addGivitUser(
-      String email, String fullName, String password, int phoneNumber) async {
+  Future<void> addGivitUser(String email, String fullName, String password,
+      String phoneNumber) async {
     return await givitUsersCollection.doc(uid).set({
       'Email': email,
       'Full Name': fullName,
