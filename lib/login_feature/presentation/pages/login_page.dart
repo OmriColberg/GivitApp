@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:givit_app/core/shared/constant.dart';
-import 'package:givit_app/core/shared/loading.dart';
 import 'package:givit_app/services/auth.dart';
 
 class LoginPage extends StatefulWidget {

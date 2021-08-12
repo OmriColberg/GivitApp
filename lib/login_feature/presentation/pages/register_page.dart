@@ -3,6 +3,13 @@ import 'package:givit_app/core/shared/constant.dart';
 import 'package:givit_app/core/shared/loading.dart';
 import 'package:givit_app/services/auth.dart';
 
+RegExp _numeric = RegExp(r'^-?[0-9]+$');
+
+/// check if the string contains only numbers
+bool isNumeric(String str) {
+  return _numeric.hasMatch(str);
+}
+
 class RegisterPage extends StatefulWidget {
   final Function toggleView;
   RegisterPage({required this.toggleView});
@@ -21,7 +28,7 @@ class _RegisterPageState extends State<RegisterPage> {
   String email = '';
   String password = '';
   String fullName = '';
-  int phoneNumber = 0;
+  String phoneNumber = '';
 
   @override
   Widget build(BuildContext context) {
@@ -99,11 +106,12 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: TextFormField(
                           decoration: textInputDecoration.copyWith(
                               hintText: 'מספר טלפון'),
-                          validator: (val) => val!.length != 10
+                          validator: (val) => val!.length != 10 &&
+                                  isNumeric(val)
                               ? "נא להכניס מספר טלפון חוקי, בעל 10 ספרות ללא מקף"
                               : null,
                           onChanged: (val) {
-                            setState(() => phoneNumber = int.parse(val));
+                            setState(() => phoneNumber = val);
                           },
                         ),
                       ),

@@ -30,7 +30,7 @@ class _ProductFoundFormState extends State<ProductFoundForm> {
   int width = 0;
   ProductState state = ProductState.unknown;
   String ownerName = '';
-  late int ownerPhoneNumber;
+  late String ownerPhoneNumber;
   String pickUpAddress = '';
   String timeForPickUp = '';
   String notes = '';
@@ -146,7 +146,7 @@ class _ProductFoundFormState extends State<ProductFoundForm> {
                           ? "הכנס מס' טלפון של מוסר המוצר"
                           : null,
                       onChanged: (val) {
-                        setState(() => ownerPhoneNumber = int.parse(val));
+                        setState(() => ownerPhoneNumber = (val));
                       },
                     ),
                   ),
