@@ -97,7 +97,7 @@ class AssignCardTransport extends StatelessWidget {
                                   if (transport.currentNumOfCarriers ==
                                       transport.totalNumOfCarriers) {
                                     await db.updateTransportFields(
-                                        transport.id, {
+                                        'Transports', transport.id, {
                                       'Status Of Transport':
                                           "waitingForVolunteers"
                                     });
@@ -107,7 +107,8 @@ class AssignCardTransport extends StatelessWidget {
                                           .phoneNumber;
                                   await db.updateGivitUserFields(
                                       {'Transports': personalTransport});
-                                  await db.updateTransportFields(transport.id, {
+                                  await db.updateTransportFields(
+                                      'Transports', transport.id, {
                                     'Current Number Of Carriers':
                                         transport.currentNumOfCarriers - 1,
                                     "Carriers":
@@ -265,8 +266,8 @@ class AssignCardTransport extends StatelessWidget {
                                     String userPhoneNumber =
                                         (await db.getUserByID(db.uid))
                                             .phoneNumber;
-                                    await db
-                                        .updateTransportFields(transport.id, {
+                                    await db.updateTransportFields(
+                                        'Transports', transport.id, {
                                       'Status Of Transport':
                                           transport.currentNumOfCarriers + 1 ==
                                                   transport.totalNumOfCarriers
@@ -294,9 +295,10 @@ class AssignCardTransport extends StatelessWidget {
                                       "\"עם הרשמות להובלה גדולה מגיעה אחריות גדולה\"",
                                       style: TextStyle(fontSize: 14),
                                     )
-                                  : (transport.datePickUp
-                                              .compareTo(DateTime.now()) <=
-                                          0
+                                  : true
+                                      // (transport.datePickUp
+                                      //             .compareTo(DateTime.now()) <=
+                                      //         0
                                       ? ElevatedButton(
                                           onPressed: () async {
                                             showDialogPost(
@@ -308,7 +310,8 @@ class AssignCardTransport extends StatelessWidget {
                                           },
                                           child: Text("אישור ביצוע ההובלה"),
                                         )
-                                      : Container())
+                                      : Container()
+                          //)
                         ]
                       ].expand((element) => element).toList(),
                     ),
@@ -519,35 +522,43 @@ class AssignCardTransport extends StatelessWidget {
                 SizedBox(height: 5),
                 ElevatedButton(
                   onPressed: () async {
+                    String transportId = '';
+                    List<String> newProductsIds = [];
                     await db
-                        .updateTransportFields(transport.id, {'SumUp': sumUp});
-
+                        .moveTransportCollection(transport, sumUp, 'Transports',
+                            'Community Transports')
+                        .then((_result) => transportId = _result);
+                    Product tempProduct = Product();
+                    transport.products.forEach((productId) async {
+                      tempProduct = await db.getProductByID(productId);
+                      while (tempProduct.id == '') {
+                        print('lol');
+                      }
+                      newProductsIds.add(await db.moveProductCollection(
+                          tempProduct,
+                          transportId,
+                          'Products',
+                          'Storage Products'));
+                      tempProduct = Product();
+                    });
+                    while (transportId == '') {}
                     for (int i = 0; i < images!.length; i++) {
                       Reference reference = db.storage
                           .ref()
-                          .child('Transport pictures/${transport.id}/$i');
+                          .child('Transport pictures/$transportId/$i');
                       reference.putFile((File(images![i].path))).whenComplete(
-                            () => reference.getDownloadURL().then(
-                                  (fileURL) => {
-                                    db.updateTransportFields(
-                                      transport.id,
-                                      {
-                                        'Pictures':
-                                            FieldValue.arrayUnion(['$fileURL}'])
-                                      },
-                                    ),
-                                  },
-                                ),
-                          );
+                          () => reference
+                              .getDownloadURL()
+                              .then((fileURL) async => {
+                                    await db.updateTransportFields(
+                                        'Community Transports', transportId, {
+                                      'Pictures':
+                                          FieldValue.arrayUnion(['$fileURL}'])
+                                    }),
+                                  }));
                     }
-                    await db.updateTransportFields(transport.id, {
-                      'Status Of Transport':
-                          TransportStatus.carriedOut.toString().split('.')[1],
-                    });
-                    await db.updateAssignProducts(personalTransport, {
-                      'Status Of Product':
-                          ProductStatus.delivered.toString().split('.')[1],
-                    });
+                    await db.updateTransportFields('Community Transports',
+                        transportId, {'Products': newProductsIds});
                     await db.deleteTransportFromGivitUserList(transport.id);
                     Navigator.of(context).pop();
                   },

@@ -147,7 +147,7 @@ class _AdminPageState extends State<AdminPage> {
                                         padding:
                                             EdgeInsets.symmetric(horizontal: 2),
                                         child: ElevatedButton(
-                                          onPressed: () {
+                                          onPressed: () async {
                                             if (product != null) {
                                               showDialogHelper(
                                                   product, widget.size, db);
