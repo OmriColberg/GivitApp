@@ -65,7 +65,6 @@ class AssignCardTransport extends StatelessWidget {
             if (snapshotProduct.connectionState == ConnectionState.waiting) {
               return Loading();
             }
-
             return Center(
               child: Card(
                 shape: RoundedRectangleBorder(
