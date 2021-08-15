@@ -522,45 +522,65 @@ class AssignCardTransport extends StatelessWidget {
                 SizedBox(height: 5),
                 ElevatedButton(
                   onPressed: () async {
+                    Navigator.of(context).pop();
                     String transportId = '';
                     List<String> newProductsIds = [];
+                    List<String> newTransportPictures = [];
+                    Product tempProduct = Product();
+                    String newProductId = '';
+                    Reference reference;
+                    File tempPicture;
                     await db
                         .moveTransportCollection(transport, sumUp, 'Transports',
                             'Community Transports')
                         .then((_result) => transportId = _result);
-                    Product tempProduct = Product();
                     transport.products.forEach((productId) async {
                       tempProduct = await db.getProductByID(productId);
-                      while (tempProduct.id == '') {
-                        print('lol');
-                      }
-                      newProductsIds.add(await db.moveProductCollection(
-                          tempProduct,
-                          transportId,
-                          'Products',
-                          'Storage Products'));
+                      while (tempProduct.id == '')
+                        print('awaiting for Old Product');
+                      tempPicture = File(tempProduct.productPictureURL);
+                      reference =
+                          db.storage.ref().child('Products Picture/$productId');
+                      await reference.delete().then((_) => print(
+                          'Successfully deleted Products Picture/$productId storage item'));
+                      while (transportId == '')
+                        print('awaiting for New Transport');
+                      newProductId = await db.moveProductCollection(tempProduct,
+                          transportId, 'Products', 'Storage Products');
+                      while (newProductId == '')
+                        print('awaiting for New Product');
+                      reference = db.storage
+                          .ref()
+                          .child('Products Pictures/$newProductId');
+                      reference.putFile(tempPicture).whenComplete(() =>
+                          reference.getDownloadURL().then((fileURL) async =>
+                              await db.updateProductFields(newProductId,
+                                  {'Product Picture URL': fileURL})));
+                      newProductsIds.add(newProductId);
+                      newProductId = '';
                       tempProduct = Product();
                     });
-                    while (transportId == '') {}
+                    while (transportId == '') {
+                      print('awaiting for New Transport2');
+                    }
                     for (int i = 0; i < images!.length; i++) {
-                      Reference reference = db.storage
+                      reference = db.storage
                           .ref()
                           .child('Transport pictures/$transportId/$i');
                       reference.putFile((File(images![i].path))).whenComplete(
-                          () => reference
-                              .getDownloadURL()
-                              .then((fileURL) async => {
-                                    await db.updateTransportFields(
-                                        'Community Transports', transportId, {
-                                      'Pictures':
-                                          FieldValue.arrayUnion(['$fileURL}'])
-                                    }),
-                                  }));
+                          () => reference.getDownloadURL().then((fileURL) =>
+                              {newTransportPictures.add(fileURL)}));
                     }
-                    await db.updateTransportFields('Community Transports',
-                        transportId, {'Products': newProductsIds});
                     await db.deleteTransportFromGivitUserList(transport.id);
-                    Navigator.of(context).pop();
+                    while (newProductsIds.length != transport.products.length) {
+                      // NOT GOOD! infi loop
+                      print('awaiting for New products ids');
+                    }
+                    await db.updateTransportFields(
+                        'Community Transports', transportId, {
+                      'Products': newProductsIds,
+                      'Pictures': newTransportPictures
+                    });
                   },
                   child: Text("לאישור"),
                 ),

@@ -72,12 +72,12 @@ class DatabaseService {
       'Destination Address': transport.destinationAddress,
       'Pick Up Address': transport.pickUpAddress,
       'Date For Pick Up': transport.datePickUp.toString(),
-      'Products': transport.products,
+      'Products': [],
       'Carriers': transport.carriers,
       'Carriers Phone Numbers': transport.carriersPhoneNumbers,
       'Status Of Transport':
           TransportStatus.carriedOut.toString().split('.')[1],
-      'Pictures': transport.pictures,
+      'Pictures': [],
       'Notes': transport.notes,
       'SumUp': sumUp,
     }).then((value) => value.id);
