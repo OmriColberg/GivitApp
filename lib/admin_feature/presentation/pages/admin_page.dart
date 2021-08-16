@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:givit_app/admin_feature/presentation/pages/add_product_page.dart';
 import 'package:givit_app/admin_feature/presentation/pages/add_product_warehouse_page.dart';
@@ -259,7 +260,14 @@ class _AdminPageState extends State<AdminPage> {
                   children: [
                     ElevatedButton(
                       onPressed: () async {
+                        Reference reference;
+                        String productId = product.id;
                         Navigator.of(context).pop();
+                        reference = db.storage
+                            .ref()
+                            .child('Products pictures/$productId');
+                        reference.delete().then((_) => print(
+                            'Successfully deleted Products Picture/$productId storage item'));
                         await db.deleteProductFromProductList(product.id);
                       },
                       child: Text('למחיקה'),

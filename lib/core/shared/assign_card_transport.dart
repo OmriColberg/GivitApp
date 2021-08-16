@@ -372,6 +372,13 @@ class AssignCardTransport extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () async {
                         Navigator.of(context).pop();
+                        Reference reference;
+                        String productId = product.id;
+                        reference = db.storage
+                            .ref()
+                            .child('Products pictures/$productId');
+                        reference.delete().then((_) => print(
+                            'Successfully deleted Products Picture/$productId storage item'));
                         await db.deleteProductFromProductList(product.id);
                         Transport transport = await db
                             .getTransportByID(product.assignedTransportId);
