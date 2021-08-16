@@ -23,8 +23,6 @@ class DatabaseService {
       FirebaseFirestore.instance.collection('Community Transports');
   final CollectionReference storageTransportsCollection =
       FirebaseFirestore.instance.collection('Storage Transports');
-  final CollectionReference storageProductsCollection =
-      FirebaseFirestore.instance.collection('Storage Products');
 
   final Map<String, CollectionReference> collectionMap = {
     'Users': FirebaseFirestore.instance.collection('Users'),
@@ -34,34 +32,7 @@ class DatabaseService {
         FirebaseFirestore.instance.collection('Community Transports'),
     'Storage Transports':
         FirebaseFirestore.instance.collection('Storage Transports'),
-    'Storage Products':
-        FirebaseFirestore.instance.collection('Storage Products'),
   };
-
-  Future<String> moveProductCollection(Product product, String transportId,
-      String fromCollection, String toCollection) async {
-    await collectionMap[fromCollection]!.doc(product.id).delete();
-    return await collectionMap[toCollection]!
-        .add({
-          'Notes': product.notes,
-          'Product Name': product.name,
-          'State Of Product': product.state.toString().split('.')[1],
-          "Owner's Name": product.ownerName,
-          "Owner's Phone Number": product.ownerPhoneNumber,
-          'Time Span For Pick Up': product.timeForPickUp,
-          'Pick Up Address': product.pickUpAddress,
-          'Product Picture URL': product.productPictureURL,
-          'Assigned Transport ID': transportId,
-          'Weight': product.weight,
-          'Length': product.length,
-          'Width': product.width,
-          'Status Of Product': ProductStatus.delivered.toString().split('.')[1],
-        })
-        .then((value) => value.id)
-        .catchError((error) {
-          print(error);
-        });
-  }
 
   Future<String> moveTransportCollection(Transport transport, String sumUp,
       String fromCollection, String toCollection) async {

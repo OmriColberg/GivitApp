@@ -301,12 +301,20 @@ class AssignCardTransport extends StatelessWidget {
                                       //         0
                                       ? ElevatedButton(
                                           onPressed: () async {
+                                            List<Product> products = [];
+                                            transport.products
+                                                .forEach((productId) async {
+                                              products.add(await db
+                                                  .getProductByID(productId));
+                                            });
+
                                             showDialogPost(
                                                 "הוספת פוסט לקהילת גיביט",
                                                 size,
                                                 context,
                                                 db,
-                                                transport);
+                                                transport,
+                                                products);
                                           },
                                           child: Text("אישור ביצוע ההובלה"),
                                         )
@@ -484,8 +492,9 @@ class AssignCardTransport extends StatelessWidget {
   }
 
   void showDialogPost(String dialogText, Size size, BuildContext context,
-      DatabaseService db, Transport transport) {
+      DatabaseService db, Transport transport, List<Product> products) {
     final ImagePicker _picker = ImagePicker();
+    List<String> newTransportPictures = [];
 
     showDialog(
       context: context,
@@ -524,63 +533,46 @@ class AssignCardTransport extends StatelessWidget {
                   onPressed: () async {
                     Navigator.of(context).pop();
                     String transportId = '';
-                    List<String> newProductsIds = [];
-                    List<String> newTransportPictures = [];
-                    Product tempProduct = Product();
-                    String newProductId = '';
-                    Reference reference;
-                    File tempPicture;
+                    List<String> productsNames = [];
+                    List<Reference> picturesReferences = [];
+                    List<Reference> productsRefrences = [];
+
                     await db
                         .moveTransportCollection(transport, sumUp, 'Transports',
                             'Community Transports')
                         .then((_result) => transportId = _result);
-                    transport.products.forEach((productId) async {
-                      tempProduct = await db.getProductByID(productId);
-                      while (tempProduct.id == '')
-                        print('awaiting for Old Product');
-                      tempPicture = File(tempProduct.productPictureURL);
-                      reference =
-                          db.storage.ref().child('Products Picture/$productId');
-                      await reference.delete().then((_) => print(
-                          'Successfully deleted Products Picture/$productId storage item'));
-                      while (transportId == '')
-                        print('awaiting for New Transport');
-                      newProductId = await db.moveProductCollection(tempProduct,
-                          transportId, 'Products', 'Storage Products');
-                      while (newProductId == '')
-                        print('awaiting for New Product');
-                      reference = db.storage
-                          .ref()
-                          .child('Products Pictures/$newProductId');
-                      reference.putFile(tempPicture).whenComplete(() =>
-                          reference.getDownloadURL().then((fileURL) async =>
-                              await db.updateProductFields(newProductId,
-                                  {'Product Picture URL': fileURL})));
-                      newProductsIds.add(newProductId);
-                      newProductId = '';
-                      tempProduct = Product();
-                    });
-                    while (transportId == '') {
-                      print('awaiting for New Transport2');
-                    }
+
                     for (int i = 0; i < images!.length; i++) {
-                      reference = db.storage
+                      picturesReferences.add(db.storage
                           .ref()
-                          .child('Transport pictures/$transportId/$i');
-                      reference.putFile((File(images![i].path))).whenComplete(
-                          () => reference.getDownloadURL().then((fileURL) =>
-                              {newTransportPictures.add(fileURL)}));
+                          .child('Transport pictures/$transportId/$i'));
+                      UploadTask uploadTask = picturesReferences[i]
+                          .putFile((File(images![i].path)));
+                      uploadTask.whenComplete(() => picturesReferences[i]
+                          .getDownloadURL()
+                          .then((fileURL) => db.updateTransportFields(
+                                  'Community Transports', transportId, {
+                                "Pictures": FieldValue.arrayUnion(['$fileURL'])
+                              })));
                     }
+                    products.forEach((product) {
+                      productsNames.add(product.name);
+                    });
+
                     await db.deleteTransportFromGivitUserList(transport.id);
-                    while (newProductsIds.length != transport.products.length) {
-                      // NOT GOOD! infi loop
-                      print('awaiting for New products ids');
-                    }
                     await db.updateTransportFields(
                         'Community Transports', transportId, {
-                      'Products': newProductsIds,
-                      'Pictures': newTransportPictures
+                      'Products': productsNames,
                     });
+
+                    for (int i = 0; i < transport.products.length; i++) {
+                      productsRefrences.add(db.storage
+                          .ref()
+                          .child('Products pictures/${transport.products[i]}'));
+                      await productsRefrences[i].delete().then((_) => null);
+                      await db
+                          .deleteProductFromProductList(transport.products[i]);
+                    }
                   },
                   child: Text("לאישור"),
                 ),
