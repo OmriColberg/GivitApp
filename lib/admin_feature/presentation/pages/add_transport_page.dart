@@ -135,7 +135,6 @@ class _AddTransportPageState extends State<AddTransportPage> {
                               maxTime: DateTime(
                                   DateTime.now().year + 3, 12, 31, 23, 59),
                               onChanged: (date) {}, onConfirm: (date) {
-                            print('CHOSEN DATE: $date');
                             setState(() => datePickUp = date);
                           },
                               currentTime: DateTime.now(),

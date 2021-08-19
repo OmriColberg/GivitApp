@@ -35,7 +35,8 @@ class _MainPageState extends State<MainPage> {
           stream: db.producstData,
           builder: (context, snapshotProduct) {
             if (snapshotProduct.hasError) {
-              return Text('אירעה תקלה, נא לפנות למנהלים');
+              return Text(snapshotProduct.error.toString() +
+                  'אירעה תקלה, נא לפנות למנהלים');
             }
 
             if (snapshotProduct.connectionState == ConnectionState.waiting) {
@@ -46,7 +47,8 @@ class _MainPageState extends State<MainPage> {
               stream: db.transportsData,
               builder: (context, snapshotTransport) {
                 if (snapshotTransport.hasError) {
-                  return Text('אירעה תקלה, נא לפנות למנהלים');
+                  return Text(snapshotTransport.error.toString() +
+                      'אירעה תקלה, נא לפנות למנהלים');
                 }
 
                 if (snapshotTransport.connectionState ==
@@ -122,7 +124,7 @@ AssignCardProduct createDeliveryAssignFromProductSnapshot(
 AssignCardTransport createDeliveryAssignFromTransportSnapshot(
     Transport transport, Size size, bool isAdmin) {
   String date =
-      DateFormat('yyyy-MM-dd hh:mm').format(transport.datePickUp).toString();
+      DateFormat('yyyy-MM-dd HH:mm').format(transport.datePickUp).toString();
 
   return AssignCardTransport(
     title: date + ' :הובלה ב' + '\n' + transport.pickUpAddress + ' :יוצאת מ',

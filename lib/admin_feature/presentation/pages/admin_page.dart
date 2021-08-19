@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:givit_app/admin_feature/presentation/pages/add_product_page.dart';
 import 'package:givit_app/admin_feature/presentation/pages/add_product_warehouse_page.dart';
@@ -31,7 +32,8 @@ class _AdminPageState extends State<AdminPage> {
       stream: db.givitUserData,
       builder: (context, snapshotGivitUser) {
         if (snapshotGivitUser.hasError) {
-          return Text('אירעה תקלה, נא לפנות למנהלים');
+          return Text(snapshotGivitUser.error.toString() +
+              'אירעה תקלה, נא לפנות למנהלים');
         }
 
         if (snapshotGivitUser.connectionState == ConnectionState.waiting) {
@@ -43,7 +45,8 @@ class _AdminPageState extends State<AdminPage> {
           stream: db.producstData,
           builder: (context, snapshotProduct) {
             if (snapshotProduct.hasError) {
-              return Text('אירעה תקלה, נא לפנות למנהלים');
+              return Text(snapshotProduct.error.toString() +
+                  'אירעה תקלה, נא לפנות למנהלים');
             }
 
             if (snapshotProduct.connectionState == ConnectionState.waiting) {
@@ -129,7 +132,8 @@ class _AdminPageState extends State<AdminPage> {
                       stream: db.transportsData,
                       builder: (context, snapshotTransport) {
                         if (snapshotTransport.hasError) {
-                          return Text('אירעה תקלה, נא לפנות למנהלים');
+                          return Text(snapshotTransport.error.toString() +
+                              'אירעה תקלה, נא לפנות למנהלים');
                         }
 
                         if (snapshotTransport.connectionState ==
@@ -256,7 +260,14 @@ class _AdminPageState extends State<AdminPage> {
                   children: [
                     ElevatedButton(
                       onPressed: () async {
+                        Reference reference;
+                        String productId = product.id;
                         Navigator.of(context).pop();
+                        reference = db.storage
+                            .ref()
+                            .child('Products pictures/$productId');
+                        reference.delete().then((_) => print(
+                            'Successfully deleted Products Picture/$productId storage item'));
                         await db.deleteProductFromProductList(product.id);
                       },
                       child: Text('למחיקה'),
@@ -296,7 +307,7 @@ AssignCardProduct createDeliveryAssignFromProductSnapshot(
 AssignCardTransport createDeliveryAssignFromTransportSnapshot(
     Transport transport, List<String> transports, Size size) {
   String date =
-      DateFormat('yyyy-MM-dd hh:mm').format(transport.datePickUp).toString();
+      DateFormat('yyyy-MM-dd HH:mm').format(transport.datePickUp).toString();
   return AssignCardTransport(
     title: date + ' :הובלה ב' + '\n' + transport.pickUpAddress + ' :יוצאת מ',
     body: transport.notes + " :הערות",
