@@ -7,6 +7,7 @@ class Product {
   final String pickUpAddress;
   final String timeForPickUp;
   final String productPictureURL;
+  final String assignedTransportId;
   final String notes;
   final int weight;
   final int length;
@@ -22,6 +23,7 @@ class Product {
     this.pickUpAddress = '',
     this.timeForPickUp = '',
     this.productPictureURL = '',
+    this.assignedTransportId = '',
     this.notes = '',
     this.weight = 0,
     this.length = 0,
@@ -37,6 +39,7 @@ class Product {
         'Pick Up Address': pickUpAddress,
         'Time Span For Pick Up': timeForPickUp,
         'Product Picture URL': productPictureURL,
+        'Assigned Transport ID': assignedTransportId,
         'Notes': notes,
         'Weight': weight,
         'Length': length,
@@ -48,14 +51,15 @@ class Product {
       Map<dynamic, dynamic> productMap, String id) {
     return Product(
       id: id,
-      name: productMap['Product Name'],
+      name: productMap['Product Name'] ?? '',
       state: Product.productStateFromString(productMap['State Of Product']),
-      ownerName: productMap["Owner's Name"],
+      ownerName: productMap["Owner's Name"] ?? '',
       ownerPhoneNumber: productMap["Owner's Phone Number"].toString(),
-      pickUpAddress: productMap['Pick Up Address'],
-      timeForPickUp: productMap['Time Span For Pick Up'],
-      productPictureURL: productMap['Product Picture URL'],
-      notes: productMap['Notes'],
+      pickUpAddress: productMap['Pick Up Address'] ?? '',
+      timeForPickUp: productMap['Time Span For Pick Up'] ?? '',
+      productPictureURL: productMap['Product Picture URL'] ?? '',
+      assignedTransportId: productMap['Assigned Transport ID'] ?? '',
+      notes: productMap['Notes'] ?? '',
       weight: productMap['Weight'] ?? 0,
       length: productMap['Length'] ?? 0,
       width: productMap['Width'] ?? 0,
@@ -117,4 +121,5 @@ enum ProductStatus {
   waitingToBeDelivered,
   assignToDelivery,
   delivered,
+  mock,
 }

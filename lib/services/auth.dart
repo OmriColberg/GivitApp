@@ -6,7 +6,6 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   GivitUser _givitUserFromFireBaseUser(User? user) {
-    //signOut();
     return user != null
         ? GivitUser(uid: user.uid, email: user.email)
         : GivitUser();
@@ -29,8 +28,8 @@ class AuthService {
   }
 
   // register with email and password
-  Future registerWithEmailAndPassword(
-      String email, String fullName, String password, int phoneNumber) async {
+  Future registerWithEmailAndPassword(String email, String fullName,
+      String password, String phoneNumber) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);

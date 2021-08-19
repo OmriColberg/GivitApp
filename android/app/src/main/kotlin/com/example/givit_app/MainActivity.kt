@@ -1,4 +1,4 @@
-package com.example.givit_app
+package com.givit.givit
 
 import io.flutter.embedding.android.FlutterActivity
 

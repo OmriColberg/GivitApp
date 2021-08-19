@@ -13,6 +13,7 @@ import 'package:givit_app/services/database.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_sms/flutter_sms.dart';
 
 class AssignCardTransport extends StatelessWidget {
   final String title;
@@ -22,6 +23,8 @@ class AssignCardTransport extends StatelessWidget {
   final List<String> personalTransport;
   final Size size;
   final CardType type;
+  final bool isAdmin;
+
   AssignCardTransport({
     required this.title,
     required this.body,
@@ -30,6 +33,7 @@ class AssignCardTransport extends StatelessWidget {
     required this.personalTransport,
     required this.size,
     required this.type,
+    required this.isAdmin,
   });
 
   @override
@@ -38,30 +42,31 @@ class AssignCardTransport extends StatelessWidget {
     final DatabaseService db = DatabaseService(uid: givitUser.uid);
     int prodIndex = 0;
     int userIndex = 0;
-    return StreamBuilder<QuerySnapshot>(
-      stream: db.usersData,
+    return StreamBuilder<QuerySnapshot<Object?>>(
+      stream: db.givitUsersData,
       builder: (context, snapshotUsers) {
         if (snapshotUsers.hasError) {
           print(snapshotUsers.error);
-          return Text('אירעה תקלה, נא לפנות למנהלים');
+          return Text(
+              snapshotUsers.error.toString() + 'אירעה תקלה, נא לפנות למנהלים');
         }
 
         if (snapshotUsers.connectionState == ConnectionState.waiting) {
           return Loading();
         }
 
-        return StreamBuilder<QuerySnapshot>(
+        return StreamBuilder<QuerySnapshot<Object?>>(
           stream: db.producstData,
           builder: (context, snapshotProduct) {
             if (snapshotProduct.hasError) {
               print(snapshotProduct.error);
-              return Text('אירעה תקלה, נא לפנות למנהלים');
+              return Text(snapshotProduct.error.toString() +
+                  'אירעה תקלה, נא לפנות למנהלים');
             }
 
             if (snapshotProduct.connectionState == ConnectionState.waiting) {
               return Loading();
             }
-
             return Center(
               child: Card(
                 shape: RoundedRectangleBorder(
@@ -88,26 +93,48 @@ class AssignCardTransport extends StatelessWidget {
                                   Icons.cancel_outlined,
                                   color: Colors.red,
                                 ),
-                                onTap: () {
+                                onTap: () async {
                                   personalTransport.remove(transport.id);
                                   if (transport.currentNumOfCarriers ==
                                       transport.totalNumOfCarriers) {
-                                    db.updateTransportFields(transport.id, {
+                                    await db.updateTransportFields(
+                                        'Transports', transport.id, {
                                       'Status Of Transport':
                                           "waitingForVolunteers"
                                     });
                                   }
-                                  db.updateGivitUserFields(
+                                  String userPhoneNumber =
+                                      (await db.getUserByID(db.uid))
+                                          .phoneNumber;
+                                  await db.updateGivitUserFields(
                                       {'Transports': personalTransport});
-                                  db.updateTransportFields(transport.id, {
+                                  await db.updateTransportFields(
+                                      'Transports', transport.id, {
                                     'Current Number Of Carriers':
                                         transport.currentNumOfCarriers - 1,
                                     "Carriers":
-                                        FieldValue.arrayRemove(['${db.uid}'])
+                                        FieldValue.arrayRemove(['${db.uid}']),
+                                    "Carriers Phone Numbers":
+                                        FieldValue.arrayRemove(
+                                            ['$userPhoneNumber']),
                                   });
                                 },
                               )
-                            : Container()
+                            : isAdmin
+                                ? InkWell(
+                                    child: Icon(
+                                      Icons.delete_outline,
+                                      color: Colors.red[900],
+                                    ),
+                                    onTap: () {
+                                      showTransportDelete(
+                                          "אישור מחיקת הובלה ממאגר המידע",
+                                          size,
+                                          context,
+                                          db);
+                                    },
+                                  )
+                                : Container()
                       ],
                     ),
                     Text(
@@ -134,13 +161,19 @@ class AssignCardTransport extends StatelessWidget {
                                     style: TextStyle(fontSize: 18),
                                   ),
                                   SizedBox(width: 10),
-                                  ClipOval(
-                                    child: Image.network(
-                                      product.productPictureURL,
-                                      fit: BoxFit.fill,
-                                      height: 30,
-                                      width: 30,
+                                  GestureDetector(
+                                    child: ClipOval(
+                                      child: Image.network(
+                                        product.productPictureURL,
+                                        fit: BoxFit.fill,
+                                        height: 30,
+                                        width: 30,
+                                      ),
                                     ),
+                                    onTap: () {
+                                      showProductInfo(
+                                          product, size, context, db);
+                                    },
                                   ),
                                 ],
                               );
@@ -152,9 +185,31 @@ class AssignCardTransport extends StatelessWidget {
                           }
                         }).toList(),
                         [
-                          Text(
-                            'נרשמו ${transport.currentNumOfCarriers} מתוך  ${transport.totalNumOfCarriers} מובילים',
-                            style: TextStyle(fontSize: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(),
+                              Text(
+                                'נרשמו ${transport.currentNumOfCarriers} מתוך  ${transport.totalNumOfCarriers} מובילים',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              isAdmin && type == CardType.admin
+                                  ? InkWell(
+                                      child: Icon(
+                                        Icons.sms,
+                                        color: Colors.blue[600],
+                                      ),
+                                      onTap: () {
+                                        showDialogPhone(
+                                            "אישור שליחת הודעה תזכורת לכלל המתנדבים הרשומים",
+                                            size,
+                                            context,
+                                            db,
+                                            transport);
+                                      },
+                                    )
+                                  : Container()
+                            ],
                           ),
                         ],
                         snapshotUsers.data!.docs
@@ -186,12 +241,34 @@ class AssignCardTransport extends StatelessWidget {
                         [
                           type == CardType.main
                               ? (ElevatedButton(
-                                  onPressed: () {
-                                    db.updateGivitUserFields({
+                                  onPressed: () async {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return Container(
+                                          height: size.height * 0.5,
+                                          child: AlertDialog(
+                                            title: Text(
+                                                'השתבצת להובלה, תודה רבה וכל הכבוד!\nתוכל/י לראות את פרטי ההובלה באזור האישי\n"גם כשלא מבקשים ממכם אצבע, תדאגו לבדוק אולי למישהו חסרה יד" :)'),
+                                            content: ElevatedButton(
+                                              onPressed: () async {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text("אישור"),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                    await db.updateGivitUserFields({
                                       "Transports": FieldValue.arrayUnion(
                                           ['${transport.id}'])
                                     });
-                                    db.updateTransportFields(transport.id, {
+                                    String userPhoneNumber =
+                                        (await db.getUserByID(db.uid))
+                                            .phoneNumber;
+                                    await db.updateTransportFields(
+                                        'Transports', transport.id, {
                                       'Status Of Transport':
                                           transport.currentNumOfCarriers + 1 ==
                                                   transport.totalNumOfCarriers
@@ -206,7 +283,10 @@ class AssignCardTransport extends StatelessWidget {
                                       'Current Number Of Carriers':
                                           transport.currentNumOfCarriers + 1,
                                       "Carriers":
-                                          FieldValue.arrayUnion(['${db.uid}'])
+                                          FieldValue.arrayUnion(['${db.uid}']),
+                                      "Carriers Phone Numbers":
+                                          FieldValue.arrayUnion(
+                                              ['$userPhoneNumber']),
                                     });
                                   },
                                   child: Text(schedule),
@@ -216,26 +296,25 @@ class AssignCardTransport extends StatelessWidget {
                                       "\"עם הרשמות להובלה גדולה מגיעה אחריות גדולה\"",
                                       style: TextStyle(fontSize: 14),
                                     )
-                                  : (transport.currentNumOfCarriers ==
-                                          transport.totalNumOfCarriers
+                                  : (transport.datePickUp
+                                              .compareTo(DateTime.now()) <=
+                                          0
                                       ? ElevatedButton(
                                           onPressed: () async {
-                                            showDialogHelper(
+                                            List<Product> products = [];
+                                            transport.products
+                                                .forEach((productId) async {
+                                              products.add(await db
+                                                  .getProductByID(productId));
+                                            });
+
+                                            showDialogPost(
                                                 "הוספת פוסט לקהילת גיביט",
                                                 size,
                                                 context,
                                                 db,
-                                                transport);
-                                            await db.updateTransportFields(
-                                                transport.id, {
-                                              'Status Of Transport':
-                                                  TransportStatus.carriedOut
-                                                      .toString()
-                                                      .split('.')[1],
-                                            });
-                                            await db.updateAssignProducts(
-                                                personalTransport,
-                                                ProductStatus.delivered);
+                                                transport,
+                                                products);
                                           },
                                           child: Text("אישור ביצוע ההובלה"),
                                         )
@@ -253,8 +332,173 @@ class AssignCardTransport extends StatelessWidget {
     );
   }
 
-  void showDialogHelper(String dialogText, Size size, BuildContext context,
+  void showProductInfo(
+      Product product, Size size, BuildContext context, DatabaseService db) {
+    String length = product.length != 0
+        ? "\nאורך המוצר בס''מ: " + product.length.toString()
+        : '';
+    String width = product.width != 0
+        ? "\nרוחב המוצר בס''מ: " + product.width.toString()
+        : '';
+    String weight = product.weight != 0
+        ? "\nמשקל המוצר בקילוגרמים: " + product.weight.toString()
+        : '';
+    String body = "שם הבעלים: " +
+        product.ownerName +
+        "\nמספר טלפון: " +
+        product.ownerPhoneNumber +
+        "\nכתוב לאיסוף: " +
+        product.pickUpAddress +
+        "\nזמן לאיסוף מוצר: " +
+        product.timeForPickUp +
+        "\nמצב המוצר: " +
+        Product.hebrewFromEnum(product.state) +
+        length +
+        width +
+        weight +
+        "\nהערות: " +
+        product.notes;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: size.height * 0.5,
+          child: AlertDialog(
+            title: Text(body),
+            content: Column(
+              children: <Widget>[
+                Container(
+                  width: 150,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(product.productPictureURL),
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                        Reference reference;
+                        String productId = product.id;
+                        reference = db.storage
+                            .ref()
+                            .child('Products pictures/$productId');
+                        reference.delete().then((_) => print(
+                            'Successfully deleted Products Picture/$productId storage item'));
+                        await db.deleteProductFromProductList(product.id);
+                        Transport transport = await db
+                            .getTransportByID(product.assignedTransportId);
+                        if (transport.products.length == 1) {
+                          await db
+                              .deleteTransportFromTransportList(transport.id);
+                          await db.updateAssignGivitUsers(transport.carriers, {
+                            "Transports":
+                                FieldValue.arrayRemove(['${transport.id}'])
+                          });
+                        } else {
+                          await db.deleteProductFromTransportList(
+                              product.id, product.assignedTransportId);
+                        }
+                      },
+                      child: Text('למחיקה'),
+                    ),
+                    SizedBox(width: 5),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text("לחזרה"),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void showTransportDelete(
+      String dialogText, Size size, BuildContext context, DatabaseService db) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: size.height * 0.5,
+          child: AlertDialog(
+            title: Text(dialogText),
+            content: Row(
+              children: <Widget>[
+                ElevatedButton(
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    await db.deleteTransportFromTransportList(transport.id);
+                    await db.updateAssignProducts(transport.products, {
+                      'Assigned Transport ID': '',
+                      'Status Of Product': ProductStatus.waitingToBeDelivered
+                          .toString()
+                          .split('.')[1]
+                    });
+                    await db.updateAssignGivitUsers(transport.carriers, {
+                      "Transports": FieldValue.arrayRemove(['${transport.id}'])
+                    });
+                  },
+                  child: Text("מחיקה"),
+                ),
+                SizedBox(width: 5),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("ביטול"),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void showDialogPhone(String dialogText, Size size, BuildContext context,
       DatabaseService db, Transport transport) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: size.height * 0.5,
+          child: AlertDialog(
+            title: Text(dialogText),
+            content: Row(
+              children: <Widget>[
+                ElevatedButton(
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    smsSender(db, transport);
+                  },
+                  child: Text("שליחת הודעות"),
+                ),
+                SizedBox(width: 5),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("ביטול"),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void showDialogPost(String dialogText, Size size, BuildContext context,
+      DatabaseService db, Transport transport, List<Product> products) {
     final ImagePicker _picker = ImagePicker();
 
     showDialog(
@@ -292,21 +536,61 @@ class AssignCardTransport extends StatelessWidget {
                 SizedBox(height: 5),
                 ElevatedButton(
                   onPressed: () async {
-                    await db
-                        .updateTransportFields(transport.id, {'SumUp': sumUp});
-
-                    for (int i = 0; i < images!.length; i++) {
-                      Reference reference = db.storage
-                          .ref()
-                          .child('Transport pictures/${transport.id}/$i');
-                      reference.putFile((File(images![i].path))).whenComplete(
-                          () => reference.getDownloadURL().then((fileURL) =>
-                              db.updateTransportFields(transport.id, {
-                                'Pictures': FieldValue.arrayUnion(['$fileURL}'])
-                              })));
-                    }
+                    String transportId = '';
+                    List<String> productsNames = [];
+                    List<Reference> picturesReferences = [];
+                    List<Reference> productsRefrences = [];
 
                     Navigator.of(context).pop();
+                    await db.moveTransportCollection(
+                        transport, 'Transports', 'Community Transports', {
+                      'Current Number Of Carriers':
+                          transport.currentNumOfCarriers,
+                      'Total Number Of Carriers': transport.totalNumOfCarriers,
+                      'Destination Address': transport.destinationAddress,
+                      'Pick Up Address': transport.pickUpAddress,
+                      'Date For Pick Up': transport.datePickUp.toString(),
+                      'Products': [],
+                      'Carriers': transport.carriers,
+                      'Carriers Phone Numbers': transport.carriersPhoneNumbers,
+                      'Status Of Transport':
+                          TransportStatus.carriedOut.toString().split('.')[1],
+                      'Pictures': [],
+                      'Notes': transport.notes,
+                      'SumUp': sumUp,
+                    }).then((_result) => transportId = _result);
+
+                    for (int i = 0; i < images!.length; i++) {
+                      picturesReferences.add(db.storage
+                          .ref()
+                          .child('Transport pictures/$transportId/$i'));
+                      UploadTask uploadTask = picturesReferences[i]
+                          .putFile((File(images![i].path)));
+                      uploadTask.whenComplete(() => picturesReferences[i]
+                          .getDownloadURL()
+                          .then((fileURL) => db.updateTransportFields(
+                                  'Community Transports', transportId, {
+                                "Pictures": FieldValue.arrayUnion(['$fileURL'])
+                              })));
+                    }
+                    products.forEach((product) {
+                      productsNames.add(product.name);
+                    });
+
+                    await db.deleteTransportFromGivitUserList(transport.id);
+                    await db.updateTransportFields(
+                        'Community Transports', transportId, {
+                      'Products': productsNames,
+                    });
+
+                    for (int i = 0; i < transport.products.length; i++) {
+                      productsRefrences.add(db.storage
+                          .ref()
+                          .child('Products pictures/${transport.products[i]}'));
+                      await productsRefrences[i].delete().then((_) => null);
+                      await db
+                          .deleteProductFromProductList(transport.products[i]);
+                    }
                   },
                   child: Text("לאישור"),
                 ),
@@ -316,5 +600,12 @@ class AssignCardTransport extends StatelessWidget {
         );
       },
     );
+  }
+
+  void smsSender(DatabaseService db, Transport transport) {
+    sendSMS(
+        message:
+            "תזכורת: בתאריך ה${transport.datePickUp.day}.${transport.datePickUp.month}.${transport.datePickUp.year} בשעה ${transport.datePickUp.hour}:${transport.datePickUp.minute} תתבצע הובלה מ${transport.pickUpAddress}. תודה על התנדבותך!",
+        recipients: transport.carriersPhoneNumbers);
   }
 }

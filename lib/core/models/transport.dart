@@ -3,6 +3,7 @@ class Transport {
   final int currentNumOfCarriers;
   final int totalNumOfCarriers;
   final List<String> carriers;
+  final List<String> carriersPhoneNumbers;
   final List<String> products;
   final DateTime datePickUp;
   final String pickUpAddress;
@@ -20,6 +21,7 @@ class Transport {
     this.pickUpAddress = '',
     this.notes = '',
     this.carriers = const [],
+    this.carriersPhoneNumbers = const [],
     this.products = const [],
     this.pictures = const [],
     this.status = TransportStatus.waitingForVolunteers,
@@ -37,6 +39,7 @@ class Transport {
       pickUpAddress: trasnportMap['Pick Up Address'] ?? '',
       datePickUp: DateTime.parse(trasnportMap['Date For Pick Up']),
       carriers: List.from(trasnportMap['Carriers']),
+      carriersPhoneNumbers: List.from(trasnportMap['Carriers Phone Numbers']),
       products: List.from(trasnportMap['Products']),
       status: Transport.transportStatusFromString(
           trasnportMap["Status Of Transport"]),
@@ -60,4 +63,5 @@ enum TransportStatus {
   waitingForVolunteers,
   waitingForDueDate,
   carriedOut,
+  mock,
 }

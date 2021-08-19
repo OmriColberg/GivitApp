@@ -15,15 +15,16 @@ class AssignCardProduct extends StatelessWidget {
   final List<String> personalProducts;
   final Size size;
   final CardType type;
-  AssignCardProduct({
-    required this.title,
-    required this.body,
-    required this.schedule,
-    required this.product,
-    required this.personalProducts,
-    required this.size,
-    required this.type,
-  });
+  final bool isAdmin;
+  AssignCardProduct(
+      {required this.title,
+      required this.body,
+      required this.schedule,
+      required this.product,
+      required this.personalProducts,
+      required this.size,
+      required this.type,
+      required this.isAdmin});
 
   @override
   Widget build(BuildContext context) {
@@ -56,13 +57,24 @@ class AssignCardProduct extends StatelessWidget {
                           Icons.cancel_outlined,
                           color: Colors.red,
                         ),
-                        onTap: () {
+                        onTap: () async {
                           personalProducts.remove(product.id);
-                          db.updateGivitUserFields(
+                          await db.updateGivitUserFields(
                               {'Products': personalProducts});
                         },
                       )
-                    : Container()
+                    : isAdmin
+                        ? InkWell(
+                            child: Icon(
+                              Icons.delete_outline,
+                              color: Colors.red[900],
+                            ),
+                            onTap: () {
+                              showDialogHelper("אישור מחיקת מוצר ממאגר המידע",
+                                  size, context, db);
+                            },
+                          )
+                        : Container()
               ],
             ),
             Text(
@@ -72,8 +84,26 @@ class AssignCardProduct extends StatelessWidget {
             type == CardType.main
                 ? Column(children: [
                     ElevatedButton(
-                      onPressed: () {
-                        db.updateGivitUserFields({
+                      onPressed: () async {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Container(
+                              height: size.height * 0.5,
+                              child: AlertDialog(
+                                title: Text(
+                                    'תודה רבה! השתבצת לחיפוש מוצר. \nתוכל/י לראות את פרטי המוצר המבוקש באזור האישי.\nחיפוש נעים :)'),
+                                content: ElevatedButton(
+                                  onPressed: () async {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("אישור"),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                        await db.updateGivitUserFields({
                           "Products": FieldValue.arrayUnion(['${product.id}'])
                         });
                       },
@@ -99,6 +129,40 @@ class AssignCardProduct extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void showDialogHelper(
+      String dialogText, Size size, BuildContext context, DatabaseService db) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: size.height * 0.5,
+          child: AlertDialog(
+            title: Text(dialogText),
+            content: Row(
+              children: <Widget>[
+                ElevatedButton(
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    await db.deleteProductFromProductList(product.id);
+                    await db.deleteProductFromGivitUserList(product.id);
+                  },
+                  child: Text("מחיקה"),
+                ),
+                SizedBox(width: 5),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("ביטול"),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

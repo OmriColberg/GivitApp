@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:givit_app/admin_feature/presentation/pages/add_product_page.dart';
+import 'package:givit_app/admin_feature/presentation/pages/add_product_warehouse_page.dart';
 import 'package:givit_app/admin_feature/presentation/pages/add_transport_page.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
@@ -12,6 +14,7 @@ import 'package:givit_app/services/database.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:provider/provider.dart';
+import 'dart:ui' as ui;
 
 class AdminPage extends StatefulWidget {
   AdminPage({required this.size});
@@ -26,10 +29,11 @@ class _AdminPageState extends State<AdminPage> {
     GivitUser user = Provider.of<GivitUser>(context);
     final DatabaseService db = DatabaseService(uid: user.uid);
     return StreamBuilder<GivitUser>(
-      stream: db.userData,
+      stream: db.givitUserData,
       builder: (context, snapshotGivitUser) {
         if (snapshotGivitUser.hasError) {
-          return Text('אירעה תקלה, נא לפנות למנהלים');
+          return Text(snapshotGivitUser.error.toString() +
+              'אירעה תקלה, נא לפנות למנהלים');
         }
 
         if (snapshotGivitUser.connectionState == ConnectionState.waiting) {
@@ -41,7 +45,8 @@ class _AdminPageState extends State<AdminPage> {
           stream: db.producstData,
           builder: (context, snapshotProduct) {
             if (snapshotProduct.hasError) {
-              return Text('אירעה תקלה, נא לפנות למנהלים');
+              return Text(snapshotProduct.error.toString() +
+                  'אירעה תקלה, נא לפנות למנהלים');
             }
 
             if (snapshotProduct.connectionState == ConnectionState.waiting) {
@@ -74,8 +79,9 @@ class _AdminPageState extends State<AdminPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 20,
                       children: [
                         ElevatedButton(
                           onPressed: () => {
@@ -89,7 +95,19 @@ class _AdminPageState extends State<AdminPage> {
                           },
                           child: Text('הוספת מוצר חדש לחיפוש'),
                         ),
-                        SizedBox(width: 20),
+                        ElevatedButton(
+                          onPressed: () => {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddProductWarehousePage(
+                                  size: widget.size,
+                                ),
+                              ),
+                            ),
+                          },
+                          child: Text('הוספת מוצר שקיים במחסן'),
+                        ),
                         ElevatedButton(
                           onPressed: () => {
                             Navigator.push(
@@ -114,7 +132,8 @@ class _AdminPageState extends State<AdminPage> {
                       stream: db.transportsData,
                       builder: (context, snapshotTransport) {
                         if (snapshotTransport.hasError) {
-                          return Text('אירעה תקלה, נא לפנות למנהלים');
+                          return Text(snapshotTransport.error.toString() +
+                              'אירעה תקלה, נא לפנות למנהלים');
                         }
 
                         if (snapshotTransport.connectionState ==
@@ -132,17 +151,20 @@ class _AdminPageState extends State<AdminPage> {
                                         padding:
                                             EdgeInsets.symmetric(horizontal: 2),
                                         child: ElevatedButton(
-                                          onPressed: () {
+                                          onPressed: () async {
                                             if (product != null) {
                                               showDialogHelper(
-                                                  product, widget.size);
+                                                  product, widget.size, db);
                                             }
                                           },
-                                          child: Text(
-                                            '${product!.name}\n${product.pickUpAddress}',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.white,
+                                          child: Directionality(
+                                            textDirection: ui.TextDirection.rtl,
+                                            child: Text(
+                                              '${product!.name}\n${product.pickUpAddress}',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.white,
+                                              ),
                                             ),
                                           ),
                                           style: ElevatedButton.styleFrom(
@@ -166,7 +188,8 @@ class _AdminPageState extends State<AdminPage> {
                                     Transport.transportFromDocument(
                                         snapshotData, document.id);
                                 if (transport.status !=
-                                    TransportStatus.carriedOut) {
+                                        TransportStatus.carriedOut &&
+                                    transport.status != TransportStatus.mock) {
                                   return createDeliveryAssignFromTransportSnapshot(
                                       transport,
                                       givitUser!.transports,
@@ -190,7 +213,7 @@ class _AdminPageState extends State<AdminPage> {
     );
   }
 
-  void showDialogHelper(Product product, Size size) {
+  void showDialogHelper(Product product, Size size, DatabaseService db) {
     String length = product.length != 0
         ? "\nאורך המוצר בס''מ: " + product.length.toString()
         : '';
@@ -233,11 +256,30 @@ class _AdminPageState extends State<AdminPage> {
                     ),
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text("לחזרה"),
+                Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () async {
+                        Reference reference;
+                        String productId = product.id;
+                        Navigator.of(context).pop();
+                        reference = db.storage
+                            .ref()
+                            .child('Products pictures/$productId');
+                        reference.delete().then((_) => print(
+                            'Successfully deleted Products Picture/$productId storage item'));
+                        await db.deleteProductFromProductList(product.id);
+                      },
+                      child: Text('למחיקה'),
+                    ),
+                    SizedBox(width: 5),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text("לחזרה"),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -258,13 +300,14 @@ AssignCardProduct createDeliveryAssignFromProductSnapshot(
     product: product,
     personalProducts: products,
     size: size,
+    isAdmin: true,
   );
 }
 
 AssignCardTransport createDeliveryAssignFromTransportSnapshot(
     Transport transport, List<String> transports, Size size) {
   String date =
-      DateFormat('yyyy-MM-dd hh:mm').format(transport.datePickUp).toString();
+      DateFormat('yyyy-MM-dd HH:mm').format(transport.datePickUp).toString();
   return AssignCardTransport(
     title: date + ' :הובלה ב' + '\n' + transport.pickUpAddress + ' :יוצאת מ',
     body: transport.notes + " :הערות",
@@ -273,5 +316,6 @@ AssignCardTransport createDeliveryAssignFromTransportSnapshot(
     transport: transport,
     personalTransport: transports,
     size: size,
+    isAdmin: true,
   );
 }

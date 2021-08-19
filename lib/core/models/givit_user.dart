@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class GivitUser {
-  final String? uid;
+  final String uid;
   final String? email;
   final String password;
   final String fullName;
-  final int phoneNumber;
+  final String phoneNumber;
   final String profilePictureURL;
   final String role;
   final List<String> products;
@@ -15,7 +15,7 @@ class GivitUser {
     this.email = '',
     this.password = '',
     this.fullName = '',
-    this.phoneNumber = 0,
+    this.phoneNumber = '',
     this.role = 'User',
     this.profilePictureURL = '',
     this.uid = '',
