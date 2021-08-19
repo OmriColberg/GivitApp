@@ -494,7 +494,6 @@ class AssignCardTransport extends StatelessWidget {
   void showDialogPost(String dialogText, Size size, BuildContext context,
       DatabaseService db, Transport transport, List<Product> products) {
     final ImagePicker _picker = ImagePicker();
-    List<String> newTransportPictures = [];
 
     showDialog(
       context: context,
@@ -531,16 +530,29 @@ class AssignCardTransport extends StatelessWidget {
                 SizedBox(height: 5),
                 ElevatedButton(
                   onPressed: () async {
-                    Navigator.of(context).pop();
                     String transportId = '';
                     List<String> productsNames = [];
                     List<Reference> picturesReferences = [];
                     List<Reference> productsRefrences = [];
 
-                    await db
-                        .moveTransportCollection(transport, sumUp, 'Transports',
-                            'Community Transports')
-                        .then((_result) => transportId = _result);
+                    Navigator.of(context).pop();
+                    await db.moveTransportCollection(
+                        transport, 'Transports', 'Community Transports', {
+                      'Current Number Of Carriers':
+                          transport.currentNumOfCarriers,
+                      'Total Number Of Carriers': transport.totalNumOfCarriers,
+                      'Destination Address': transport.destinationAddress,
+                      'Pick Up Address': transport.pickUpAddress,
+                      'Date For Pick Up': transport.datePickUp.toString(),
+                      'Products': [],
+                      'Carriers': transport.carriers,
+                      'Carriers Phone Numbers': transport.carriersPhoneNumbers,
+                      'Status Of Transport':
+                          TransportStatus.carriedOut.toString().split('.')[1],
+                      'Pictures': [],
+                      'Notes': transport.notes,
+                      'SumUp': sumUp,
+                    }).then((_result) => transportId = _result);
 
                     for (int i = 0; i < images!.length; i++) {
                       picturesReferences.add(db.storage

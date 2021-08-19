@@ -34,24 +34,31 @@ class DatabaseService {
         FirebaseFirestore.instance.collection('Storage Transports'),
   };
 
-  Future<String> moveTransportCollection(Transport transport, String sumUp,
-      String fromCollection, String toCollection) async {
+  Future<String> moveTransportCollection(
+      Transport transport,
+      String fromCollection,
+      String toCollection,
+      Map<String, Object?> data) async {
     await collectionMap[fromCollection]!.doc(transport.id).delete();
-    return await collectionMap[toCollection]!.add({
-      'Current Number Of Carriers': transport.currentNumOfCarriers,
-      'Total Number Of Carriers': transport.totalNumOfCarriers,
-      'Destination Address': transport.destinationAddress,
-      'Pick Up Address': transport.pickUpAddress,
-      'Date For Pick Up': transport.datePickUp.toString(),
-      'Products': [],
-      'Carriers': transport.carriers,
-      'Carriers Phone Numbers': transport.carriersPhoneNumbers,
-      'Status Of Transport':
-          TransportStatus.carriedOut.toString().split('.')[1],
-      'Pictures': [],
-      'Notes': transport.notes,
-      'SumUp': sumUp,
-    }).then((value) => value.id);
+    return await collectionMap[toCollection]!
+        .add(data
+            //   {
+            //   'Current Number Of Carriers': transport.currentNumOfCarriers,
+            //   'Total Number Of Carriers': transport.totalNumOfCarriers,
+            //   'Destination Address': transport.destinationAddress,
+            //   'Pick Up Address': transport.pickUpAddress,
+            //   'Date For Pick Up': transport.datePickUp.toString(),
+            //   'Products': [],
+            //   'Carriers': transport.carriers,
+            //   'Carriers Phone Numbers': [],
+            //   'Status Of Transport':
+            //       TransportStatus.carriedOut.toString().split('.')[1],
+            //   'Pictures': [],
+            //   'Notes': transport.notes,
+            //   'SumUp': transport.sumUp,
+            // }
+            )
+        .then((value) => value.id);
   }
 
   Future<void> addGivitUser(String email, String fullName, String password,
@@ -163,6 +170,10 @@ class DatabaseService {
       'Notes': notes ?? '',
       'SumUp': '',
     }).then((value) => value.id);
+  }
+
+  Stream<QuerySnapshot<Object?>> get communityTransportsData {
+    return communityTransportsCollection.snapshots();
   }
 
   Stream<QuerySnapshot<Object?>> get transportsData {

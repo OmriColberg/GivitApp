@@ -65,7 +65,7 @@ class MainMenuUser extends StatelessWidget {
             ),
             body: TabBarView(
               children: [
-                GivitCommunityPage(size: size),
+                GivitCommunityPage(size: size, isAdmin: false),
                 ProfilePage(size: size),
                 MainPage(size: size),
               ],
