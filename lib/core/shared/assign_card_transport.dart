@@ -296,10 +296,9 @@ class AssignCardTransport extends StatelessWidget {
                                       "\"עם הרשמות להובלה גדולה מגיעה אחריות גדולה\"",
                                       style: TextStyle(fontSize: 14),
                                     )
-                                  : true
-                                      // (transport.datePickUp
-                                      //             .compareTo(DateTime.now()) <=
-                                      //         0
+                                  : (transport.datePickUp
+                                              .compareTo(DateTime.now()) <=
+                                          0
                                       ? ElevatedButton(
                                           onPressed: () async {
                                             List<Product> products = [];
@@ -319,8 +318,7 @@ class AssignCardTransport extends StatelessWidget {
                                           },
                                           child: Text("אישור ביצוע ההובלה"),
                                         )
-                                      : Container()
-                          //)
+                                      : Container())
                         ]
                       ].expand((element) => element).toList(),
                     ),
