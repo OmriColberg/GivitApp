@@ -98,7 +98,7 @@ class AssignCardTransport extends StatelessWidget {
                                   if (transport.currentNumOfCarriers ==
                                       transport.totalNumOfCarriers) {
                                     await db.updateTransportFields(
-                                        transport.id, {
+                                        'Transports', transport.id, {
                                       'Status Of Transport':
                                           "waitingForVolunteers"
                                     });
@@ -108,7 +108,8 @@ class AssignCardTransport extends StatelessWidget {
                                           .phoneNumber;
                                   await db.updateGivitUserFields(
                                       {'Transports': personalTransport});
-                                  await db.updateTransportFields(transport.id, {
+                                  await db.updateTransportFields(
+                                      'Transports', transport.id, {
                                     'Current Number Of Carriers':
                                         transport.currentNumOfCarriers - 1,
                                     "Carriers":
@@ -266,8 +267,8 @@ class AssignCardTransport extends StatelessWidget {
                                     String userPhoneNumber =
                                         (await db.getUserByID(db.uid))
                                             .phoneNumber;
-                                    await db
-                                        .updateTransportFields(transport.id, {
+                                    await db.updateTransportFields(
+                                        'Transports', transport.id, {
                                       'Status Of Transport':
                                           transport.currentNumOfCarriers + 1 ==
                                                   transport.totalNumOfCarriers
@@ -300,12 +301,20 @@ class AssignCardTransport extends StatelessWidget {
                                           0
                                       ? ElevatedButton(
                                           onPressed: () async {
+                                            List<Product> products = [];
+                                            transport.products
+                                                .forEach((productId) async {
+                                              products.add(await db
+                                                  .getProductByID(productId));
+                                            });
+
                                             showDialogPost(
                                                 "הוספת פוסט לקהילת גיביט",
                                                 size,
                                                 context,
                                                 db,
-                                                transport);
+                                                transport,
+                                                products);
                                           },
                                           child: Text("אישור ביצוע ההובלה"),
                                         )
@@ -489,7 +498,7 @@ class AssignCardTransport extends StatelessWidget {
   }
 
   void showDialogPost(String dialogText, Size size, BuildContext context,
-      DatabaseService db, Transport transport) {
+      DatabaseService db, Transport transport, List<Product> products) {
     final ImagePicker _picker = ImagePicker();
 
     showDialog(
@@ -527,37 +536,61 @@ class AssignCardTransport extends StatelessWidget {
                 SizedBox(height: 5),
                 ElevatedButton(
                   onPressed: () async {
-                    await db
-                        .updateTransportFields(transport.id, {'SumUp': sumUp});
+                    String transportId = '';
+                    List<String> productsNames = [];
+                    List<Reference> picturesReferences = [];
+                    List<Reference> productsRefrences = [];
 
-                    for (int i = 0; i < images!.length; i++) {
-                      Reference reference = db.storage
-                          .ref()
-                          .child('Transport pictures/${transport.id}/$i');
-                      reference.putFile((File(images![i].path))).whenComplete(
-                            () => reference.getDownloadURL().then(
-                                  (fileURL) => {
-                                    db.updateTransportFields(
-                                      transport.id,
-                                      {
-                                        'Pictures':
-                                            FieldValue.arrayUnion(['$fileURL}'])
-                                      },
-                                    ),
-                                  },
-                                ),
-                          );
-                    }
-                    await db.updateTransportFields(transport.id, {
+                    Navigator.of(context).pop();
+                    await db.moveTransportCollection(
+                        transport, 'Transports', 'Community Transports', {
+                      'Current Number Of Carriers':
+                          transport.currentNumOfCarriers,
+                      'Total Number Of Carriers': transport.totalNumOfCarriers,
+                      'Destination Address': transport.destinationAddress,
+                      'Pick Up Address': transport.pickUpAddress,
+                      'Date For Pick Up': transport.datePickUp.toString(),
+                      'Products': [],
+                      'Carriers': transport.carriers,
+                      'Carriers Phone Numbers': transport.carriersPhoneNumbers,
                       'Status Of Transport':
                           TransportStatus.carriedOut.toString().split('.')[1],
+                      'Pictures': [],
+                      'Notes': transport.notes,
+                      'SumUp': sumUp,
+                    }).then((_result) => transportId = _result);
+
+                    for (int i = 0; i < images!.length; i++) {
+                      picturesReferences.add(db.storage
+                          .ref()
+                          .child('Transport pictures/$transportId/$i'));
+                      UploadTask uploadTask = picturesReferences[i]
+                          .putFile((File(images![i].path)));
+                      uploadTask.whenComplete(() => picturesReferences[i]
+                          .getDownloadURL()
+                          .then((fileURL) => db.updateTransportFields(
+                                  'Community Transports', transportId, {
+                                "Pictures": FieldValue.arrayUnion(['$fileURL'])
+                              })));
+                    }
+                    products.forEach((product) {
+                      productsNames.add(product.name);
                     });
-                    await db.updateAssignProducts(personalTransport, {
-                      'Status Of Product':
-                          ProductStatus.delivered.toString().split('.')[1],
-                    });
+
                     await db.deleteTransportFromGivitUserList(transport.id);
-                    Navigator.of(context).pop();
+                    await db.updateTransportFields(
+                        'Community Transports', transportId, {
+                      'Products': productsNames,
+                    });
+
+                    for (int i = 0; i < transport.products.length; i++) {
+                      productsRefrences.add(db.storage
+                          .ref()
+                          .child('Products pictures/${transport.products[i]}'));
+                      await productsRefrences[i].delete().then((_) => null);
+                      await db
+                          .deleteProductFromProductList(transport.products[i]);
+                    }
                   },
                   child: Text("לאישור"),
                 ),

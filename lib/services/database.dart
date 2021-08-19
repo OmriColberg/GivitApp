@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:givit_app/core/models/givit_user.dart';
+import 'package:givit_app/core/models/product.dart';
 import 'package:givit_app/core/models/transport.dart';
 import 'package:givit_app/core/shared/constant.dart';
 import 'package:intl/intl.dart';
@@ -11,12 +12,54 @@ class DatabaseService {
 
   final FirebaseStorage storage = FirebaseStorage.instance;
   final FirebaseFirestore db = FirebaseFirestore.instance;
+
   final CollectionReference givitUsersCollection =
       FirebaseFirestore.instance.collection('Users');
   final CollectionReference productsCollection =
       FirebaseFirestore.instance.collection('Products');
   final CollectionReference transportsCollection =
       FirebaseFirestore.instance.collection('Transports');
+  final CollectionReference communityTransportsCollection =
+      FirebaseFirestore.instance.collection('Community Transports');
+  final CollectionReference storageTransportsCollection =
+      FirebaseFirestore.instance.collection('Storage Transports');
+
+  final Map<String, CollectionReference> collectionMap = {
+    'Users': FirebaseFirestore.instance.collection('Users'),
+    'Products': FirebaseFirestore.instance.collection('Products'),
+    'Transports': FirebaseFirestore.instance.collection('Transports'),
+    'Community Transports':
+        FirebaseFirestore.instance.collection('Community Transports'),
+    'Storage Transports':
+        FirebaseFirestore.instance.collection('Storage Transports'),
+  };
+
+  Future<String> moveTransportCollection(
+      Transport transport,
+      String fromCollection,
+      String toCollection,
+      Map<String, Object?> data) async {
+    await collectionMap[fromCollection]!.doc(transport.id).delete();
+    return await collectionMap[toCollection]!
+        .add(data
+            //   {
+            //   'Current Number Of Carriers': transport.currentNumOfCarriers,
+            //   'Total Number Of Carriers': transport.totalNumOfCarriers,
+            //   'Destination Address': transport.destinationAddress,
+            //   'Pick Up Address': transport.pickUpAddress,
+            //   'Date For Pick Up': transport.datePickUp.toString(),
+            //   'Products': [],
+            //   'Carriers': transport.carriers,
+            //   'Carriers Phone Numbers': [],
+            //   'Status Of Transport':
+            //       TransportStatus.carriedOut.toString().split('.')[1],
+            //   'Pictures': [],
+            //   'Notes': transport.notes,
+            //   'SumUp': transport.sumUp,
+            // }
+            )
+        .then((value) => value.id);
+  }
 
   Future<void> addGivitUser(String email, String fullName, String password,
       String phoneNumber) async {
@@ -66,6 +109,16 @@ class DatabaseService {
     });
   }
 
+  Future<Product> getProductByID(String id) async {
+    return await productsCollection
+        .doc(id)
+        .get()
+        .then((DocumentSnapshot<Object?> document) {
+      var snapshotData = document.data() as Map;
+      return Product.productFromDocument(snapshotData, document.id);
+    });
+  }
+
   Future<GivitUser> getUserByID(String? id) async {
     return await givitUsersCollection
         .doc(id)
@@ -89,8 +142,8 @@ class DatabaseService {
   }
 
   Future<void> updateTransportFields(
-      String id, Map<String, Object?> data) async {
-    return await transportsCollection.doc(id).update(data);
+      String transportCollection, String id, Map<String, Object?> data) async {
+    return await collectionMap[transportCollection]!.doc(id).update(data);
   }
 
   Future<String> addTransport({
@@ -117,6 +170,10 @@ class DatabaseService {
       'Notes': notes ?? '',
       'SumUp': '',
     }).then((value) => value.id);
+  }
+
+  Stream<QuerySnapshot<Object?>> get communityTransportsData {
+    return communityTransportsCollection.snapshots();
   }
 
   Stream<QuerySnapshot<Object?>> get transportsData {
