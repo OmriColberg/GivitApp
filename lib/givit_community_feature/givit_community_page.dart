@@ -73,8 +73,13 @@ class GivitCommunityPage extends StatelessWidget {
                                           },
                                         )
                                       : Container(),
-                                  Text(transport.sumUp,
-                                      style: TextStyle(fontSize: 20)),
+                                  Flexible(
+                                    child: Directionality(
+                                      textDirection: TextDirection.rtl,
+                                      child: Text(transport.sumUp,
+                                          style: TextStyle(fontSize: 20)),
+                                    ),
+                                  ),
                                 ],
                               ),
                               Wrap(

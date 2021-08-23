@@ -386,7 +386,7 @@ class AssignCardTransport extends StatelessWidget {
                         reference = db.storage
                             .ref()
                             .child('Products pictures/$productId');
-                        reference.delete().then((_) => print(
+                        await reference.delete().then((_) => print(
                             'Successfully deleted Products Picture/$productId storage item'));
                         await db.deleteProductFromProductList(product.id);
                         Transport transport = await db
