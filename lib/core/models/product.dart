@@ -70,7 +70,7 @@ class Product {
   static ProductState productStateFromString(String state) {
     ProductState res = ProductState.unknown;
     ProductState.values.forEach((element) => {
-          if (Product.hebrewFromEnum(element) == state ||
+          if (element.toString().split('.')[1] == state ||
               element.toString() == state)
             {res = element}
         });
