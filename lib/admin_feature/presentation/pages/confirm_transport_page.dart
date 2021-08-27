@@ -33,6 +33,8 @@ class _ConfirmTranportPageState extends State<ConfirmTranportPage> {
   final GivitUser? givitUser;
   int numOfPhotos = 0;
   List<XFile>? images = [];
+  String sumUp = '';
+
   _ConfirmTranportPageState({required this.size, required this.givitUser});
 
   @override
@@ -45,7 +47,6 @@ class _ConfirmTranportPageState extends State<ConfirmTranportPage> {
     GivitUser user = Provider.of<GivitUser>(context);
     final DatabaseService db = DatabaseService(uid: user.uid);
     final ImagePicker _picker = ImagePicker();
-    String sumUp = '';
 
     return SafeArea(
       child: Scaffold(
