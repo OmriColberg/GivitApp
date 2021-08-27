@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:givit_app/admin_feature/presentation/pages/confirm_transport_page.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
 import 'package:givit_app/core/models/transport.dart';
@@ -308,13 +309,18 @@ class AssignCardTransport extends StatelessWidget {
                                                   .getProductByID(productId));
                                             });
 
-                                            showDialogPost(
-                                                "הוספת פוסט לקהילת גיביט",
-                                                size,
-                                                context,
-                                                db,
-                                                transport,
-                                                products);
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ConfirmTranportPage(
+                                                  size: size,
+                                                  givitUser: givitUser,
+                                                  transport: transport,
+                                                  products: products,
+                                                ),
+                                              ),
+                                            );
                                           },
                                           child: Text("אישור ביצוע ההובלה"),
                                         )
@@ -488,111 +494,6 @@ class AssignCardTransport extends StatelessWidget {
                     Navigator.of(context).pop();
                   },
                   child: Text("ביטול"),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void showDialogPost(String dialogText, Size size, BuildContext context,
-      DatabaseService db, Transport transport, List<Product> products) {
-    final ImagePicker _picker = ImagePicker();
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        String sumUp = '';
-        List<XFile>? images = [];
-        return Container(
-          height: size.height * 0.3,
-          child: AlertDialog(
-            backgroundColor: Colors.blue[300],
-            title: Text(dialogText),
-            content: Column(
-              children: [
-                TextField(
-                  minLines: 3,
-                  maxLines: 5,
-                  decoration: textInputDecoration.copyWith(
-                      hintText: 'פירוט אודות ההובלה לקבילת גיביט'),
-                  onChanged: (sumUPText) {
-                    sumUp = sumUPText;
-                  },
-                ),
-                SizedBox(height: 5),
-                ElevatedButton(
-                  onPressed: () async {
-                    if (await Permission.accessMediaLocation
-                        .request()
-                        .isGranted) {
-                      images = await _picker.pickMultiImage();
-                    }
-                  },
-                  child: Text("לבחירת תמונות"),
-                ),
-                SizedBox(height: 5),
-                ElevatedButton(
-                  onPressed: () async {
-                    String transportId = '';
-                    List<String> productsNames = [];
-                    List<Reference> picturesReferences = [];
-                    List<Reference> productsRefrences = [];
-
-                    Navigator.of(context).pop();
-                    await db.moveTransportCollection(
-                        transport, 'Transports', 'Community Transports', {
-                      'Current Number Of Carriers':
-                          transport.currentNumOfCarriers,
-                      'Total Number Of Carriers': transport.totalNumOfCarriers,
-                      'Destination Address': transport.destinationAddress,
-                      'Pick Up Address': transport.pickUpAddress,
-                      'Date For Pick Up': transport.datePickUp.toString(),
-                      'Products': [],
-                      'Carriers': transport.carriers,
-                      'Carriers Phone Numbers': transport.carriersPhoneNumbers,
-                      'Status Of Transport':
-                          TransportStatus.carriedOut.toString().split('.')[1],
-                      'Pictures': [],
-                      'Notes': transport.notes,
-                      'SumUp': sumUp,
-                    }).then((_result) => transportId = _result);
-
-                    for (int i = 0; i < images!.length; i++) {
-                      picturesReferences.add(db.storage
-                          .ref()
-                          .child('Transport pictures/$transportId/$i'));
-                      UploadTask uploadTask = picturesReferences[i]
-                          .putFile((File(images![i].path)));
-                      uploadTask.whenComplete(() => picturesReferences[i]
-                          .getDownloadURL()
-                          .then((fileURL) => db.updateTransportFields(
-                                  'Community Transports', transportId, {
-                                "Pictures": FieldValue.arrayUnion(['$fileURL'])
-                              })));
-                    }
-                    products.forEach((product) {
-                      productsNames.add(product.name);
-                    });
-
-                    await db.deleteTransportFromGivitUserList(transport.id);
-                    await db.updateTransportFields(
-                        'Community Transports', transportId, {
-                      'Products': productsNames,
-                    });
-
-                    for (int i = 0; i < transport.products.length; i++) {
-                      productsRefrences.add(db.storage
-                          .ref()
-                          .child('Products pictures/${transport.products[i]}'));
-                      await productsRefrences[i].delete().then((_) => null);
-                      await db
-                          .deleteProductFromProductList(transport.products[i]);
-                    }
-                  },
-                  child: Text("לאישור"),
                 ),
               ],
             ),
