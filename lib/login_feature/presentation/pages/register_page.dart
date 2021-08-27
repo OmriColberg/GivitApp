@@ -56,93 +56,109 @@ class _RegisterPageState extends State<RegisterPage> {
                 ],
               ),
               body: Container(
-                padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                 child: Form(
                   key: _formKey,
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(height: 20.0),
-                      Directionality(
-                        textDirection: TextDirection.rtl,
-                        child: TextFormField(
-                          decoration:
-                              textInputDecoration.copyWith(hintText: 'אי-מייל'),
-                          validator: (val) =>
-                              val!.isEmpty ? 'הכנס/י אי-מייל' : null,
-                          onChanged: (val) {
-                            setState(() => email = val);
-                          },
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(height: 20.0),
+                        Directionality(
+                          textDirection: TextDirection.rtl,
+                          child: TextFormField(
+                            decoration: textInputDecoration.copyWith(
+                                hintText: 'אי-מייל'),
+                            validator: (val) =>
+                                val!.isEmpty ? 'הכנס/י אי-מייל' : null,
+                            onChanged: (val) {
+                              setState(() => email = val);
+                            },
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 20.0),
-                      Directionality(
-                        textDirection: TextDirection.rtl,
-                        child: TextFormField(
-                          decoration:
-                              textInputDecoration.copyWith(hintText: 'סיסמא'),
-                          obscureText: true,
-                          validator: (val) => val!.length < 6
-                              ? 'הכנס סיסמא באורך של לפחות 6 תווים'
-                              : null,
-                          onChanged: (val) {
-                            setState(() => password = val);
-                          },
+                        SizedBox(height: 20.0),
+                        Directionality(
+                          textDirection: TextDirection.rtl,
+                          child: TextFormField(
+                            decoration:
+                                textInputDecoration.copyWith(hintText: 'סיסמא'),
+                            obscureText: true,
+                            validator: (val) => val!.length < 6
+                                ? 'הכנס סיסמא באורך של לפחות 6 תווים'
+                                : null,
+                            onChanged: (val) {
+                              setState(() => password = val);
+                            },
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 20.0),
-                      Directionality(
-                        textDirection: TextDirection.rtl,
-                        child: TextFormField(
-                          decoration: textInputDecoration.copyWith(
-                              hintText: 'שם פרטי ומשפחה'),
-                          onChanged: (val) {
-                            setState(() => fullName = val);
-                          },
+                        SizedBox(height: 20.0),
+                        Directionality(
+                          textDirection: TextDirection.rtl,
+                          child: TextFormField(
+                            decoration: textInputDecoration.copyWith(
+                                hintText: 'שם פרטי ומשפחה'),
+                            onChanged: (val) {
+                              setState(() => fullName = val);
+                            },
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 20.0),
-                      Directionality(
-                        textDirection: TextDirection.rtl,
-                        child: TextFormField(
-                          decoration: textInputDecoration.copyWith(
-                              hintText: 'מספר טלפון'),
-                          validator: (val) => val!.length != 10 &&
-                                  isNumeric(val)
-                              ? "נא להכניס מספר טלפון חוקי, בעל 10 ספרות ללא מקף"
-                              : null,
-                          onChanged: (val) {
-                            setState(() => phoneNumber = val);
-                          },
+                        SizedBox(height: 20.0),
+                        Directionality(
+                          textDirection: TextDirection.rtl,
+                          child: TextFormField(
+                            decoration: textInputDecoration.copyWith(
+                                hintText: 'מספר טלפון'),
+                            validator: (val) => val!.length != 10 &&
+                                    isNumeric(val)
+                                ? "נא להכניס מספר טלפון חוקי, בעל 10 ספרות ללא מקף"
+                                : null,
+                            onChanged: (val) {
+                              setState(() => phoneNumber = val);
+                            },
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 20.0),
-                      ElevatedButton(
-                        child: Text(
-                          'הרשמה',
-                          style: TextStyle(color: Colors.white),
+                        SizedBox(height: 20.0),
+                        Directionality(
+                          textDirection: TextDirection.rtl,
+                          child: TextFormField(
+                            decoration: textInputDecoration.copyWith(
+                                hintText: 'קוד אישור'),
+                            validator: (val) => val != CONFIRMATION_CODE
+                                ? "אנא פנה/י למנהלי העמותה על מנת לקבל את קוד האישור"
+                                : null,
+                            onChanged: (val) {
+                              setState(() => phoneNumber = val);
+                            },
+                          ),
                         ),
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            setState(() => loading = true);
-                            dynamic result =
-                                await _auth.registerWithEmailAndPassword(
-                                    email, fullName, password, phoneNumber);
-                            _formKey.currentState!.reset();
-                            if (result == null) {
-                              setState(() {
-                                loading = false;
-                                error = 'נא לספק אי-מייל חוקי';
-                              });
+                        SizedBox(height: 20.0),
+                        ElevatedButton(
+                          child: Text(
+                            'הרשמה',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              setState(() => loading = true);
+                              dynamic result =
+                                  await _auth.registerWithEmailAndPassword(
+                                      email, fullName, password, phoneNumber);
+                              _formKey.currentState!.reset();
+                              if (result == null) {
+                                setState(() {
+                                  loading = false;
+                                  error = 'נא לספק אי-מייל חוקי';
+                                });
+                              }
                             }
-                          }
-                        },
-                      ),
-                      SizedBox(height: 12.0),
-                      Text(
-                        error,
-                        style: TextStyle(color: Colors.red, fontSize: 14.0),
-                      )
-                    ],
+                          },
+                        ),
+                        SizedBox(height: 12.0),
+                        Text(
+                          error,
+                          style: TextStyle(color: Colors.red, fontSize: 14.0),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
