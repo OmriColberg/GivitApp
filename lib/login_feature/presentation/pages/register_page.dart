@@ -125,9 +125,6 @@ class _RegisterPageState extends State<RegisterPage> {
                             validator: (val) => val != CONFIRMATION_CODE
                                 ? "אנא פנה/י למנהלי העמותה על מנת לקבל את קוד האישור"
                                 : null,
-                            onChanged: (val) {
-                              setState(() => phoneNumber = val);
-                            },
                           ),
                         ),
                         SizedBox(height: 20.0),
