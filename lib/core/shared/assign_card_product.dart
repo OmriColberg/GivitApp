@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
-import 'package:givit_app/profile_page_feature/presentation/pages/product_found_form.dart';
+import 'package:givit_app/core/shared/product_found_form.dart';
 import 'package:givit_app/services/database.dart';
 import 'package:provider/provider.dart';
 
@@ -112,14 +112,27 @@ class AssignCardProduct extends StatelessWidget {
                   ])
                 : type == CardType.personal
                     ? ElevatedButton(
-                        onPressed: () async {
+                        onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => ProductFoundForm(
-                                  size: size,
-                                  product: product,
-                                  products: personalProducts),
+                                size: size,
+                                product: product,
+                                products: personalProducts,
+                                length: 0,
+                                ownerName: '',
+                                productImagePath: '',
+                                state: ProductState.unknown,
+                                weigth: 0,
+                                width: 0,
+                                notes: '',
+                                ownerPhoneNumber: '',
+                                pickUpAddress: '',
+                                timeForPickUp: '',
+                                isUpdate: false,
+                                pickedImage: false,
+                              ),
                             ),
                           );
                         },
