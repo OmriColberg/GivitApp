@@ -41,23 +41,7 @@ class DatabaseService {
       Map<String, Object?> data) async {
     await collectionMap[fromCollection]!.doc(transport.id).delete();
     return await collectionMap[toCollection]!
-        .add(data
-            //   {
-            //   'Current Number Of Carriers': transport.currentNumOfCarriers,
-            //   'Total Number Of Carriers': transport.totalNumOfCarriers,
-            //   'Destination Address': transport.destinationAddress,
-            //   'Pick Up Address': transport.pickUpAddress,
-            //   'Date For Pick Up': transport.datePickUp.toString(),
-            //   'Products': [],
-            //   'Carriers': transport.carriers,
-            //   'Carriers Phone Numbers': [],
-            //   'Status Of Transport':
-            //       TransportStatus.carriedOut.toString().split('.')[1],
-            //   'Pictures': [],
-            //   'Notes': transport.notes,
-            //   'SumUp': transport.sumUp,
-            // }
-            )
+        .add(data)
         .then((value) => value.id);
   }
 
