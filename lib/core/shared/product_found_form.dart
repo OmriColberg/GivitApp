@@ -12,8 +12,34 @@ class ProductFoundForm extends StatefulWidget {
   final Size size;
   final Product product;
   final List<String> products;
+  final String productImagePath;
+  final int weigth;
+  final int length;
+  final int width;
+  final ProductState state;
+  final String ownerName;
+  final String ownerPhoneNumber;
+  final String pickUpAddress;
+  final String timeForPickUp;
+  final String notes;
+  final bool isUpdate;
+  final bool pickedImage;
   ProductFoundForm(
-      {required this.size, required this.product, required this.products});
+      {required this.size,
+      required this.product,
+      required this.products,
+      required this.productImagePath,
+      required this.weigth,
+      required this.length,
+      required this.width,
+      required this.state,
+      required this.ownerName,
+      required this.ownerPhoneNumber,
+      required this.pickUpAddress,
+      required this.timeForPickUp,
+      required this.notes,
+      required this.isUpdate,
+      required this.pickedImage});
 
   @override
   _ProductFoundFormState createState() => _ProductFoundFormState();
@@ -23,18 +49,32 @@ class _ProductFoundFormState extends State<ProductFoundForm> {
   final _formKey = GlobalKey<FormState>();
   String error = '';
 
-  bool pickedImage = false;
-  String productImagePath = '';
-  int weight = 0;
-  int length = 0;
-  int width = 0;
-  ProductState state = ProductState.unknown;
-  String ownerName = '';
+  void initState() {
+    super.initState();
+    notes = widget.notes;
+    pickedImage = widget.pickedImage;
+    productImagePath = widget.productImagePath;
+    weight = widget.weigth;
+    length = widget.length;
+    width = widget.width;
+    state = widget.state;
+    ownerName = widget.ownerName;
+    ownerPhoneNumber = widget.ownerPhoneNumber;
+    timeForPickUp = widget.timeForPickUp;
+    pickUpAddress = widget.pickUpAddress;
+  }
+
+  late bool pickedImage;
+  late String productImagePath;
+  late int weight;
+  late int length;
+  late int width;
+  late ProductState state;
+  late String ownerName;
   late String ownerPhoneNumber;
-  String pickUpAddress = '';
-  String timeForPickUp = '';
-  String notes = '';
-  ProductStatus status = ProductStatus.searching;
+  late String pickUpAddress;
+  late String timeForPickUp;
+  late String notes;
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +99,7 @@ class _ProductFoundFormState extends State<ProductFoundForm> {
                   Directionality(
                     textDirection: TextDirection.rtl,
                     child: TextFormField(
+                      initialValue: ownerName,
                       decoration: textInputDecoration.copyWith(
                           hintText: 'שם מוסר/ת המוצר'),
                       validator: (val) =>
@@ -89,14 +130,21 @@ class _ProductFoundFormState extends State<ProductFoundForm> {
                       ),
                       SizedBox(width: 10),
                       pickedImage
-                          ? ClipOval(
-                              child: Image.file(
-                                File(productImagePath),
-                                fit: BoxFit.fill,
-                                height: 50,
-                                width: 50,
-                              ),
-                            )
+                          ? widget.isUpdate
+                              ? Image.network(
+                                  productImagePath,
+                                  fit: BoxFit.fill,
+                                  height: 50,
+                                  width: 50,
+                                )
+                              : ClipOval(
+                                  child: Image.file(
+                                    File(productImagePath),
+                                    fit: BoxFit.fill,
+                                    height: 50,
+                                    width: 50,
+                                  ),
+                                )
                           : Container(
                               width: 50,
                               height: 50,
@@ -140,6 +188,7 @@ class _ProductFoundFormState extends State<ProductFoundForm> {
                   Directionality(
                     textDirection: TextDirection.rtl,
                     child: TextFormField(
+                      initialValue: ownerPhoneNumber,
                       decoration: textInputDecoration.copyWith(
                           hintText: 'טלפון מוסר/ת המוצר'),
                       validator: (val) => val!.length != 10
@@ -154,6 +203,7 @@ class _ProductFoundFormState extends State<ProductFoundForm> {
                   Directionality(
                     textDirection: TextDirection.rtl,
                     child: TextFormField(
+                      initialValue: pickUpAddress,
                       decoration: textInputDecoration.copyWith(
                           hintText: 'כתובת לאיסוף'),
                       validator: (val) =>
@@ -167,6 +217,7 @@ class _ProductFoundFormState extends State<ProductFoundForm> {
                   Directionality(
                     textDirection: TextDirection.rtl,
                     child: TextFormField(
+                      initialValue: timeForPickUp,
                       decoration: textInputDecoration.copyWith(
                           hintText: 'מועד לאיסוף המוצר'),
                       validator: (val) =>
@@ -180,6 +231,7 @@ class _ProductFoundFormState extends State<ProductFoundForm> {
                   Directionality(
                     textDirection: TextDirection.rtl,
                     child: TextFormField(
+                      initialValue: weight == 0 ? '' : weight.toString(),
                       decoration: textInputDecoration.copyWith(
                           hintText: 'משקל בקילוגרמים'),
                       onChanged: (val) {
@@ -191,6 +243,7 @@ class _ProductFoundFormState extends State<ProductFoundForm> {
                   Directionality(
                     textDirection: TextDirection.rtl,
                     child: TextFormField(
+                      initialValue: length == 0 ? '' : length.toString(),
                       decoration:
                           textInputDecoration.copyWith(hintText: 'אורך בס"מ'),
                       onChanged: (val) {
@@ -202,6 +255,7 @@ class _ProductFoundFormState extends State<ProductFoundForm> {
                   Directionality(
                     textDirection: TextDirection.rtl,
                     child: TextFormField(
+                      initialValue: width == 0 ? '' : width.toString(),
                       decoration:
                           textInputDecoration.copyWith(hintText: 'רוחב בס"מ'),
                       onChanged: (val) {
@@ -213,6 +267,7 @@ class _ProductFoundFormState extends State<ProductFoundForm> {
                   Directionality(
                     textDirection: TextDirection.rtl,
                     child: TextFormField(
+                      initialValue: notes,
                       decoration: textInputDecoration.copyWith(
                           hintText: 'הערות נוספות'),
                       onChanged: (val) {
@@ -244,18 +299,23 @@ class _ProductFoundFormState extends State<ProductFoundForm> {
                               .toString()
                               .split('.')[1],
                         }).then((_result) {
-                          showDialogHelper(
-                              "תודה על מציאת המוצר!\nפרטי המוצר עודכנו, ממתין לשיבוץ הובלה",
-                              widget.size);
+                          widget.isUpdate
+                              ? showDialogHelper(
+                                  "פרטי המוצר עודכנו", widget.size)
+                              : showDialogHelper(
+                                  "תודה על מציאת המוצר!\nפרטי המוצר עודכנו, ממתין לשיבוץ הובלה",
+                                  widget.size);
                         }).catchError((error) {
                           showDialogHelper(
                               "קרתה תקלה, נסה שוב ($error)", widget.size);
                         });
-                        widget.products.remove(widget.product.id);
-                        await db.updateGivitUserFields(
-                            {'Products': widget.products});
-                        await db
-                            .deleteProductFromGivitUserList(widget.product.id);
+                        if (!widget.isUpdate) {
+                          widget.products.remove(widget.product.id);
+                          await db.updateGivitUserFields(
+                              {'Products': widget.products});
+                          await db.deleteProductFromGivitUserList(
+                              widget.product.id);
+                        }
                         Reference reference = db.storage
                             .ref()
                             .child('Products pictures/${widget.product.id}');

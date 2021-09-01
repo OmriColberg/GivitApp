@@ -4,30 +4,50 @@ import 'package:givit_app/core/models/product.dart';
 import 'package:givit_app/core/shared/assign_card_product.dart';
 import 'package:givit_app/core/shared/constant.dart';
 import 'package:givit_app/services/database.dart';
-import 'package:multi_select_flutter/multi_select_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'dart:ui' as ui;
 
-class AddTransportPage extends StatefulWidget {
+class UpdateTransportPage extends StatefulWidget {
   final Size size;
-  final List<MultiSelectItem<Product?>> productsToBeDelivered;
-  AddTransportPage({required this.size, required this.productsToBeDelivered});
+  final int totalNumOfCarriers;
+  final String destinationAddress;
+  final String pickUpAddress;
+  final String notes;
+  final DateTime datePickUp;
+  final String transportId;
+  UpdateTransportPage(
+      {required this.size,
+      required this.totalNumOfCarriers,
+      required this.destinationAddress,
+      required this.pickUpAddress,
+      required this.notes,
+      required this.datePickUp,
+      required this.transportId});
 
   @override
-  _AddTransportPageState createState() => _AddTransportPageState();
+  _UpdateTransportPageState createState() => _UpdateTransportPageState();
 }
 
-class _AddTransportPageState extends State<AddTransportPage> {
+class _UpdateTransportPageState extends State<UpdateTransportPage> {
+  void initState() {
+    super.initState();
+    totalNumOfCarriers = widget.totalNumOfCarriers;
+    destinationAddress = widget.destinationAddress;
+    pickUpAddress = widget.pickUpAddress;
+    notes = widget.notes;
+    datePickUp = widget.datePickUp;
+  }
+
   final _formKey = GlobalKey<FormState>();
   String error = '';
 
-  int totalNumOfCarriers = 0;
-  String destinationAddress = '';
-  String pickUpAddress = '';
-  String notes = '';
-  List<String> products = const [];
-  DateTime datePickUp = DateTime.now();
+  late int totalNumOfCarriers;
+  late String destinationAddress;
+  late String pickUpAddress;
+  late String notes;
+  late DateTime datePickUp;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +59,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
         appBar: AppBar(
           backgroundColor: Colors.blue[400],
           elevation: 0.0,
-          title: Text('    הוספת הובלה חדשה '),
+          title: Text('    עדכון הובלה קיימת '),
         ),
         body: Form(
           key: _formKey,
@@ -52,23 +72,8 @@ class _AddTransportPageState extends State<AddTransportPage> {
                 children: [
                   Directionality(
                     textDirection: ui.TextDirection.rtl,
-                    child: MultiSelectDialogField<Product?>(
-                      items: widget.productsToBeDelivered,
-                      title: Text("מוצרים לבחירה"),
-                      selectedColor: Colors.blue,
-                      buttonText: Text("בחר/י מוצרים להובלה"),
-                      onConfirm: (results) {
-                        products = results
-                            .map((Product? product) => product!.id)
-                            .toList()
-                            .cast<String>();
-                      },
-                    ),
-                  ),
-                  SizedBox(height: 20.0),
-                  Directionality(
-                    textDirection: ui.TextDirection.rtl,
                     child: TextFormField(
+                      initialValue: totalNumOfCarriers.toString(),
                       decoration: textInputDecoration.copyWith(
                           hintText: 'מספר מובילים'),
                       validator: (val) =>
@@ -82,6 +87,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
                   Directionality(
                     textDirection: ui.TextDirection.rtl,
                     child: TextFormField(
+                      initialValue: destinationAddress,
                       decoration:
                           textInputDecoration.copyWith(hintText: 'כתובת יעד'),
                       validator: (val) =>
@@ -95,6 +101,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
                   Directionality(
                     textDirection: ui.TextDirection.rtl,
                     child: TextFormField(
+                      initialValue: pickUpAddress,
                       decoration:
                           textInputDecoration.copyWith(hintText: 'כתובת התחלה'),
                       validator: (val) =>
@@ -108,6 +115,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
                   Directionality(
                     textDirection: ui.TextDirection.rtl,
                     child: TextFormField(
+                      initialValue: notes,
                       decoration:
                           textInputDecoration.copyWith(hintText: 'הערות'),
                       onChanged: (val) {
@@ -136,9 +144,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
                                   DateTime.now().year + 3, 12, 31, 23, 59),
                               onChanged: (date) {}, onConfirm: (date) {
                             setState(() => datePickUp = date);
-                          },
-                              currentTime: DateTime.now(),
-                              locale: LocaleType.en);
+                          }, currentTime: datePickUp, locale: LocaleType.en);
                         },
                       ),
                     ],
@@ -162,55 +168,23 @@ class _AddTransportPageState extends State<AddTransportPage> {
                   SizedBox(height: 12.0),
                   ElevatedButton(
                     child: Text(
-                      'הוסף הובלה למערכת',
+                      'עדכון הובלה',
                       style: TextStyle(color: Colors.white),
                     ),
                     onPressed: () async {
-                      String transportID = '';
-                      if (isDatePicked(datePickUp)) {
-                        if (_formKey.currentState!.validate()) {
-                          if (products.isNotEmpty) {
-                            await db
-                                .addTransport(
-                              products: products,
-                              datePickUp: datePickUp,
-                              totalNumOfCarriers: totalNumOfCarriers,
-                              destinationAddress: destinationAddress,
-                              pickUpAddress: pickUpAddress,
-                              notes: notes,
-                            )
-                                .then((_result) {
-                              transportID = _result;
-                              print(
-                                  'This is the ID of the transport that just added: $_result');
-                              showDialogHelper(
-                                  "ההובלה התווספה בהצלחה", widget.size);
-                            }).catchError((error) {
-                              showDialogHelper(
-                                  "קרתה תקלה, נסה שוב ($error)", widget.size);
-                            });
-                            await db
-                                .updateAssignProducts(products, {
-                                  'Status Of Product': ProductStatus
-                                      .assignToDelivery
-                                      .toString()
-                                      .split('.')[1],
-                                  'Assigned Transport ID': transportID,
-                                })
-                                .then((_) => products.forEach((id) {
-                                      print(
-                                          'the product with the id: $id were updated to delivery');
-                                    }))
-                                .onError((error, stackTrace) =>
-                                    print("קרתה תקלה, נסה שוב ($error)"));
-                            _formKey.currentState!.reset();
-                          } else {
-                            error = 'ההובלה חייבת לכלול לפחות מוצר 1';
-                          }
-                        }
-                      } else {
-                        showDialogHelper(
-                            "נא לבחור תאריך ושעה להובלה", widget.size);
+                      if (_formKey.currentState!.validate()) {
+                        await db.updateTransportFields(
+                            'Transports', widget.transportId, {
+                          'Date For Pick Up': DateFormat('yyyy-MM-dd HH:mm')
+                              .format(datePickUp)
+                              .toString(),
+                          'Total Number Of Carriers': totalNumOfCarriers,
+                          'Destination Address': destinationAddress,
+                          'Pick Up Address': pickUpAddress,
+                          'Notes': notes,
+                        });
+                        showDialogHelper('ההובלה עודכנה בהצלחה', widget.size);
+                        _formKey.currentState!.reset();
                       }
                     },
                   ),
