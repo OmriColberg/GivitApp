@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
+import 'package:givit_app/core/models/transport.dart';
 import 'package:givit_app/core/shared/assign_card_product.dart';
 import 'package:givit_app/core/shared/constant.dart';
 import 'package:givit_app/services/database.dart';
@@ -12,6 +13,7 @@ import 'dart:ui' as ui;
 class UpdateTransportPage extends StatefulWidget {
   final Size size;
   final int totalNumOfCarriers;
+  final int currentNumOfCarriers;
   final String destinationAddress;
   final String pickUpAddress;
   final String notes;
@@ -29,6 +31,7 @@ class UpdateTransportPage extends StatefulWidget {
     required this.transportId,
     required this.carrier,
     required this.carrierPhoneNumber,
+    required this.currentNumOfCarriers,
   });
 
   @override
@@ -206,16 +209,41 @@ class _UpdateTransportPageState extends State<UpdateTransportPage> {
                     ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        await db.updateTransportFields(
-                            'Transports', widget.transportId, {
-                          'Date For Pick Up': DateFormat('yyyy-MM-dd HH:mm')
-                              .format(datePickUp)
-                              .toString(),
-                          'Total Number Of Carriers': totalNumOfCarriers,
-                          'Destination Address': destinationAddress,
-                          'Pick Up Address': pickUpAddress,
-                          'Notes': notes,
-                        });
+                        if (widget.currentNumOfCarriers < totalNumOfCarriers) {
+                          await db.updateTransportFields(
+                              'Transports', widget.transportId, {
+                            'Date For Pick Up': DateFormat('yyyy-MM-dd HH:mm')
+                                .format(datePickUp)
+                                .toString(),
+                            'Total Number Of Carriers': totalNumOfCarriers,
+                            'Destination Address': destinationAddress,
+                            'Pick Up Address': pickUpAddress,
+                            'Status Of Transport': TransportStatus
+                                .waitingForVolunteers
+                                .toString()
+                                .split('.')[1],
+                            'Notes': notes,
+                            'Carrier': carrier,
+                            'Carrier Phone Number': carrierPhoneNumber,
+                          });
+                        } else {
+                          await db.updateTransportFields(
+                              'Transports', widget.transportId, {
+                            'Date For Pick Up': DateFormat('yyyy-MM-dd HH:mm')
+                                .format(datePickUp)
+                                .toString(),
+                            'Total Number Of Carriers': totalNumOfCarriers,
+                            'Destination Address': destinationAddress,
+                            'Pick Up Address': pickUpAddress,
+                            'Status Of Transport': TransportStatus
+                                .waitingForDueDate
+                                .toString()
+                                .split('.')[1],
+                            'Notes': notes,
+                            'Carrier': carrier,
+                            'Carrier Phone Number': carrierPhoneNumber,
+                          });
+                        }
                         showDialogHelper('ההובלה עודכנה בהצלחה', widget.size);
                         _formKey.currentState!.reset();
                       }
