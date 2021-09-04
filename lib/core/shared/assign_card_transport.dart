@@ -213,6 +213,10 @@ class AssignCardTransport extends StatelessWidget {
                                                         transport
                                                             .totalNumOfCarriers,
                                                     transportId: transport.id,
+                                                    carrier: transport.carrier,
+                                                    carrierPhoneNumber:
+                                                        transport
+                                                            .carrierPhoneNumber,
                                                   )),
                                         );
                                       },

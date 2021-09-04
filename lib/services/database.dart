@@ -137,6 +137,8 @@ class DatabaseService {
     String? notes,
     List<String>? products,
     DateTime? datePickUp,
+    String? carrier,
+    String? carrierPhoneNumber,
   }) async {
     return await transportsCollection.add({
       'Current Number Of Carriers': 0,
@@ -153,6 +155,8 @@ class DatabaseService {
       'Pictures': [],
       'Notes': notes ?? '',
       'SumUp': '',
+      'Carrier': carrier ?? '',
+      'Carrier Phone Number': carrierPhoneNumber ?? '',
     }).then((value) => value.id);
   }
 

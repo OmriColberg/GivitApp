@@ -12,6 +12,8 @@ class Transport {
   final List<String> pictures;
   final String notes;
   final String sumUp;
+  final String carrier;
+  final String carrierPhoneNumber;
 
   Transport({
     this.id = '',
@@ -27,6 +29,8 @@ class Transport {
     this.status = TransportStatus.waitingForVolunteers,
     this.sumUp = '',
     required this.datePickUp,
+    this.carrier = '',
+    this.carrierPhoneNumber = '',
   });
 
   static Transport transportFromDocument(
@@ -46,6 +50,8 @@ class Transport {
       pictures: List.from(trasnportMap['Pictures']),
       notes: trasnportMap['Notes'] ?? '',
       sumUp: trasnportMap['SumUp'] ?? '',
+      carrier: trasnportMap['Carrier'] ?? '',
+      carrierPhoneNumber: trasnportMap['Carrier Phone Number'] ?? '',
     );
   }
 
