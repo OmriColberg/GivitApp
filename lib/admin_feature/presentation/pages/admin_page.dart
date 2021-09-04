@@ -341,7 +341,7 @@ AssignCardTransport createDeliveryAssignFromTransportSnapshot(
       DateFormat('yyyy-MM-dd HH:mm').format(transport.datePickUp).toString();
   return AssignCardTransport(
     title: date + ' :הובלה ב' + '\n' + ' יוצאת מ: ' + transport.pickUpAddress,
-    body: "הערות: " + transport.notes,
+    body: transport.notes == '' ? "אין הערות" : "הערות: " + transport.notes,
     schedule: 'לשיבוץ הובלה',
     type: CardType.admin,
     transport: transport,
