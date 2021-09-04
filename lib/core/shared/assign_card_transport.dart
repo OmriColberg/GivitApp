@@ -40,8 +40,6 @@ class AssignCardTransport extends StatelessWidget {
   Widget build(BuildContext context) {
     final GivitUser givitUser = Provider.of<GivitUser>(context);
     final DatabaseService db = DatabaseService(uid: givitUser.uid);
-    int prodIndex = 0;
-    int userIndex = 0;
     return StreamBuilder<QuerySnapshot<Object?>>(
       stream: db.givitUsersData,
       builder: (context, snapshotUsers) {
@@ -157,7 +155,7 @@ class AssignCardTransport extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    "${++prodIndex}. " + product.name,
+                                    product.name,
                                     style: TextStyle(fontSize: 18),
                                   ),
                                   SizedBox(width: 10),
@@ -256,7 +254,7 @@ class AssignCardTransport extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  user.fullName + " .${++userIndex}",
+                                  " ${user.fullName}",
                                   style: TextStyle(fontSize: 16),
                                 ),
                                 SizedBox(width: 10),
