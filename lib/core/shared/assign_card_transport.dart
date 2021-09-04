@@ -1,19 +1,18 @@
-import 'dart:io';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:givit_app/admin_feature/presentation/pages/confirm_transport_page.dart';
+import 'package:givit_app/admin_feature/presentation/pages/update_transport_page.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
 import 'package:givit_app/core/models/transport.dart';
 import 'package:givit_app/core/shared/assign_card_product.dart';
 import 'package:givit_app/core/shared/constant.dart';
 import 'package:givit_app/core/shared/loading.dart';
+import 'package:givit_app/core/shared/product_found_form.dart';
 import 'package:givit_app/services/database.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 
 class AssignCardTransport extends StatelessWidget {
@@ -189,7 +188,43 @@ class AssignCardTransport extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Container(),
+                              isAdmin && type == CardType.admin
+                                  ? InkWell(
+                                      child: Icon(
+                                        Icons.edit,
+                                        color: Colors.blue[600],
+                                      ),
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  UpdateTransportPage(
+                                                    datePickUp:
+                                                        transport.datePickUp,
+                                                    destinationAddress:
+                                                        transport
+                                                            .destinationAddress,
+                                                    notes: transport.notes,
+                                                    pickUpAddress:
+                                                        transport.pickUpAddress,
+                                                    size: size,
+                                                    totalNumOfCarriers:
+                                                        transport
+                                                            .totalNumOfCarriers,
+                                                    currentNumOfCarriers:
+                                                        transport
+                                                            .currentNumOfCarriers,
+                                                    transportId: transport.id,
+                                                    carrier: transport.carrier,
+                                                    carrierPhoneNumber:
+                                                        transport
+                                                            .carrierPhoneNumber,
+                                                  )),
+                                        );
+                                      },
+                                    )
+                                  : Container(),
                               Text(
                                 'נרשמו ${transport.currentNumOfCarriers} מתוך  ${transport.totalNumOfCarriers} מובילים',
                                 style: TextStyle(fontSize: 16),
@@ -392,8 +427,6 @@ class AssignCardTransport extends StatelessWidget {
                         reference = db.storage
                             .ref()
                             .child('Products pictures/$productId');
-                        await reference.delete().then((_) => print(
-                            'Successfully deleted Products Picture/$productId storage item'));
                         await db.deleteProductFromProductList(product.id);
                         Transport transport = await db
                             .getTransportByID(product.assignedTransportId);
@@ -408,8 +441,43 @@ class AssignCardTransport extends StatelessWidget {
                           await db.deleteProductFromTransportList(
                               product.id, product.assignedTransportId);
                         }
+                        await reference
+                            .delete()
+                            .then((_) => print(
+                                'Successfully deleted Products Picture/$productId storage item'))
+                            .onError(
+                                (error, stackTrace) => print(error.toString()));
                       },
                       child: Text('למחיקה'),
+                    ),
+                    SizedBox(width: 5),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProductFoundForm(
+                              size: size,
+                              product: product,
+                              products: [],
+                              length: product.length,
+                              ownerName: product.ownerName,
+                              productImagePath: product.productPictureURL,
+                              state: product.state,
+                              weigth: product.weight,
+                              width: product.width,
+                              notes: product.notes,
+                              ownerPhoneNumber: product.ownerPhoneNumber,
+                              pickUpAddress: product.pickUpAddress,
+                              timeForPickUp: product.timeForPickUp,
+                              isUpdate: true,
+                              pickedImage: product.productPictureURL !=
+                                  defaultFurnitureUrl,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Text('לעריכה'),
                     ),
                     SizedBox(width: 5),
                     ElevatedButton(
@@ -434,11 +502,31 @@ class AssignCardTransport extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return Container(
-          height: size.height * 0.5,
+          height: size.height * 0.7,
           child: AlertDialog(
+            insetPadding: EdgeInsets.all(10),
             title: Text(dialogText),
             content: Row(
               children: <Widget>[
+                ElevatedButton(
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    await db.deleteTransportFromTransportList(transport.id);
+                    await db.updateAssignProducts(transport.products, {
+                      'Assigned Transport ID': '',
+                      'Status Of Product': ProductStatus.waitingToBeDelivered
+                          .toString()
+                          .split('.')[1]
+                    });
+                    await db.updateAssignGivitUsers(transport.carriers, {
+                      "Transports": FieldValue.arrayRemove(['${transport.id}'])
+                    });
+                    smsSender(db, transport,
+                        "ההובלה שהייתה אמורה להתקיים בתאריך ה${transport.datePickUp.day}.${transport.datePickUp.month}.${transport.datePickUp.year} בשעה ${transport.datePickUp.hour}:${transport.datePickUp.minute} מ${transport.pickUpAddress} התבטלה. תודה על הושטת היד!");
+                  },
+                  child: Text("מחיקה ושליחת SMS"),
+                ),
+                SizedBox(width: 5),
                 ElevatedButton(
                   onPressed: () async {
                     Navigator.of(context).pop();
@@ -484,7 +572,8 @@ class AssignCardTransport extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () async {
                     Navigator.of(context).pop();
-                    smsSender(db, transport);
+                    smsSender(db, transport,
+                        "תזכורת: בתאריך ה${transport.datePickUp.day}.${transport.datePickUp.month}.${transport.datePickUp.year} בשעה ${transport.datePickUp.hour}:${transport.datePickUp.minute} תתבצע הובלה מ${transport.pickUpAddress}. תודה על התנדבותך!");
                   },
                   child: Text("שליחת הודעות"),
                 ),
@@ -503,10 +592,7 @@ class AssignCardTransport extends StatelessWidget {
     );
   }
 
-  void smsSender(DatabaseService db, Transport transport) {
-    sendSMS(
-        message:
-            "תזכורת: בתאריך ה${transport.datePickUp.day}.${transport.datePickUp.month}.${transport.datePickUp.year} בשעה ${transport.datePickUp.hour}:${transport.datePickUp.minute} תתבצע הובלה מ${transport.pickUpAddress}. תודה על התנדבותך!",
-        recipients: transport.carriersPhoneNumbers);
+  void smsSender(DatabaseService db, Transport transport, String smsContent) {
+    sendSMS(message: smsContent, recipients: transport.carriersPhoneNumbers);
   }
 }

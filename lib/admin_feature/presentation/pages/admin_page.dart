@@ -9,7 +9,9 @@ import 'package:givit_app/core/models/product.dart';
 import 'package:givit_app/core/models/transport.dart';
 import 'package:givit_app/core/shared/assign_card_product.dart';
 import 'package:givit_app/core/shared/assign_card_transport.dart';
+import 'package:givit_app/core/shared/constant.dart';
 import 'package:givit_app/core/shared/loading.dart';
+import 'package:givit_app/core/shared/product_found_form.dart';
 import 'package:givit_app/services/database.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
@@ -271,6 +273,35 @@ class _AdminPageState extends State<AdminPage> {
                         await db.deleteProductFromProductList(product.id);
                       },
                       child: Text('למחיקה'),
+                    ),
+                    SizedBox(width: 5),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProductFoundForm(
+                              size: size,
+                              product: product,
+                              products: [],
+                              length: product.length,
+                              ownerName: product.ownerName,
+                              productImagePath: product.productPictureURL,
+                              state: product.state,
+                              weigth: product.weight,
+                              width: product.width,
+                              notes: product.notes,
+                              ownerPhoneNumber: product.ownerPhoneNumber,
+                              pickUpAddress: product.pickUpAddress,
+                              timeForPickUp: product.timeForPickUp,
+                              isUpdate: true,
+                              pickedImage: product.productPictureURL !=
+                                  defaultFurnitureUrl,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Text('לעריכה'),
                     ),
                     SizedBox(width: 5),
                     ElevatedButton(
