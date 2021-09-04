@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:givit_app/core/models/givit_user.dart';
 import 'package:givit_app/core/models/product.dart';
+import 'package:givit_app/core/models/transport.dart';
 import 'package:givit_app/core/shared/assign_card_product.dart';
 import 'package:givit_app/core/shared/constant.dart';
 import 'package:givit_app/services/database.dart';
@@ -12,19 +13,26 @@ import 'dart:ui' as ui;
 class UpdateTransportPage extends StatefulWidget {
   final Size size;
   final int totalNumOfCarriers;
+  final int currentNumOfCarriers;
   final String destinationAddress;
   final String pickUpAddress;
   final String notes;
   final DateTime datePickUp;
   final String transportId;
-  UpdateTransportPage(
-      {required this.size,
-      required this.totalNumOfCarriers,
-      required this.destinationAddress,
-      required this.pickUpAddress,
-      required this.notes,
-      required this.datePickUp,
-      required this.transportId});
+  final String carrier;
+  final String carrierPhoneNumber;
+  UpdateTransportPage({
+    required this.size,
+    required this.totalNumOfCarriers,
+    required this.destinationAddress,
+    required this.pickUpAddress,
+    required this.notes,
+    required this.datePickUp,
+    required this.transportId,
+    required this.carrier,
+    required this.carrierPhoneNumber,
+    required this.currentNumOfCarriers,
+  });
 
   @override
   _UpdateTransportPageState createState() => _UpdateTransportPageState();
@@ -38,6 +46,8 @@ class _UpdateTransportPageState extends State<UpdateTransportPage> {
     pickUpAddress = widget.pickUpAddress;
     notes = widget.notes;
     datePickUp = widget.datePickUp;
+    carrier = widget.carrier;
+    carrierPhoneNumber = widget.carrierPhoneNumber;
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -46,6 +56,8 @@ class _UpdateTransportPageState extends State<UpdateTransportPage> {
   late int totalNumOfCarriers;
   late String destinationAddress;
   late String pickUpAddress;
+  late String carrier = '';
+  late String carrierPhoneNumber = '';
   late String notes;
   late DateTime datePickUp;
 
@@ -66,7 +78,7 @@ class _UpdateTransportPageState extends State<UpdateTransportPage> {
           child: Container(
             color: Colors.blue[100],
             alignment: Alignment.topCenter,
-            padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+            padding: EdgeInsets.symmetric(vertical: 20, horizontal: 50),
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -83,7 +95,7 @@ class _UpdateTransportPageState extends State<UpdateTransportPage> {
                       },
                     ),
                   ),
-                  SizedBox(height: 20.0),
+                  SizedBox(height: 20),
                   Directionality(
                     textDirection: ui.TextDirection.rtl,
                     child: TextFormField(
@@ -111,7 +123,7 @@ class _UpdateTransportPageState extends State<UpdateTransportPage> {
                       },
                     ),
                   ),
-                  SizedBox(height: 20.0),
+                  SizedBox(height: 20),
                   Directionality(
                     textDirection: ui.TextDirection.rtl,
                     child: TextFormField(
@@ -123,7 +135,31 @@ class _UpdateTransportPageState extends State<UpdateTransportPage> {
                       },
                     ),
                   ),
-                  SizedBox(height: 12.0),
+                  SizedBox(height: 20),
+                  Directionality(
+                    textDirection: ui.TextDirection.rtl,
+                    child: TextFormField(
+                      initialValue: carrier,
+                      decoration:
+                          textInputDecoration.copyWith(hintText: 'שם המוביל'),
+                      onChanged: (val) {
+                        setState(() => carrier = val);
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Directionality(
+                    textDirection: ui.TextDirection.rtl,
+                    child: TextFormField(
+                      initialValue: carrierPhoneNumber,
+                      decoration: textInputDecoration.copyWith(
+                          hintText: 'מספר טלפון של המוביל'),
+                      onChanged: (val) {
+                        setState(() => carrierPhoneNumber = val);
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     textDirection: ui.TextDirection.rtl,
@@ -149,7 +185,7 @@ class _UpdateTransportPageState extends State<UpdateTransportPage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 12.0),
+                  SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     textDirection: ui.TextDirection.rtl,
@@ -165,7 +201,7 @@ class _UpdateTransportPageState extends State<UpdateTransportPage> {
                             ),
                     ],
                   ),
-                  SizedBox(height: 12.0),
+                  SizedBox(height: 12),
                   ElevatedButton(
                     child: Text(
                       'עדכון הובלה',
@@ -173,25 +209,50 @@ class _UpdateTransportPageState extends State<UpdateTransportPage> {
                     ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        await db.updateTransportFields(
-                            'Transports', widget.transportId, {
-                          'Date For Pick Up': DateFormat('yyyy-MM-dd HH:mm')
-                              .format(datePickUp)
-                              .toString(),
-                          'Total Number Of Carriers': totalNumOfCarriers,
-                          'Destination Address': destinationAddress,
-                          'Pick Up Address': pickUpAddress,
-                          'Notes': notes,
-                        });
+                        if (widget.currentNumOfCarriers < totalNumOfCarriers) {
+                          await db.updateTransportFields(
+                              'Transports', widget.transportId, {
+                            'Date For Pick Up': DateFormat('yyyy-MM-dd HH:mm')
+                                .format(datePickUp)
+                                .toString(),
+                            'Total Number Of Carriers': totalNumOfCarriers,
+                            'Destination Address': destinationAddress,
+                            'Pick Up Address': pickUpAddress,
+                            'Status Of Transport': TransportStatus
+                                .waitingForVolunteers
+                                .toString()
+                                .split('.')[1],
+                            'Notes': notes,
+                            'Carrier': carrier,
+                            'Carrier Phone Number': carrierPhoneNumber,
+                          });
+                        } else {
+                          await db.updateTransportFields(
+                              'Transports', widget.transportId, {
+                            'Date For Pick Up': DateFormat('yyyy-MM-dd HH:mm')
+                                .format(datePickUp)
+                                .toString(),
+                            'Total Number Of Carriers': totalNumOfCarriers,
+                            'Destination Address': destinationAddress,
+                            'Pick Up Address': pickUpAddress,
+                            'Status Of Transport': TransportStatus
+                                .waitingForDueDate
+                                .toString()
+                                .split('.')[1],
+                            'Notes': notes,
+                            'Carrier': carrier,
+                            'Carrier Phone Number': carrierPhoneNumber,
+                          });
+                        }
                         showDialogHelper('ההובלה עודכנה בהצלחה', widget.size);
                         _formKey.currentState!.reset();
                       }
                     },
                   ),
-                  SizedBox(height: 12.0),
+                  SizedBox(height: 12),
                   Text(
                     error,
-                    style: TextStyle(color: Colors.red, fontSize: 14.0),
+                    style: TextStyle(color: Colors.red, fontSize: 14),
                   )
                 ],
               ),

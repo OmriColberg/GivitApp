@@ -26,6 +26,8 @@ class _AddTransportPageState extends State<AddTransportPage> {
   String destinationAddress = '';
   String pickUpAddress = '';
   String notes = '';
+  String carrier = '';
+  String carrierPhoneNumber = '';
   List<String> products = const [];
   DateTime datePickUp = DateTime.now();
 
@@ -46,7 +48,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
           child: Container(
             color: Colors.blue[100],
             alignment: Alignment.topCenter,
-            padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+            padding: EdgeInsets.symmetric(vertical: 20, horizontal: 50),
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -65,7 +67,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
                       },
                     ),
                   ),
-                  SizedBox(height: 20.0),
+                  SizedBox(height: 20),
                   Directionality(
                     textDirection: ui.TextDirection.rtl,
                     child: TextFormField(
@@ -78,7 +80,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
                       },
                     ),
                   ),
-                  SizedBox(height: 20.0),
+                  SizedBox(height: 20),
                   Directionality(
                     textDirection: ui.TextDirection.rtl,
                     child: TextFormField(
@@ -91,7 +93,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
                       },
                     ),
                   ),
-                  SizedBox(height: 20.0),
+                  SizedBox(height: 20),
                   Directionality(
                     textDirection: ui.TextDirection.rtl,
                     child: TextFormField(
@@ -104,7 +106,29 @@ class _AddTransportPageState extends State<AddTransportPage> {
                       },
                     ),
                   ),
-                  SizedBox(height: 20.0),
+                  SizedBox(height: 20),
+                  Directionality(
+                    textDirection: ui.TextDirection.rtl,
+                    child: TextFormField(
+                      decoration:
+                          textInputDecoration.copyWith(hintText: 'שם המוביל'),
+                      onChanged: (val) {
+                        setState(() => carrier = val);
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Directionality(
+                    textDirection: ui.TextDirection.rtl,
+                    child: TextFormField(
+                      decoration: textInputDecoration.copyWith(
+                          hintText: 'מספר טלפון של המוביל'),
+                      onChanged: (val) {
+                        setState(() => carrierPhoneNumber = val);
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 20),
                   Directionality(
                     textDirection: ui.TextDirection.rtl,
                     child: TextFormField(
@@ -115,7 +139,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
                       },
                     ),
                   ),
-                  SizedBox(height: 12.0),
+                  SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     textDirection: ui.TextDirection.rtl,
@@ -159,7 +183,7 @@ class _AddTransportPageState extends State<AddTransportPage> {
                             ),
                     ],
                   ),
-                  SizedBox(height: 12.0),
+                  SizedBox(height: 12),
                   ElevatedButton(
                     child: Text(
                       'הוסף הובלה למערכת',
@@ -178,6 +202,8 @@ class _AddTransportPageState extends State<AddTransportPage> {
                               destinationAddress: destinationAddress,
                               pickUpAddress: pickUpAddress,
                               notes: notes,
+                              carrier: carrier,
+                              carrierPhoneNumber: carrierPhoneNumber,
                             )
                                 .then((_result) {
                               transportID = _result;
@@ -214,10 +240,10 @@ class _AddTransportPageState extends State<AddTransportPage> {
                       }
                     },
                   ),
-                  SizedBox(height: 12.0),
+                  SizedBox(height: 12),
                   Text(
                     error,
-                    style: TextStyle(color: Colors.red, fontSize: 14.0),
+                    style: TextStyle(color: Colors.red, fontSize: 14),
                   )
                 ],
               ),

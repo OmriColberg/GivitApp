@@ -212,7 +212,14 @@ class AssignCardTransport extends StatelessWidget {
                                                     totalNumOfCarriers:
                                                         transport
                                                             .totalNumOfCarriers,
+                                                    currentNumOfCarriers:
+                                                        transport
+                                                            .currentNumOfCarriers,
                                                     transportId: transport.id,
+                                                    carrier: transport.carrier,
+                                                    carrierPhoneNumber:
+                                                        transport
+                                                            .carrierPhoneNumber,
                                                   )),
                                         );
                                       },
@@ -585,7 +592,7 @@ class AssignCardTransport extends StatelessWidget {
     );
   }
 
-  void smsSender(DatabaseService db, Transport transport, String SmsContent) {
-    sendSMS(message: SmsContent, recipients: transport.carriersPhoneNumbers);
+  void smsSender(DatabaseService db, Transport transport, String smsContent) {
+    sendSMS(message: smsContent, recipients: transport.carriersPhoneNumbers);
   }
 }
