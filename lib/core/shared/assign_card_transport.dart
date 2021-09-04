@@ -499,11 +499,31 @@ class AssignCardTransport extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return Container(
-          height: size.height * 0.5,
+          height: size.height * 0.7,
           child: AlertDialog(
+            insetPadding: EdgeInsets.all(10),
             title: Text(dialogText),
             content: Row(
               children: <Widget>[
+                ElevatedButton(
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    await db.deleteTransportFromTransportList(transport.id);
+                    await db.updateAssignProducts(transport.products, {
+                      'Assigned Transport ID': '',
+                      'Status Of Product': ProductStatus.waitingToBeDelivered
+                          .toString()
+                          .split('.')[1]
+                    });
+                    await db.updateAssignGivitUsers(transport.carriers, {
+                      "Transports": FieldValue.arrayRemove(['${transport.id}'])
+                    });
+                    smsSender(db, transport,
+                        "ההובלה שהייתה אמורה להתקיים בתאריך ה${transport.datePickUp.day}.${transport.datePickUp.month}.${transport.datePickUp.year} בשעה ${transport.datePickUp.hour}:${transport.datePickUp.minute} מ${transport.pickUpAddress} התבטלה. תודה על הושטת היד!");
+                  },
+                  child: Text("מחיקה ושליחת SMS"),
+                ),
+                SizedBox(width: 5),
                 ElevatedButton(
                   onPressed: () async {
                     Navigator.of(context).pop();
@@ -549,7 +569,8 @@ class AssignCardTransport extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () async {
                     Navigator.of(context).pop();
-                    smsSender(db, transport);
+                    smsSender(db, transport,
+                        "תזכורת: בתאריך ה${transport.datePickUp.day}.${transport.datePickUp.month}.${transport.datePickUp.year} בשעה ${transport.datePickUp.hour}:${transport.datePickUp.minute} תתבצע הובלה מ${transport.pickUpAddress}. תודה על התנדבותך!");
                   },
                   child: Text("שליחת הודעות"),
                 ),
@@ -568,10 +589,7 @@ class AssignCardTransport extends StatelessWidget {
     );
   }
 
-  void smsSender(DatabaseService db, Transport transport) {
-    sendSMS(
-        message:
-            "תזכורת: בתאריך ה${transport.datePickUp.day}.${transport.datePickUp.month}.${transport.datePickUp.year} בשעה ${transport.datePickUp.hour}:${transport.datePickUp.minute} תתבצע הובלה מ${transport.pickUpAddress}. תודה על התנדבותך!",
-        recipients: transport.carriersPhoneNumbers);
+  void smsSender(DatabaseService db, Transport transport, String SmsContent) {
+    sendSMS(message: SmsContent, recipients: transport.carriersPhoneNumbers);
   }
 }
